@@ -17,7 +17,6 @@ rebuild: clean all
 
 $(TARGET): $(DSTDIR) $(SRCS) $(META)
 	pandoc $(FLAGS) -o $@ $(SRCS) $(META)
-	pandoc $(FLAGS) -o build/book.pdf $(SRCS) $(META)
 
 $(DSTDIR):
 	mkdir -p $(DSTDIR)
