@@ -30,10 +30,13 @@ jobs:
         run: |
           git merge --no-ff ${GITHUB_SHA}
 
+      - name: Install pandoc
+        run: |
+          sudo apt install -y pandoc
+
       - name: Build
-        uses: docker://pandoc/core:latest
-        with:
-          entrypoint: make
+        run: |
+          make
 
       - name: Move
         run: |
