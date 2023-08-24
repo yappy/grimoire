@@ -43,7 +43,9 @@ jobs:
 
       - name: Move
         run: |
+          cat ${{ env.dest }}/index.html
           mv ./build/index.html ${{ env.dest }}/index.html
+          cat ${{ env.dest }}/index.html
 
       - name: Git Add
         run: |
