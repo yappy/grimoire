@@ -2,6 +2,9 @@
 
 name: Build and Push Documents
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
