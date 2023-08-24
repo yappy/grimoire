@@ -31,8 +31,9 @@ jobs:
           git merge --no-ff ${GITHUB_SHA}
 
       - name: Build
-        run: |
-          make
+        uses: docker://pandoc/core:latest
+        with:
+          entrypoint: make
 
       - name: Move
         run: |
