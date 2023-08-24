@@ -1,5 +1,9 @@
 # grimoire
 
+[![Build and Push Documents](https://github.com/yappy/grimoire/actions/workflows/pages.yaml/badge.svg?branch=main)](https://github.com/yappy/grimoire/actions/workflows/pages.yaml)
+
+<https://yappy.github.io/grimoire/>
+
 ## Install Pandoc
 
 ```bash
