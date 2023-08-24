@@ -2,6 +2,7 @@
 
 [![Build and Push Documents](https://github.com/yappy/grimoire/actions/workflows/pages.yaml/badge.svg?branch=main)](https://github.com/yappy/grimoire/actions/workflows/pages.yaml)
 
+Auto build (branch: pages, location: docs/index.html):
 <https://yappy.github.io/grimoire/>
 
 ## Install Pandoc
