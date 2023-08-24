@@ -43,11 +43,12 @@ jobs:
 
       - name: Move
         run: |
-          mv ./build/index.html ${{ env.dest }}
+          mv ./build/index.html ${{ env.dest }}/index.html
 
       - name: Git Add
         run: |
           git add ${{ env.dest }}
+          git status
 
       - name: Git Commit
         continue-on-error: true
