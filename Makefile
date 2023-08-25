@@ -1,21 +1,30 @@
 SRCDIR := src
 DSTDIR := build
-SRCS   := $(sort $(wildcard $(SRCDIR)/??-*.md))
-META   := $(SRCDIR)/metadata.yaml
+METASRC:= $(SRCDIR)/metadata.in.yaml
+MERADST:= $(DSTDIR)/metadata.yaml
+SRCS   := $(sort $(wildcard $(SRCDIR)/??-*.md)) $(MERADST)
 TARGET := $(DSTDIR)/index.html
 FLAGS  := --standalone --toc --number-sections
 
 GITDATE := $(shell git show -s --format=%as)
-GITDATE := $(shell git describe --dirty --always)
+GITDESC := $(shell git describe --dirty --always)
+PDVER   := $(shell pandoc --version | head -n 1)
 
 
-.PHONY: all rebuild clean
+.PHONY: all rebuild $(MERADST) clean
 
 all: $(TARGET)
 
 rebuild: clean all
 
-$(TARGET): $(DSTDIR) $(SRCS) $(META)
+# always run (.PHONY)
+$(MERADST): $(DSTDIR)
+	sed -e 's/%%GITDATE%%/${GITDATE}/g' $(METASRC) | \
+sed -e 's/%%GITDESC%%/${GITDESC}/g' | \
+sed -e 's/%%PDVER%%/${PDVER}/g' \
+> $(MERADST)
+
+$(TARGET): $(SRCS) $(META)
 	pandoc $(FLAGS) -o $@ $(SRCS) $(META)
 
 $(DSTDIR):

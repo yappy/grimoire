@@ -1,9 +1,9 @@
 ---
 title: 3日ではなれないかもしれない人形遣い
 author: yappy
-date: 1234-07-16
+date: %%GITDATE%%
 
-subtitle: This is subtitle
+subtitle: %%GITDESC%% - built by %%PDVER%%
 abstract: This is abstract.
 keywords:
 - keyword1
