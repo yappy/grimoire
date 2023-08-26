@@ -2,7 +2,9 @@
 
 name: Build HTML and Push
 
-permissions: write-all
+permissions:
+  contents: write
+  workflows: write
 
 on:
   push:
