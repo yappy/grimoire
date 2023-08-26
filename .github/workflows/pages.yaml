@@ -4,6 +4,7 @@ name: Build HTML and Push
 
 permissions:
   contents: write
+  workflows: write
 
 on:
   push:
