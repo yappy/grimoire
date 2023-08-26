@@ -1,3 +1,8 @@
+ifndef PANDOC
+PANDOC := pandoc
+endif
+$(info [info] PANDOC command = ${PANDOC})
+
 SRCDIR := src
 DSTDIR := build
 METASRC:= $(SRCDIR)/metadata.in.yaml
@@ -9,7 +14,7 @@ FLAGS  := --standalone --toc --number-sections
 
 GITDATE := $(shell git show -s --format=%as)
 GITDESC := $(shell git describe --dirty --always)
-PDVER   := $(shell pandoc --version | head -n 1)
+PDVER   := $(shell $(PANDOC) --version | head -n 1)
 
 
 .PHONY: all rebuild meta clean
@@ -38,7 +43,7 @@ meta: $(DSTDIR)
 
 $(TARGET): $(SRCS)
 	$(info [info] Build)
-	pandoc $(FLAGS) -o $@ $(SRCS)
+	$(PANDOC) $(FLAGS) -o $@ $(SRCS)
 
 $(DSTDIR):
 	$(info [info] Dest Dir)
