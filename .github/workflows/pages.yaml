@@ -1,6 +1,6 @@
 # On push to main, checkout "pages" branch and work in it.
 
-name: Build and Push Documents
+name: Build HTML and Push
 
 permissions:
   contents: write
@@ -33,12 +33,9 @@ jobs:
         run: |
           git merge --no-ff ${GITHUB_SHA}
 
-      - name: Install pandoc
-        run: |
-          sudo apt install -y pandoc
-
       - name: Build
         run: |
+          export PANDOC="docker run --rm -v $(pwd):/data -u $(id -u):$(id -g) pandoc/core"
           make
 
       - name: Move
