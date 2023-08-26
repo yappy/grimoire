@@ -35,7 +35,7 @@ jobs:
 
       - name: Build
         run: |
-          export PANDOC="docker run --rm -v $(pwd):/data -u $(id -u):$(id -g) pandoc/core"
+          export PANDOC="docker run --rm -v $(pwd):/data -u $(id -u):$(id -g) pandoc/core:latest"
           make
 
       - name: Move

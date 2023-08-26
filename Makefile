@@ -2,6 +2,7 @@ ifndef PANDOC
 PANDOC := pandoc
 endif
 $(info [info] PANDOC command = ${PANDOC})
+$(info [info] You can change pandoc command by $$PANDOC env var.)
 
 SRCDIR := src
 DSTDIR := build

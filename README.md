@@ -7,17 +7,31 @@ Auto build (branch: pages, location: docs/index.html):
 
 ## Install Pandoc
 
-```bash
+```sh
+# May be a little bit old...
 sudo apt install pandoc
+```
+
+```sh
+# The latest version will be available, but cannot be updated automatically
+# https://github.com/jgm/pandoc/releases
+sudo dpkg -i pandoc-x.y.z.w-amd64.deb
+```
+
+```sh
+# Docker is required, but nearly latest vesion will be available
+# https://hub.docker.com/r/pandoc/core
+alias pandock=\
+'docker run --rm -v "$(pwd):/data" -u $(id -u):$(id -g) pandoc/core:latest'
 ```
 
 ## Build
 
-```bash
+```sh
 make
 ```
 
-```bash
+```sh
 # other targets
 make clean
 make rebuild
