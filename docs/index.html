@@ -181,7 +181,7 @@
 <body>
 <header id="title-block-header">
 <h1 class="title">3日ではなれないかもしれない人形遣い</h1>
-<p class="subtitle">ba02b0d - built by pandoc 3.1.1</p>
+<p class="subtitle">31098ad - built by pandoc 3.1.1</p>
 <p class="author">yappy</p>
 <p class="date">2023-08-27</p>
 <div class="abstract">
@@ -201,6 +201,32 @@ class="toc-section-number">1.2</span> Subsection2</a></li>
 </ul></li>
 <li><a href="#title-1" id="toc-title-1"><span
 class="toc-section-number">2</span> Title</a></li>
+<li><a href="#参考文献" id="toc-参考文献"><span
+class="toc-section-number">3</span> 参考文献</a>
+<ul>
+<li><a href="#データ構造とアルゴリズム"
+id="toc-データ構造とアルゴリズム"><span
+class="toc-section-number">3.1</span> データ構造とアルゴリズム</a></li>
+<li><a href="#形式言語理論" id="toc-形式言語理論"><span
+class="toc-section-number">3.2</span> 形式言語理論</a></li>
+<li><a href="#オペレーティングシステム"
+id="toc-オペレーティングシステム"><span
+class="toc-section-number">3.3</span> オペレーティングシステム</a></li>
+<li><a href="#コンピュータアーキテクチャ"
+id="toc-コンピュータアーキテクチャ"><span
+class="toc-section-number">3.4</span>
+コンピュータアーキテクチャ</a></li>
+<li><a href="#コンパイラ" id="toc-コンパイラ"><span
+class="toc-section-number">3.5</span> コンパイラ</a></li>
+<li><a href="#データベース" id="toc-データベース"><span
+class="toc-section-number">3.6</span> データベース</a></li>
+<li><a href="#プログラミング" id="toc-プログラミング"><span
+class="toc-section-number">3.7</span> プログラミング</a></li>
+<li><a href="#関数型言語-という訳ではない"
+id="toc-関数型言語-という訳ではない"><span
+class="toc-section-number">3.8</span> 関数型言語
+(という訳ではない)</a></li>
+</ul></li>
 </ul>
 </nav>
 <h1 data-number="1" id="title"><span
@@ -213,5 +239,118 @@ class="header-section-number">1.2</span> Subsection2</h2>
 <h1 data-number="2" id="title-1"><span
 class="header-section-number">2</span> Title</h1>
 <p>Hello, test text.</p>
+<h1 data-number="3" id="参考文献"><span
+class="header-section-number">3</span> 参考文献</h1>
+<ul>
+<li>最初から順に読み進めて読破が狙えるものと、それは普通に無理なものが存在する。</li>
+</ul>
+<h2 data-number="3.1" id="データ構造とアルゴリズム"><span
+class="header-section-number">3.1</span> データ構造とアルゴリズム</h2>
+<ul>
+<li>アルゴリズムイントロダクション
+<ul>
+<li>Introduction to Algorithms: アルゴリズム入門 (MIT 基準)</li>
+<li>アルゴリズム専門の研究者になるなら入門だから…。</li>
+<li>数学的厳密性が重視されており、ややマイナーなアルゴリズムも掲載。
+その代わり圧倒的な分量を持つ。</li>
+</ul></li>
+<li>もう1冊軽いものがあるとよいと思うが、色々ありすぎて何がよさそうか謎。。</li>
+</ul>
+<h2 data-number="3.2" id="形式言語理論"><span
+class="header-section-number">3.2</span> 形式言語理論</h2>
+<ul>
+<li>オートマトン言語理論 計算論</li>
+</ul>
+<h2 data-number="3.3" id="オペレーティングシステム"><span
+class="header-section-number">3.3</span> オペレーティングシステム</h2>
+<p>cf. コンピュータアーキテクチャ</p>
+<ul>
+<li>Operating System Concepts
+<ul>
+<li>恐竜本。</li>
+<li>他にもいくつか案はあるが、多少の実践に立ち入った本よりは下記をやった方がよいのかも。</li>
+</ul></li>
+<li>6.1810: Operating System Engineering
+<ul>
+<li>MIT の OS 実践授業</li>
+<li>xv6 (最初期の UNIX の ANSI C 再実装)
+を使う。ソースがコンパクトで綺麗で明快だが OS
+のエッセンスは揃っている。</li>
+<li>GitHub の risc-v 版ソースコードを手元に用意しながら授業ページの pdf
+を読めば あっという間に一流の人形遣いになれそう。</li>
+<li>アセンブラ、リンカスクリプト、スタートアップルーチン</li>
+<li>昔は x86 だったので、苦行を積みたい場合はそちら。</li>
+</ul></li>
+<li>30日でできる! OS自作入門</li>
+<li>ゼロからのOS自作入門
+<ul>
+<li>BIOS or UEFI およびク〇すぎる x86
+のブートアップに正面から向き合うことができる。</li>
+<li>理論的な面は弱め。他にないタイプの本であることに間違いはない。</li>
+</ul></li>
+</ul>
+<h2 data-number="3.4" id="コンピュータアーキテクチャ"><span
+class="header-section-number">3.4</span> コンピュータアーキテクチャ</h2>
+<p>cf. ディジタル回路、オペレーティングシステム</p>
+<ul>
+<li>コンピュータの構成と設計
+<ul>
+<li>パタヘネ。これは文句なくまずはこの一冊(日本語版は一冊ではない)でOK。</li>
+<li>Amazon 検索だと誤って古い版を買ってしまいやすいので注意(一敗)。</li>
+</ul></li>
+<li>コンピュータアーキテクチャ 定量的アプローチ
+<ul>
+<li>ヘネパタ。むずかしい。</li>
+</ul></li>
+<li>CPU の創りかた
+<ul>
+<li>20年経っても色あせない名著</li>
+<li><del>読んだことがない</del></li>
+</ul></li>
+</ul>
+<h2 data-number="3.5" id="コンパイラ"><span
+class="header-section-number">3.5</span> コンパイラ</h2>
+<p>cf. オートマトン、正規表現</p>
+<ul>
+<li>コンパイラ―原理・技法・ツール
+<ul>
+<li>ドラゴンブック。</li>
+<li>教科書として使うのは微妙な気もするけどだったら何がいいのかはよくわからない。</li>
+</ul></li>
+<li>低レイヤを知りたい人のためのCコンパイラ作成入門 <a
+href="https://www.sigbus.info/compilerbook"
+class="uri">https://www.sigbus.info/compilerbook</a>
+<ul>
+<li>C で C コンパイラを作る完全実践型。C セルフホスト RTA
+が流行っているらしい(???)</li>
+<li>コンパイラについては構文解析は理論的な面が大きいが、
+出力にアセンブラや機械語のローレイヤの知識が必要なのがアレ。</li>
+</ul></li>
+</ul>
+<h2 data-number="3.6" id="データベース"><span
+class="header-section-number">3.6</span> データベース</h2>
+<p>わかんない。。</p>
+<h2 data-number="3.7" id="プログラミング"><span
+class="header-section-number">3.7</span> プログラミング</h2>
+<ul>
+<li>コンパイラ言語</li>
+<li>スクリプト言語</li>
+<li>関数型言語</li>
+</ul>
+<p>を最低1つずつ習得するのがよいとされている(要出典)。</p>
+<h2 data-number="3.8" id="関数型言語-という訳ではない"><span
+class="header-section-number">3.8</span> 関数型言語
+(という訳ではない)</h2>
+<ul>
+<li>SICP
+<ul>
+<li>最近はやめてしまったらしい。何で LISP
+を学んだらいいのかわからない。</li>
+</ul></li>
+<li>型システム入門 −プログラミング言語と型の理論− (TAPL)
+<ul>
+<li>これも関数型言語の本ではないが</li>
+</ul></li>
+</ul>
 </body>
 </html>
