@@ -1,6 +1,6 @@
-# On push to main, checkout "pages" branch and work in it.
+# On push to main
 
-name: Build HTML and Push
+name: Build HTML and Deploy
 
 permissions:
   contents: write
@@ -19,46 +19,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Setup mdBook
+        uses: peaceiris/actions-mdbook@v2
         with:
-          ref: ${{ env.ref }}
-          fetch-depth: 0
-
-      - name: Git Setup
-        run: |
-          git remote set-url origin https://github-actions:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Merge from main
-        run: |
-          git merge --no-ff ${GITHUB_SHA}
-
-      - name: Install mdBook
-        run: |
-          cargo install mdbook
+          mdbook-version: 'latest'
 
       - name: Build
         run: |
           mdbook build
 
-      - name: Git Rm
-        run: |
-          git rm -rf ${{ env.dest }}
-
-      - name: Move
-        run: |
-          mv ./book ${{ env.dest }}
-
-      - name: Git Add
-        run: |
-          git add ${{ env.dest }}
-          git status
-
-      - name: Git Commit
-        continue-on-error: true
-        run: |
-          git commit -m "Update for ${GITHUB_REF} ${GITHUB_SHA}" -m "Automatic push by github actions"
-
-      - name: Git Push
-        run: |
-          git push origin HEAD:${{ env.ref }}
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./book
