@@ -35,12 +35,15 @@ jobs:
 
       - name: Build
         run: |
-          export PANDOC="docker run --rm -v $(pwd):/data -u $(id -u):$(id -g) pandoc/core:latest"
-          make
+          mdbook build
+
+      - name: Git Rm
+        run: |
+          git rm -rf ${{ env.dest }}
 
       - name: Move
         run: |
-          mv ./build/index.html ${{ env.dest }}/index.html
+          mv ./book ${{ env.dest }}
 
       - name: Git Add
         run: |
