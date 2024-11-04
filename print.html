@@ -1,0 +1,712 @@
+<!DOCTYPE HTML>
+<html lang="ja" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>3日ではなれないかもしれない人形遣い</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="10-stub.html"><strong aria-hidden="true">1.</strong> Chapter 1</a></li><li class="chapter-item expanded "><a href="20-stub.html"><strong aria-hidden="true">2.</strong> Chapter 2</a></li><li class="chapter-item expanded "><a href="90-refer.html"><strong aria-hidden="true">3.</strong> Chapter 9</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">3日ではなれないかもしれない人形遣い</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="マルチコアと同期"><a class="header" href="#マルチコアと同期">マルチコアと同期</a></h1>
+<p>3行まとめ</p>
+<ul>
+<li>ロックを使え。</li>
+</ul>
+<h2 id="マルチスレッド"><a class="header" href="#マルチスレッド">マルチスレッド</a></h2>
+<p>シングルコアでは物理的に同時に動くのは1つのプログラムである。
+しかし、その時代から OS によるマルチタスキング・マルチスレッドの概念はあった。
+OS が適当なタイミング (特別な理由がなければタイマ割り込み) を契機に実行中の
+スレッドから実行権を剥奪 (プリエンプト) し、別のスレッドに切り替える。</p>
+<p>※それより前は OS ではなくアプリケーションが自ら CPU を手放す協調的スケジューリングも
+あったが、アプリがバグると CPU を放さなくなってしまうので、現代の OS ではシステムが
+勝手にタスクを切り替えるプリエンプティブスケジューリングが採用されることが多い。
+ただし OS のスレッドの上でユーザランドでタスクを切り替えるグリーンスレッドだとか
+最近流行りの async-await 系の話では協調的スケジューリングも現役と言える。</p>
+<p>現代ではシングルコア性能の向上に限界を迎え、CPU のマルチコア化が進んでいる。
+ハードウェア設計の方の話で N コア M スレッドのように言われると
+コアという用語が何を指すのか分かりづらいため、ソフトウェア/OS の世界では
+「CPU0, CPU1, ...」「ハードウェアスレッド」のような呼び方をすることも多い。
+しかし口語では簡単にコアと言ってしまうことも多く、要はプログラムを実行できるユニット
+1つ分のことである。</p>
+<p>マルチコア用 OS では、スレッドを同時にコア数分まで同時に物理的に実行することができる。
+しかしそれより多くは不可能なので、そこから先はシングルスレッドと同様の方法で
+スレッドの切り替えを行うことになる。</p>
+<p>マルチコア環境では複数のプログラムを同時に実行するとマルチコアの恩恵を受けやすいが、
+1つのプログラムに関してはマルチスレッドプログラミングを意識して行わないと
+マルチコアの恩恵をほとんど受けられない。</p>
+<p>PC の CPU 使用率の (できればコアごとの) モニタを見てみると分かるが、
+現代の PC においては、一部の限られた作業以外では CPU コアを持て余しているのが
+普通である。
+シングルコアの時代では割と頻繁に CPU 使用率が 100% に「張り付いていた」が、
+現代では全コア 100% となることは一部のタスクを除いてほとんどない。
+したがって CPU が実行速度のボトルネックになることは少なく、
+高級なコア数の多い CPU を選ぶ価値は低い。</p>
+<p>ただしマルチコア CPU の並列性を大いに生かした作業を行う場合は例外であり、
+低性能なコア数の少ない CPU を強制的に使用させるような行為は基本的人権の侵害となる。</p>
+<ul>
+<li>プログラムの並列ビルド</li>
+<li>将棋の手読み</li>
+<li>AI のための行列演算は GPU を用いた方がよい。</li>
+</ul>
+<h2 id="主流のハードウェア構成"><a class="header" href="#主流のハードウェア構成">主流のハードウェア構成</a></h2>
+<p>主流でなければ色々な構成が考えられるという前提の上で、PC やスマホ等で主流の構成は</p>
+<ul>
+<li>N コア M スレッド
+<ul>
+<li>例: 8 コア 16 スレッド</li>
+<li>プログラムの実行主体が 1 コアあたり (M/N) 本ある、という意味。</li>
+<li>ソフトウェア視点、OS を書くくらいの視点以上からは単に M コアであるとみなして
+問題ない。</li>
+<li>例: 8 コア 16 スレッド =&gt; OS からは CPU0..15 の 16 コアあるように見えるはず</li>
+</ul>
+</li>
+<li>L1 キャッシュ (コアごと)</li>
+<li>L2 キャッシュ (共通)</li>
+<li>L3 キャッシュ (共通)</li>
+<li>メモリ
+<ul>
+<li>CPU の速度向上に置いて行かれてとんでもなく遅い(だからキャッシュがある)。</li>
+</ul>
+</li>
+</ul>
+<h2 id="スレッドライブラリ"><a class="header" href="#スレッドライブラリ">スレッドライブラリ</a></h2>
+<h3 id="pthread"><a class="header" href="#pthread">pthread</a></h3>
+<p>POSIX 標準の C API。</p>
+<pre><code class="language-C">#include &lt;stdio.h&gt;
+#include &lt;pthread.h&gt;
+
+void *print_hello(void *arg) {
+    printf("Hello, World!\n");
+    return NULL;
+}
+
+int main() {
+    pthread_t thread1;
+
+    if (pthread_create(&amp;thread1, NULL, print_hello, NULL) != 0) {
+        fprintf(stderr, "Error creating thread\n");
+        return 1;
+    }
+
+    if (pthread_join(thread1, NULL) != 0) {
+        fprintf(stderr, "Error joining thread\n");
+        return 1;
+    }
+
+    return 0;
+}
+</code></pre>
+<h3 id="stdthread"><a class="header" href="#stdthread">std::thread</a></h3>
+<p>余計な記述が少なく結構使いやすい。</p>
+<pre><code class="language-C++">#include &lt;cassert&gt;
+#include &lt;thread&gt;
+
+int main()
+{
+  int x = 0, y = 0;
+
+  std::thread t([&amp;]{ ++x; });
+  --y;
+  t.join();
+
+  assert(x == 1 &amp;&amp; y == -1);
+  return 0;
+}
+</code></pre>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<p>スレッドセーフでないコードは基本的にコンパイルが通らない。</p>
+<pre><pre class="playground"><code class="language-rust">use std::thread;
+use std::time::Duration;
+
+fn main() {
+    let handle = thread::spawn(|| {
+        for i in 1..10 {
+            println!("hi number {} from the spawned thread!", i);
+            thread::sleep(Duration::from_millis(1));
+        }
+    });
+
+    for i in 1..5 {
+        println!("hi number {} from the main thread!", i);
+        thread::sleep(Duration::from_millis(1));
+    }
+
+    handle.join().unwrap();
+}</code></pre></pre>
+<h2 id="競合状態-race-condition"><a class="header" href="#競合状態-race-condition">競合状態 (race condition)</a></h2>
+<p>スレッド間で通信をするためには、メモリ空間を共有していることを考えると、
+共有メモリを読み書きするのが手軽である。</p>
+<p>以下は shared_mem を 256 スレッドから 1000000 回インクリメントするが、
+256000000 にはならない (ことがある)。</p>
+<pre><code class="language-C">#include &lt;stdio.h&gt;
+#include &lt;pthread.h&gt;
+
+void *proc(void *arg) {
+  int *shared_mem = (int *)arg;
+  for (int i = 0; i &lt; 1000000; i++) {
+    (*shared_mem)++;
+  }
+
+  return NULL;
+}
+
+int main() {
+  pthread_t th[256];
+  int shared_mem = 0;
+
+  for (int i = 0; i &lt; 256; i++) {
+    if (pthread_create(&amp;th[i], NULL, proc, &amp;shared_mem) != 0) {
+      fprintf(stderr, "Error creating thread\n");
+      return 1;
+    }
+  }
+  for (int i = 0; i &lt; 256; i++) {
+    if (pthread_join(th[i], NULL) != 0) {
+      fprintf(stderr, "Error joining thread\n");
+      return 1;
+    }
+  }
+
+  printf("shared_mem = %d\n", shared_mem);
+
+  return 0;
+}
+</code></pre>
+<p>このように何の工夫もなく複数のスレッドから共通のメモリを読み書きすると、色々と壊れる。
+しかも確率的にごく稀に壊れることもある。
+これを競合状態 (race condition)、スレッドセーフでない等という。</p>
+<p>スレッドセーフでないコードが具体的にどうなるかは非常に説明が難しい。
+当然ハードウェア実装にもよる。</p>
+<p>昔ながらの教科書では以下のように説明されることが多いし、一旦はこれで納得すること。
+でもこういうケースなら大丈夫じゃないの？と思ったりするが、全然大丈夫じゃないので
+その思考に至るレベルでは必ずロックを取ること。</p>
+<ol>
+<li>スレッドAがメモリから値 0 を CPU 内に読む</li>
+<li>スレッドBがメモリから値 0 を CPU 内に読む</li>
+<li>スレッドAが CPU 内でインクリメントを行い、値 1 を CPU 内に用意する</li>
+<li>スレッドAがメモリへ値 1 を書き込む</li>
+<li>スレッドBが CPU 内でインクリメントを行い、値 1 を CPU 内に用意する</li>
+<li>スレッドBがメモリへ値 1 を書き込む</li>
+</ol>
+<ul>
+<li>まず、コンパイラの最適化がかかる。コンパイラ最適化はシングルスレッドでの実行結果が
+変わらないことしか保証しない。
+<ul>
+<li><code>volatile int *</code> とすると、1000000 回メモリに書き込む機械語が生成されることは
+保証される。ただし volatile 単独ではスレッドセーフにはならない。
+巷にはインチキコードが溢れているので注意。</li>
+</ul>
+</li>
+<li>高機能なプロセッサでは Out-of-Order 実行によって CPU の内部で機械語の実行順序を
+並べ替えられる。こちらもシングルスレッドでの実行結果が変わらないことしか保証しない。
+<ul>
+<li>こんなとんでもないことをわざわざする理由については、CPU 設計のパイプラインと
+命令間依存性、ハザードの話を参照。
+ジムケラーを恨め。</li>
+</ul>
+</li>
+<li>パイプライン実行によって1命令を何クロックもかけて、他の命令と同時並列で実行する。</li>
+<li>そのような CPU コアが複数あり、それぞれが同一クロックで独立して動いている。</li>
+<li>この世の終わり。</li>
+</ul>
+<p>Note: 読み出しのみならセーフ。
+メモリに置いた定数を複数スレッドから共有するのは問題ない。</p>
+<h2 id="ロック-ミューテックス"><a class="header" href="#ロック-ミューテックス">ロック (ミューテックス)</a></h2>
+<h2 id="注意-volatile-は罠"><a class="header" href="#注意-volatile-は罠">注意: volatile は罠</a></h2>
+<p>CON02-C. volatile を同期用プリミティブとして使用しない</p>
+<p><a href="https://www.jpcert.or.jp/sc-rules/c-con02-c.html">https://www.jpcert.or.jp/sc-rules/c-con02-c.html</a></p>
+<p>volatile は主にメモリマップされたハードウェアレジスタを読み書きすることを
+意図したもので、単体でスレッドセーフにする効果はない。
+メモリアクセスをコンパイラ最適化で省略しないというのは共有メモリで通信する以上
+必須ではあるのだが、それだけでは全然足りないためである。
+生成される機械語が変わるので、レースバグの再現率を変える実験くらいにしか使えない。
+レースバグは絶対に直らない。</p>
+<ul>
+<li>volatile オブジェクトへの読み書きのメモリアクセスは省略されない。
+<ul>
+<li>Memory Mapped I/O (メモリアクセス命令で特定レンジへのアクセスが
+メインメモリではなく他のハードウェアデバイスへ飛んで制御できる方法。)
+がうまくいくようになる。</li>
+<li>2回異なるデータを同じ場所に書き込んだ時、1回目は無駄だからといって
+省略してはならない。それは通常のメモリの場合であって、それ以外の
+ハードウェアデバイスへの書き込みには意味がある可能性がある。
+1を書き込んだタイミングで処理開始、とか。</li>
+<li>複数回の同一アドレスからの読み出しも省略してはならない。
+CPU 外のハードウェアは CPU とは独立して動作しており、
+読み出される値は変更される可能性がある
+(volatile = 揮発性 = 何もしなくても状態が勝手に変わる)。</li>
+</ul>
+</li>
+<li>メモリを使わずレジスタだけで済ませるという最適化も無効。</li>
+</ul>
+<p>難しい話が分からない場合は、書き込みを伴う共有変数には必ずロックを使うこと。
+ロックに代表される同期プリミティブと呼ばれるオブジェクトは、
+難しい話を全てクリアしてある。</p>
+<h2 id="アトミック命令-ここから上級者向け"><a class="header" href="#アトミック命令-ここから上級者向け">アトミック命令 (ここから上級者向け)</a></h2>
+<p>古い OS の教科書にはピーターソンのアルゴリズムやデッカーのアルゴリズムなど、
+ハードウェアサポートなしで同期を取ろうとする天才プログラムが載っていたりするが、
+Out-of-Order + マルチコアのような現代の世紀末環境では全く通用しないし、
+専用の命令をハードウェアに用意してもらった方が効率的で使い方も簡単である。</p>
+<p>アトミック性 (atomicity) とは、不可分</p>
+<h2 id="メモリオーダリングメモリバリアフェンス"><a class="header" href="#メモリオーダリングメモリバリアフェンス">メモリオーダリング・メモリバリア・フェンス</a></h2>
+<h2 id="メモリモデル一貫性モデル"><a class="header" href="#メモリモデル一貫性モデル">メモリモデル・一貫性モデル</a></h2>
+<h2 id="ロックの作り方"><a class="header" href="#ロックの作り方">ロックの作り方</a></h2>
+<h3 id="割り込み禁止-シングルコア専用カーネルモード専用"><a class="header" href="#割り込み禁止-シングルコア専用カーネルモード専用">割り込み禁止 (シングルコア専用・カーネルモード専用)</a></h3>
+<p>シングルコア限定で絶対にレースしない必殺技があって、それが割り込み禁止である。</p>
+<p>CPU の割り込み機能はオフにできるため、そうしている間は突然実行コンテキストが切り替わる
+ことが絶対にない (NMI (Non-Maskable Interrupt) は除く)。
+タイマ割り込みも無効になる。</p>
+<p>ただし当然、早急な処理を求められる外部ハードウェアへの応答が遅れるため、
+長時間のロックはご法度である。
+また当然、カーネルモード (OS の中) でしか変更できない。</p>
+<p>割り込みハンドラとの間でも同期が取れることになるが、
+割り込みハンドラと変数を共有していない場合はプリエンプト禁止で十分かもしれない。
+プリエンプト禁止は CPU のハードウェア設定ではなく、OS 上でのソフトウェア的な
+制御になる。</p>
+<h3 id="スピンロック-マルチコア向けカーネルモード向け"><a class="header" href="#スピンロック-マルチコア向けカーネルモード向け">スピンロック (マルチコア向け・カーネルモード向け)</a></h3>
+<p>アトミック命令を使って初めに作ることになる、最も単純なロックである。
+シングルコアではビジーウェイト (メモリの値が変わるまで読み続ける) は
+他のスレッドにスイッチしてメモリが書き換えられるまで無駄に CPU 時間を消費するため
+行儀の悪いスタイルと言われるが、マルチコアではビジーウェイト中も他のコアが動けるため、
+ロック時間が十分短いならばコンテキストスイッチのコストがかからずむしろ
+性能のよいロックとなる。
+また、割り込みハンドラ同士または割り込みハンドラとスレッドコンテキストとの間の
+ロックとして使用可能である。</p>
+<p>データ構造としては、ロック本体はメモリ上に 1 word 程度の整数を用意するだけで
+ロック1つを実現できる。</p>
+<p>xv6 (RISC-V) での実装</p>
+<pre><code class="language-C">// Mutual exclusion lock.
+struct spinlock {
+  uint locked;       // Is the lock held?
+
+  // For debugging:
+  char *name;        // Name of lock.
+  struct cpu *cpu;   // The cpu holding the lock.
+};
+</code></pre>
+<p>まず、スピンロックを取得した状態で、解放前に自身のコアで割り込みが入り、
+その割り込みハンドラでそのロックを取得しようとした場合、デッドロックして
+コアが割り込みハンドラ内で固まってしまう。
+そのため初めにローカルコア割り込みを OFF にしている。
+割り込みハンドラからロックしないならば、これは不要とも言える。
+ただしタイマ割り込みからのプリエンプトは禁止すべきだろう。
+オープンソースの OS の実装を見て回るのもよい。</p>
+<p>次の <code>__sync_lock_test_and_set()</code> がアトミック命令で、ロックの本体である。
+アセンブラで直接書くか、このように gcc 拡張を使って多少ハードウェア非依存っぽく
+書くこともできる。
+このようなコンパイラ拡張は、コンパイラへの並べ替え禁止効果を含んでいて便利である。
+自力でやるときは <code>asm volatile</code> とか使う。多分。</p>
+<p><code>test_and_set</code> は名前と違って atomic_swap に近いらしい。
+「メモリを読んで返す」のと「メモリに第二引数 (1) を書き込む」を同時に行い、
+その途中状態を他のコアから観測されないようにする。
+具体的にはメモリバスロックを行い、自分以外のコアのメモリアクセスを禁止するとか。多分。</p>
+<p>コードとしてはメモリ内容と 1 をアトミックに交換し、0 が取得された場合は
+ロックが取れた (ロック変数を0から1に変更した) とみなし、
+1 が取得された場合はロックが取れなかった (ロック変数は1から1のまま) とみなす、
+というだけのことである。
+ロックのキモはたったこれだけではある。
+両方のスレッドからアクセス可能な 1 word 程度のメモリがあれば実現できる。
+ただし、他がやばい。</p>
+<pre><code class="language-C">// Acquire the lock.
+// Loops (spins) until the lock is acquired.
+void
+acquire(struct spinlock *lk)
+{
+  push_off(); // disable interrupts to avoid deadlock.
+  if(holding(lk))
+    panic("acquire");
+
+  // On RISC-V, sync_lock_test_and_set turns into an atomic swap:
+  //   a5 = 1
+  //   s1 = &amp;lk-&gt;locked
+  //   amoswap.w.aq a5, a5, (s1)
+  while(__sync_lock_test_and_set(&amp;lk-&gt;locked, 1) != 0)
+    ;
+
+  // Tell the C compiler and the processor to not move loads or stores
+  // past this point, to ensure that the critical section's memory
+  // references happen strictly after the lock is acquired.
+  // On RISC-V, this emits a fence instruction.
+  __sync_synchronize();
+
+  // Record info about lock acquisition for holding() and debugging.
+  lk-&gt;cpu = mycpu();
+}
+
+// Release the lock.
+void
+release(struct spinlock *lk)
+{
+  if(!holding(lk))
+    panic("release");
+
+  lk-&gt;cpu = 0;
+
+  // Tell the C compiler and the CPU to not move loads or stores
+  // past this point, to ensure that all the stores in the critical
+  // section are visible to other CPUs before the lock is released,
+  // and that loads in the critical section occur strictly before
+  // the lock is released.
+  // On RISC-V, this emits a fence instruction.
+  __sync_synchronize();
+
+  // Release the lock, equivalent to lk-&gt;locked = 0.
+  // This code doesn't use a C assignment, since the C standard
+  // implies that an assignment might be implemented with
+  // multiple store instructions.
+  // On RISC-V, sync_lock_release turns into an atomic swap:
+  //   s1 = &amp;lk-&gt;locked
+  //   amoswap.w zero, zero, (s1)
+  __sync_lock_release(&amp;lk-&gt;locked);
+
+  pop_off();
+}
+</code></pre>
+<p>ロックを使わずアトミック命令でスレッドセーフに書く (ロックを作る時など)
+ための条件は以下の通り。</p>
+<ul>
+<li>通常のメモリロードストア命令ではなくアトミック命令を使い、
+途中の状態を他のコアから観測されないようにする。</li>
+<li>コンパイラ最適化を無効にし、特定のラインをまたいだ命令の並べ替えを防止する。</li>
+<li>メモリバリア命令を置き、それをまたいだ CPU 内での命令の並べ替えを防止する。</li>
+</ul>
+<p>volatile の付与だけでは全然足りないことが分かる。</p>
+<p>コンパイラによるコンパイル時の並べ替えと CPU による実行時の並べ替えは、
+いつやるかが違うだけで概念としては同じものが使える。
+メモリの読み書きの (物理的な) 順番の制御をメモリオーダリングと呼び、
+手動でそれを防ぐ手段をメモリバリアと呼ぶ。</p>
+<p>ちなみに x86 はメモリオーダリングに関してはかなり「堅い」方で、ARM はユルユルである。
+Google が Android のために JVM を x86 から ARM に持っていったら
+怪奇現象にしか見えないメモリオーダリングのバグに苦労したらしい…。</p>
+<h3 id="スリープロック-普通のロック"><a class="header" href="#スリープロック-普通のロック">スリープロック (普通のロック)</a></h3>
+<h2 id="ロックフリーアルゴリズム-初心者お断り"><a class="header" href="#ロックフリーアルゴリズム-初心者お断り">ロックフリーアルゴリズム (初心者お断り)</a></h2>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="title"><a class="header" href="#title">Title</a></h1>
+<p>Hello, test text.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="参考文献"><a class="header" href="#参考文献">参考文献</a></h1>
+<ul>
+<li>最初から順に読み進めて読破が狙えるものと、それは普通に無理なものが存在する。</li>
+</ul>
+<h2 id="データ構造とアルゴリズム"><a class="header" href="#データ構造とアルゴリズム">データ構造とアルゴリズム</a></h2>
+<ul>
+<li>アルゴリズムイントロダクション
+<ul>
+<li>Introduction to Algorithms: アルゴリズム入門 (MIT 基準)</li>
+<li>アルゴリズム専門の研究者になるなら入門だから…。</li>
+<li>数学的厳密性が重視されており、ややマイナーなアルゴリズムも掲載。
+その代わり圧倒的な分量を持つ。</li>
+</ul>
+</li>
+<li>もう1冊軽いものがあるとよいと思うが、色々ありすぎて何がよさそうか謎。。</li>
+</ul>
+<h2 id="形式言語理論"><a class="header" href="#形式言語理論">形式言語理論</a></h2>
+<ul>
+<li>オートマトン言語理論 計算論</li>
+</ul>
+<h2 id="オペレーティングシステム"><a class="header" href="#オペレーティングシステム">オペレーティングシステム</a></h2>
+<p>cf. コンピュータアーキテクチャ</p>
+<ul>
+<li>
+<p>Operating System Concepts</p>
+<ul>
+<li>恐竜本。</li>
+<li>他にもいくつか案はあるが、多少の実践に立ち入った本よりは下記をやった方がよいのかも。</li>
+</ul>
+</li>
+<li>
+<p>6.1810: Operating System Engineering</p>
+<ul>
+<li>MIT の OS 実践授業</li>
+<li>xv6 (最初期の UNIX の ANSI C 再実装) を使う。ソースがコンパクトで綺麗で明快だが
+OS のエッセンスは揃っている。</li>
+<li>GitHub の risc-v 版ソースコードを手元に用意しながら授業ページの pdf を読めば
+あっという間に一流の人形遣いになれそう。</li>
+<li>アセンブラ、リンカスクリプト、スタートアップルーチン</li>
+<li>昔は x86 だったので、苦行を積みたい場合はそちら。</li>
+</ul>
+</li>
+<li>
+<p>30日でできる! OS自作入門</p>
+</li>
+<li>
+<p>ゼロからのOS自作入門</p>
+<ul>
+<li>BIOS or UEFI およびク〇すぎる x86 のブートアップに正面から向き合うことができる。</li>
+<li>理論的な面は弱め。他にないタイプの本であることに間違いはない。</li>
+</ul>
+</li>
+</ul>
+<h2 id="コンピュータアーキテクチャ"><a class="header" href="#コンピュータアーキテクチャ">コンピュータアーキテクチャ</a></h2>
+<p>cf. ディジタル回路、オペレーティングシステム</p>
+<ul>
+<li>
+<p>コンピュータの構成と設計</p>
+<ul>
+<li>パタヘネ。これは文句なくまずはこの一冊(日本語版は一冊ではない)でOK。</li>
+<li>Amazon 検索だと誤って古い版を買ってしまいやすいので注意(一敗)。</li>
+</ul>
+</li>
+<li>
+<p>コンピュータアーキテクチャ 定量的アプローチ</p>
+<ul>
+<li>ヘネパタ。むずかしい。</li>
+</ul>
+</li>
+<li>
+<p>CPU の創りかた</p>
+<ul>
+<li>20年経っても色あせない名著</li>
+<li><del>読んだことがない</del></li>
+</ul>
+</li>
+</ul>
+<h2 id="コンパイラ"><a class="header" href="#コンパイラ">コンパイラ</a></h2>
+<p>cf. オートマトン、正規表現</p>
+<ul>
+<li>コンパイラ―原理・技法・ツール
+<ul>
+<li>ドラゴンブック。</li>
+<li>教科書として使うのは微妙な気もするけどだったら何がいいのかはよくわからない。</li>
+</ul>
+</li>
+<li>低レイヤを知りたい人のためのCコンパイラ作成入門 <a href="https://www.sigbus.info/compilerbook">https://www.sigbus.info/compilerbook</a>
+<ul>
+<li>C で C コンパイラを作る完全実践型。C セルフホスト RTA が流行っているらしい(???)</li>
+<li>コンパイラについては構文解析は理論的な面が大きいが、
+出力にアセンブラや機械語のローレイヤの知識が必要なのがアレ。</li>
+</ul>
+</li>
+</ul>
+<h2 id="データベース"><a class="header" href="#データベース">データベース</a></h2>
+<p>わかんない。。</p>
+<h2 id="プログラミング"><a class="header" href="#プログラミング">プログラミング</a></h2>
+<ul>
+<li>コンパイラ言語</li>
+<li>スクリプト言語</li>
+<li>関数型言語</li>
+</ul>
+<p>を最低1つずつ習得するのがよいとされている(要出典)。</p>
+<h2 id="関数型言語-という訳ではない"><a class="header" href="#関数型言語-という訳ではない">関数型言語 (という訳ではない)</a></h2>
+<ul>
+<li>SICP
+<ul>
+<li>最近はやめてしまったらしい。何で LISP を学んだらいいのかわからない。</li>
+</ul>
+</li>
+<li>型システム入門 −プログラミング言語と型の理論− (TAPL)
+<ul>
+<li>これも関数型言語の本ではないが</li>
+</ul>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>
