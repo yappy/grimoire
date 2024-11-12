@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="ja" class="light" dir="ltr">
+<html lang="ja" class="light sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
 
         <!-- Custom HTML head -->
-        
+
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
@@ -31,15 +31,19 @@
 
         <!-- Custom theme stylesheets -->
 
-    </head>
-    <body class="sidebar-visible no-js">
-    <div id="body-container">
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
-
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
@@ -61,19 +65,16 @@
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
-            var html = document.querySelector('html');
+            const html = document.documentElement;
             html.classList.remove('light')
             html.classList.add(theme);
-            var body = document.querySelector('body');
-            body.classList.remove('no-js')
-            body.classList.add('js');
+            html.classList.add("js");
         </script>
 
         <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var body = document.querySelector('body');
             var sidebar = null;
             var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
@@ -83,45 +84,25 @@
                 sidebar = 'hidden';
             }
             sidebar_toggle.checked = sidebar === 'visible';
-            body.classList.remove('sidebar-visible');
-            body.classList.add("sidebar-" + sidebar);
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="10-stub.html"><strong aria-hidden="true">1.</strong> Chapter 1</a></li><li class="chapter-item expanded "><a href="20-stub.html"><strong aria-hidden="true">2.</strong> Chapter 2</a></li><li class="chapter-item expanded "><a href="90-refer.html"><strong aria-hidden="true">3.</strong> Chapter 9</a></li></ol>
-            </div>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
             </div>
         </nav>
 
-        <!-- Track and set sidebar scroll position -->
-        <script>
-            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
-            sidebarScrollbox.addEventListener('click', function(e) {
-                if (e.target.tagName === 'A') {
-                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
-                }
-            }, { passive: true });
-            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
-            sessionStorage.removeItem('sidebar-scroll');
-            if (sidebarScrollTop) {
-                // preserve sidebar scroll position when navigating via links within sidebar
-                sidebarScrollbox.scrollTop = sidebarScrollTop;
-            } else {
-                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
-                var activeSection = document.querySelector('#sidebar .active');
-                if (activeSection) {
-                    activeSection.scrollIntoView({ block: 'center' });
-                }
-            }
-        </script>
-
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -174,7 +155,219 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="マルチコアと同期"><a class="header" href="#マルチコアと同期">マルチコアと同期</a></h1>
+                        <h1 id="nandgame-攻略"><a class="header" href="#nandgame-攻略">NandGame 攻略</a></h1>
+<p><a href="https://nandgame.com/">NandGame</a></p>
+<ol>
+<li>難しいアナログ電気の世界で我慢してなんとか 0, 1 の世界を作る。</li>
+<li>小学校の算数より簡単な世界になる。</li>
+<li>単純明快な理論をベースにそれまでできなかった速度で大量の計算ができるようになったが、
+結局、とてつもなく複雑なハードウェアとソフトウェアの世界が構築された。助けてくれ。</li>
+</ol>
+<h2 id="and-or-not"><a class="header" href="#and-or-not">AND, OR, NOT</a></h2>
+<p>数学や論理学で使われる「かつ」「または」「でない」だが、別にそこまで言わなくても
+日常で使う範囲の理解で問題ない。
+ただし「かつ」は両方 1 のときも 1 とする。
+定義の問題であって数学に合わせたと思っておく。</p>
+<p>両方 1 のときに 0 とする「または」を exclusive or (XOR; 排他的論理和) と呼ぶ。
+mod 2 (2 で割った余り) の数学を使いたいときはこちらで定義すればよいし、決めの問題。
+また、mod 2 とか関係なくてもどうせそのうち欲しくなる。</p>
+<p>A AND B (A かつ B)</p>
+<div class="table-wrapper"><table><thead><tr><th>A</th><th>B</th><th>OUT</th></tr></thead><tbody>
+<tr><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>1</td><td>0</td><td>0</td></tr>
+<tr><td>1</td><td>1</td><td>1</td></tr>
+</tbody></table>
+</div>
+<p>A OR B (A または B)</p>
+<div class="table-wrapper"><table><thead><tr><th>A</th><th>B</th><th>OUT</th></tr></thead><tbody>
+<tr><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>0</td><td>1</td><td>1</td></tr>
+<tr><td>1</td><td>0</td><td>1</td></tr>
+<tr><td>1</td><td>1</td><td>1</td></tr>
+</tbody></table>
+</div>
+<p>NOT A</p>
+<div class="table-wrapper"><table><thead><tr><th>A</th><th>OUT</th></tr></thead><tbody>
+<tr><td>0</td><td>1</td></tr>
+<tr><td>1</td><td>0</td></tr>
+</tbody></table>
+</div>
+<h2 id="or-を消す-and-を消す"><a class="header" href="#or-を消す-and-を消す">OR を消す (AND を消す)</a></h2>
+<p>唐突だがここでド・モルガンの法則を思い出す。</p>
+<p>\( \overline{ A + B } = \overline{ A } \cdot \overline{ B } \)</p>
+<p>記号の意味を知らずに見るとうわっとなるかもしれないが、</p>
+<ul>
+<li>上に線を引いたら NOT を表す。</li>
+<li>掛け算は AND を表す。</li>
+<li>足し算は OR を表す。</li>
+</ul>
+<p>つまり、<code>NOT (A OR B) = (NOT A) AND (NOT B)</code> という意味である。</p>
+<ul>
+<li>A または B、ではない</li>
+<li>A でない、かつ、B でもない</li>
+</ul>
+<p>ベン図を書けば一目瞭然だし、そもそも論理式の公式というのは A, B のような変数に
+0, 1 しか入らないので全通り代入して一致するか検証するだけで厳密に証明できてしまう。</p>
+<div class="table-wrapper"><table><thead><tr><th>A</th><th>B</th><th>A OR B</th><th>NOT (A OR B)</th></tr></thead><tbody>
+<tr><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+<tr><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+<tr><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+</tbody></table>
+</div><div class="table-wrapper"><table><thead><tr><th>A</th><th>B</th><th>NOT A</th><th>NOT B</th><th>(NOT A) AND (NOT B)</th></tr></thead><tbody>
+<tr><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td></tr>
+<tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+</tbody></table>
+</div>
+<p>この式をよく見ると、OR を消して AND にできそうな気がしてくる。
+少々テクニカルだが、NOT を何とかひねり出したいという発想のもと、
+まず、X の否定の否定を考える。
+0 は 1 になって 0 になる。1 は 0 になって 1 になる。
+そこまで考える必要もなく、当然値は変わらない。</p>
+<p>\( X = \overline{ \overline{ X } } \)</p>
+<p>A OR B に対してそれを適用する。</p>
+<p>\( A + B = \overline{ \overline{ A + B } } \)</p>
+<p>これで内側にド・モルガンの法則が使える。</p>
+<p>\( A + B = \overline{ \overline{ A } \cdot \overline{ B } } \)</p>
+<p>これで AND と NOT だけの式にできた！
+ちょっとテクニカルな式変形をした気がするが、ベン図を書いて考えても簡単にできる。</p>
+<p>また、ド・モルガンの法則は AND を OR に変えることができるので、
+同様の操作で OR と NOT だけの式に変換することもできる。
+実は、OR が無くても (AND がなくても)、困らないのである
+(めちゃくちゃ読みづらくはなる)。</p>
+<h2 id="nand-だけにもできる"><a class="header" href="#nand-だけにもできる">NAND だけにもできる</a></h2>
+<p>NAND (なんど) とは NOT AND のことで、<code>A NAND B = NOT (A AND B)</code> である。
+実は、これ1つあれば困らないことが示せる。</p>
+<div class="table-wrapper"><table><thead><tr><th>A</th><th>B</th><th>A NAND B</th></tr></thead><tbody>
+<tr><td>0</td><td>0</td><td>1</td></tr>
+<tr><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>1</td><td>0</td><td>0</td></tr>
+<tr><td>1</td><td>1</td><td>0</td></tr>
+</tbody></table>
+</div>
+<p>前節で AND と NOT だけあれば困らないことが分かっているので、
+NAND だけを使って AND と NOT を作れないか考えてみる。</p>
+<p>まず、<code>NOT A</code> を考える。
+入力パラメータの数が違うのがやや気になるが、他にやりようがないので NAND の両辺に
+A を渡してみよう。</p>
+<p><code>A NAND A</code></p>
+<p>NAND の定義の表で <code>A = B</code> である一番上と一番下の行を見ると、
+ちょうど NOT になっている。
+または、<code>A AND A = A</code> という公式 (証明は A に 0 と 1 を入れてそれぞれ確かめるだけ)</p>
+<p><code>A NAND A = NOT (A AND A) = NOT A</code></p>
+<p>次に AND を作りたいが、NAND は <code>A AND B</code> の NOT を取ったものだったので、
+そこに NOT を被せれば <code>A AND B</code> に戻せる。</p>
+<p><code>A AND B = NOT(A NAND B)</code></p>
+<p>NOT は既に NAND だけで表せているから、AND も NAND だけで表せることが分かった。</p>
+<p>同様の方法で NOR (のあ) だけで AND, OR, NOT すべてを表すこともできる。
+以上より、NAND や NOR はそれ1つだけであらゆる論理式を記述することができるという意味で、
+<strong>万能ゲート</strong> (universal gate) と呼ばれる。</p>
+<h2 id="and-or-not-があればすべての論理を表せる"><a class="header" href="#and-or-not-があればすべての論理を表せる">AND, OR, NOT があればすべての論理を表せる</a></h2>
+<p>細かいことを言うと、ここまでで分かったのは NAND (または NOR) は
+AND, OR, NOT の組と表現能力が等しいというところまでである。</p>
+<ul>
+<li>AND, OR, NOT は機械的に NAND のみの式に変換できる。</li>
+<li>NAND を機械的に AND, NOT のみの式に変換できる。</li>
+</ul>
+<p>実は、というほどのことでもないかもしれないが、AND, OR, NOT で
+すべての論理を表すことができる。
+この3つがあれば、表せないものがあって困るなんてことがないというのは
+直感的に明らかかもしれない。
+なのでそこから機械的に変換可能な NAND だけですべての論理が記述可能と言えるわけである。</p>
+<p>というわけで、本当は AND, OR, NOT だけですべての論理が表せることを
+証明しないといけない。
+あまりちゃんとやらずに進む資料も多いし別にそれでいいとも思うが、
+気になる人向けに一応証明の概略を書いておく。</p>
+<h3 id="証明の概略"><a class="header" href="#証明の概略">証明の概略</a></h3>
+<p>まず、「すべての論理回路」という言葉が緩すぎてどう扱ったらよいか迷ってしまう。</p>
+<p>N 入力 M 出力の論理回路というものを考えてみる。
+N=3, M=2 とした場合の表を示す。</p>
+<div class="table-wrapper"><table><thead><tr><th>A</th><th>B</th><th>C</th><th>OUT1</th><th>OUT2</th></tr></thead><tbody>
+<tr><td>0</td><td>0</td><td>0</td><td>?</td><td>?</td></tr>
+<tr><td>0</td><td>0</td><td>1</td><td>?</td><td>?</td></tr>
+<tr><td>0</td><td>1</td><td>0</td><td>?</td><td>?</td></tr>
+<tr><td>0</td><td>1</td><td>1</td><td>?</td><td>?</td></tr>
+<tr><td>1</td><td>0</td><td>0</td><td>?</td><td>?</td></tr>
+<tr><td>1</td><td>0</td><td>1</td><td>?</td><td>?</td></tr>
+<tr><td>1</td><td>1</td><td>0</td><td>?</td><td>?</td></tr>
+<tr><td>1</td><td>1</td><td>1</td><td>?</td><td>?</td></tr>
+</tbody></table>
+</div>
+<p>? と置いたマスが16個ある。
+ここにそれぞれ好きな数 (ただし 0 または 1 に限る) を入れれば
+1つの論理回路が完成する。
+1行につき 2 bit の出力を決める必要があり、それは他の行からの制約を一切受けない。
+なので1行につき出力パターンの組み合わせが \( 2^2 \) 通り、
+出力ビット数 M を使って一般に表すと \( 2^M \) 通りある。</p>
+<p>そして行数だが、これは入力ビットのパターン数分だけあるので例では \( 2^3 \) 行、
+入力ビット数 N を使って一般化すると \( 2^N \) 行となる。</p>
+<p>以上より、N 入力 M 出力の論理回路とは、図の ? 部分の埋め方の場合の数通りしかない。
+その数は、
+\( (2^M)^(2^N) \)
+(2のM乗を、(2のN乗)乗したもの) となる。
+これは当然 N, M を大きくすると爆発的に大きくはなるが、有限値ではある。</p>
+<p>この考え方をもとに、任意の入出力サイズ N, M について AND, OR, NOT
+(ここで無理に NAND だけでなんとかしようとする必要はない) だけで
+全ての表のパターンを表現できることを示せばよい、という方針が立った。</p>
+<p>次に、任意の N, M (1以上の整数) について、という部分が難しいので、
+数学的帰納法を使うことを試みる。</p>
+<p>(1) N=1, M=1 のとき、回路は以下の4通りしかない。</p>
+<div class="table-wrapper"><table><thead><tr><th>A</th><th>OUT</th></tr></thead><tbody>
+<tr><td>0</td><td>0</td></tr>
+<tr><td>1</td><td>0</td></tr>
+</tbody></table>
+</div><div class="table-wrapper"><table><thead><tr><th>A</th><th>OUT</th></tr></thead><tbody>
+<tr><td>0</td><td>0</td></tr>
+<tr><td>1</td><td>1</td></tr>
+</tbody></table>
+</div><div class="table-wrapper"><table><thead><tr><th>A</th><th>OUT</th></tr></thead><tbody>
+<tr><td>0</td><td>1</td></tr>
+<tr><td>1</td><td>0</td></tr>
+</tbody></table>
+</div><div class="table-wrapper"><table><thead><tr><th>A</th><th>OUT</th></tr></thead><tbody>
+<tr><td>0</td><td>1</td></tr>
+<tr><td>1</td><td>1</td></tr>
+</tbody></table>
+</div>
+<p>これらすべてを AND, OR, NOT のみで表してみよう。
+と言ってもこれは大変簡単で、必要なのは NOT のみである。</p>
+<ul>
+<li><code>OUT = 0</code></li>
+<li><code>OUT = A</code></li>
+<li><code>OUT = NOT A</code></li>
+<li><code>OUT = 1</code></li>
+</ul>
+<p>(2) 次に、サイズ (N, M) の論理回路がすべて AND, OR, NOT のみで
+構成する方法があると仮定し、
+サイズ (N+1, M) の論理回路 (入力ビット数が1増えた) のすべてのパターンを、
+存在すると仮定した方法に AND, OR, NOT のみを組み合わせることによって
+構成可能なことを示す。</p>
+<p>(3) 同様に、(N, M) がすべて構成可能という仮定の下で、(N, M+1) も構成可能であるという
+ことを示す。</p>
+<p>(1)(2)(3) を組み合わせれば、</p>
+<ul>
+<li>(1, 1) で成り立つ</li>
+<li>(1, 2) で成り立つ</li>
+<li>(1, 3) で成り立つ</li>
+<li>(2, 3) で成り立つ</li>
+<li>...</li>
+</ul>
+<p>のように、任意の狙った (N, M) について成り立つことが言える。</p>
+<h2 id="nandgame-の意図"><a class="header" href="#nandgame-の意図">NandGame の意図</a></h2>
+<p>コンピュータの中身は NAND を計算できる素子と、それ同士の配線からのみでできている。
+現代の IC (Integrated Circuit), LSI (Large Scale Integrated) は
+シリコンをナノメートル単位で加工して、トランジスタで作った NAND ゲートを
+億を超えるほどの数を作ってつなげている。</p>
+<p>ちなみに全部 NAND なのは数学的にきれいだから、ではなく、作るのが一番簡単だかららしい。</p>
+<p>コンピュータがのどこがすごいか、なぜ21世紀が情報化社会と呼ばれているか、
+なぜ人類の科学技術を先に進めたか、という理由の本質は、
+0, 1 の世界にした直後の話が小学校の算数よりも簡単だから。
+大学生にこれを教えていることがばれると示しがつかないので格好をつけるために
+難しい話をしようとすればできるが、本質はそこにはない。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="マルチコアと同期"><a class="header" href="#マルチコアと同期">マルチコアと同期</a></h1>
 <p>3行まとめ</p>
 <ul>
 <li>ロックを使え。</li>
@@ -186,15 +379,17 @@ OS が適当なタイミング (特別な理由がなければタイマ割り込
 スレッドから実行権を剥奪 (プリエンプト) し、別のスレッドに切り替える。</p>
 <p>※それより前は OS ではなくアプリケーションが自ら CPU を手放す協調的スケジューリングも
 あったが、アプリがバグると CPU を放さなくなってしまうので、現代の OS ではシステムが
-勝手にタスクを切り替えるプリエンプティブスケジューリングが採用されることが多い。
+勝手に (タイマ割り込みで) タスクを切り替える、
+プリエンプティブスケジューリングが採用されることが多い。
 ただし OS のスレッドの上でユーザランドでタスクを切り替えるグリーンスレッドだとか
-最近流行りの async-await 系の話では協調的スケジューリングも現役と言える。</p>
+最近流行りの async-await <sup class="footnote-reference"><a href="#1">1</a></sup>: 系の話では協調的スケジューリングも現役と言える。</p>
 <p>現代ではシングルコア性能の向上に限界を迎え、CPU のマルチコア化が進んでいる。
 ハードウェア設計の方の話で N コア M スレッドのように言われると
 コアという用語が何を指すのか分かりづらいため、ソフトウェア/OS の世界では
 「CPU0, CPU1, ...」「ハードウェアスレッド」のような呼び方をすることも多い。
-しかし口語では簡単にコアと言ってしまうことも多く、要はプログラムを実行できるユニット
-1つ分のことである。</p>
+物理コア、論理コアという便利な言い回しもある。
+しかし口語では簡単にコアと言ってしまうことも多く、要はプログラムを物理的に
+同時に実行できる単位1つ分のことである。</p>
 <p>マルチコア用 OS では、スレッドを同時にコア数分まで同時に物理的に実行することができる。
 しかしそれより多くは不可能なので、そこから先はシングルスレッドと同様の方法で
 スレッドの切り替えを行うことになる。</p>
@@ -215,6 +410,10 @@ OS が適当なタイミング (特別な理由がなければタイマ割り込
 <li>将棋の手読み</li>
 <li>AI のための行列演算は GPU を用いた方がよい。</li>
 </ul>
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p>共通しているのは見た目や使い勝手のみで、
+具体的に何が起こるかはプログラミング言語ごとにバラバラで一概には言い難い。</p>
+</div>
 <h2 id="主流のハードウェア構成"><a class="header" href="#主流のハードウェア構成">主流のハードウェア構成</a></h2>
 <p>主流でなければ色々な構成が考えられるという前提の上で、PC やスマホ等で主流の構成は</p>
 <ul>
@@ -227,16 +426,40 @@ OS が適当なタイミング (特別な理由がなければタイマ割り込
 <li>例: 8 コア 16 スレッド =&gt; OS からは CPU0..15 の 16 コアあるように見えるはず</li>
 </ul>
 </li>
-<li>L1 キャッシュ (コアごと)</li>
+<li>L1 キャッシュ (コアごと) SRAM</li>
 <li>L2 キャッシュ (共通)</li>
 <li>L3 キャッシュ (共通)</li>
-<li>メモリ
+<li>メモリ DRAM
 <ul>
 <li>CPU の速度向上に置いて行かれてとんでもなく遅い(だからキャッシュがある)。</li>
 </ul>
 </li>
 </ul>
+<h3 id="simultaneous-multi-threading-smt"><a class="header" href="#simultaneous-multi-threading-smt">Simultaneous Multi-Threading (SMT)</a></h3>
+<p>N コア M スレッドの補足。
+SMT と呼ばれる技術である。
+Intel 用語だと Intel Hyper-Threading。</p>
+<p>(CPU 設計上の狭い意味で) コアと呼ばれるものの1つ1つの中には、
+演算器やメモリの読み書きユニット、L1 キャッシュのような各種ユニットが含まれている。</p>
+<p>コアごとに各クロックで、1命令を細かく切り刻んだステージを複数命令分同時に実行していく
+(パイプライン実行) のだが、その様子を観察するとハードウェアユニットを各クロックで
+100% 使用していないということが分かった
+(普通のプログラムを普通に動かして各ユニットが各クロックで 100% フル稼働するとは
+考えにくい)。</p>
+<p>そこで、あるユニットを使いたいときは隣のスレッドが使い終わるまで待つような調停を
+入れつつ、物理コア内で2本のハードウェアスレッドを実行できるようにしたものである。
+加算器やメモリロードストアユニットのようなよく使われるものはそれなりに競合するだろうし、
+1コアあたり2スレッドとしたところで性能は2倍とはならない。
+実際のところ、1.3 倍程度？らしい。</p>
 <h2 id="スレッドライブラリ"><a class="header" href="#スレッドライブラリ">スレッドライブラリ</a></h2>
+<p>だいたいのところ、関数をスレッド生成関数に渡すとそれを別スレッドとして
+実行開始してくれることが多い。
+スレッドの起動パラメータを渡せることもあれば、クロージャの環境キャプチャを使えと
+言われることも。move セマンティクスに対応していると嬉しい。
+ラムダ式があると記述が楽なこともあれば、大きなスレッドは普通に関数として書きたいことも。</p>
+<p>join でスレッド終了の待ち合わせと返り値を受け渡せることが多い。
+ただし実戦は別スレッドでのエラー (or 例外) 処理とリソースの解放義務が複雑に絡み合い
+カオスになりがち。Rust を使おう。</p>
 <h3 id="pthread"><a class="header" href="#pthread">pthread</a></h3>
 <p>POSIX 標準の C API。</p>
 <pre><code class="language-C">#include &lt;stdio.h&gt;
@@ -264,7 +487,8 @@ int main() {
 }
 </code></pre>
 <h3 id="stdthread"><a class="header" href="#stdthread">std::thread</a></h3>
-<p>余計な記述が少なく結構使いやすい。</p>
+<p>余計な記述が少なく結構使いやすい。
+スレッド内で発生した例外が join() で受け取れたり、結構頑張っている。</p>
 <pre><code class="language-C++">#include &lt;cassert&gt;
 #include &lt;thread&gt;
 
@@ -281,7 +505,7 @@ int main()
 }
 </code></pre>
 <h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
-<p>スレッドセーフでないコードは基本的にコンパイルが通らない。</p>
+<p>スレッドセーフでないコードはコンパイルが通らない。</p>
 <pre><pre class="playground"><code class="language-rust">use std::thread;
 use std::time::Duration;
 
@@ -345,8 +569,9 @@ int main() {
 <p>スレッドセーフでないコードが具体的にどうなるかは非常に説明が難しい。
 当然ハードウェア実装にもよる。</p>
 <p>昔ながらの教科書では以下のように説明されることが多いし、一旦はこれで納得すること。
-でもこういうケースなら大丈夫じゃないの？と思ったりするが、全然大丈夫じゃないので
-その思考に至るレベルでは必ずロックを取ること。</p>
+でも～なケースなら大丈夫じゃないの？と思ったりするかもしれないが、
+大抵の場合全然大丈夫じゃないので CPU 内部の挙動を説明できるレベルにない間は
+必ずロックを取ること。</p>
 <ol>
 <li>スレッドAがメモリから値 0 を CPU 内に読む</li>
 <li>スレッドBがメモリから値 0 を CPU 内に読む</li>
@@ -368,13 +593,12 @@ int main() {
 並べ替えられる。こちらもシングルスレッドでの実行結果が変わらないことしか保証しない。
 <ul>
 <li>こんなとんでもないことをわざわざする理由については、CPU 設計のパイプラインと
-命令間依存性、ハザードの話を参照。
-ジムケラーを恨め。</li>
+命令間依存性、ハザードの話を参照。</li>
 </ul>
 </li>
-<li>パイプライン実行によって1命令を何クロックもかけて、他の命令と同時並列で実行する。</li>
+<li>パイプライン実行によって1命令を数～数十ステージに分割し、何クロックもかけて、
+他の命令と同時並列で実行する。</li>
 <li>そのような CPU コアが複数あり、それぞれが同一クロックで独立して動いている。</li>
-<li>この世の終わり。</li>
 </ul>
 <p>Note: 読み出しのみならセーフ。
 メモリに置いた定数を複数スレッドから共有するのは問題ない。</p>
@@ -414,8 +638,45 @@ CPU 外のハードウェアは CPU とは独立して動作しており、
 ハードウェアサポートなしで同期を取ろうとする天才プログラムが載っていたりするが、
 Out-of-Order + マルチコアのような現代の世紀末環境では全く通用しないし、
 専用の命令をハードウェアに用意してもらった方が効率的で使い方も簡単である。</p>
-<p>アトミック性 (atomicity) とは、不可分</p>
+<p>アトミック性 (atomicity) とは、不可分性と訳され、他の実行コンテキストから
+その命令の実行前と実行後のどちらかの状態しか観測されないという性質のことである。
+逆に言うとアトミックと明示的に言われない限りは保証されないと思っておいた方がよい。</p>
+<p>アトミック性の概念自体は CPU の提供するアトミック命令だけではなく、
+もっと広く用いられるものである。
+例えばロックを取っている間に複数の変数を変更した場合、同じくロックを取ってアクセスする
+他のスレッドからは、ロックを取る前かロックを解除した後の状態しか観測されない。</p>
+<p>実際のところ、メモリアラインされた 32 bit ロード or ストアは
+何もしなくてもアトミックになることが多い。
+明示的にアトミック命令と言われた場合、read-modify-write (atomic-add, atomic-swap)
+を指すことが多い。
+メモリを読んで、それに何か計算をして、結果を書き込む、という操作は
+典型的なレースコンディションを引き起こす操作だが、
+現代の CPU ではそれくらいなら専用命令を呼ぶだけでアトミックに
+処理できるということである。
+アトミック命令は内部的にはバスロック (ハードウェア論理レベルでメモリバスを占有する) で
+実装されることが多い、気がする。多分。</p>
+<p>(アトミック命令で実装されている) ロックを使わずアトミック命令を直接呼ぶだけで
+実現可能な単純なロジックならば、アトミック命令で実装した方が性能は上がる可能性が高い。
+外部からのキャンセルリクエストのようなものならば atomic bool 等で十分かもしれない。
+ただしスレッドセーフにしなければならないデータ構造が変数2つ以上になった瞬間
+ロックで書き直さなければならなくなったりもする。
+可読性やメンテナンス性とのトレードオフとなるのでよく考えること。</p>
 <h2 id="メモリオーダリングメモリバリアフェンス"><a class="header" href="#メモリオーダリングメモリバリアフェンス">メモリオーダリング・メモリバリア・フェンス</a></h2>
+<p>アトミック性自体はアトミック命令を呼べば実現するが、
+アトミック性だけで十分なケースは大して多くない。</p>
+<p>あるスレッドがメモリを書き換えたとき、その書き換えの順番が他のスレッドから
+同じ順番で見えるとは保証されないことがあるからである。
+コンパイラ最適化による命令の並べ替えもその一種と言えなくもないが、
+こちらは volatile で制御できなくもない。
+問題は CPU のアウトオブオーダ実行による CPU 内部での命令の並べ替えである。</p>
+<p>現代の性能重視の CPU は、シングルスレッドで考えた実行結果が変わらないという制約の下で、
+命令の実行順を入れ替えることがある。
+これは現代 CPU の中でも最も複雑な部分と思われる。
+アウトオブオーダ機能の自作はおすすめしないしデバッグも困難を極める。
+なぜわざわざそんなことをするかというと、そうした方が速いケースがあるからである。
+命令の (パイプライン化され細かく分かれたステージのうちの) 実行には入力オペランド
+(例えば、足し算なら、その対象の2つのレジスタなど) が確定している必要があるが、
+そのレジスタが直前の命令によって書き込まれる</p>
 <h2 id="メモリモデル一貫性モデル"><a class="header" href="#メモリモデル一貫性モデル">メモリモデル・一貫性モデル</a></h2>
 <h2 id="ロックの作り方"><a class="header" href="#ロックの作り方">ロックの作り方</a></h2>
 <h3 id="割り込み禁止-シングルコア専用カーネルモード専用"><a class="header" href="#割り込み禁止-シングルコア専用カーネルモード専用">割り込み禁止 (シングルコア専用・カーネルモード専用)</a></h3>
@@ -425,7 +686,7 @@ Out-of-Order + マルチコアのような現代の世紀末環境では全く�
 タイマ割り込みも無効になる。</p>
 <p>ただし当然、早急な処理を求められる外部ハードウェアへの応答が遅れるため、
 長時間のロックはご法度である。
-また当然、カーネルモード (OS の中) でしか変更できない。</p>
+またこれも当然、カーネルモード (OS の中) でしか変更できない。</p>
 <p>割り込みハンドラとの間でも同期が取れることになるが、
 割り込みハンドラと変数を共有していない場合はプリエンプト禁止で十分かもしれない。
 プリエンプト禁止は CPU のハードウェア設定ではなく、OS 上でのソフトウェア的な
@@ -438,7 +699,7 @@ Out-of-Order + マルチコアのような現代の世紀末環境では全く�
 ロック時間が十分短いならばコンテキストスイッチのコストがかからずむしろ
 性能のよいロックとなる。
 また、割り込みハンドラ同士または割り込みハンドラとスレッドコンテキストとの間の
-ロックとして使用可能である。</p>
+ロックとしても使用可能である。</p>
 <p>データ構造としては、ロック本体はメモリ上に 1 word 程度の整数を用意するだけで
 ロック1つを実現できる。</p>
 <p>xv6 (RISC-V) での実装</p>
@@ -451,8 +712,8 @@ struct spinlock {
   struct cpu *cpu;   // The cpu holding the lock.
 };
 </code></pre>
-<p>まず、スピンロックを取得した状態で、解放前に自身のコアで割り込みが入り、
-その割り込みハンドラでそのロックを取得しようとした場合、デッドロックして
+<p>スピンロックを取得した状態で解放前に自身のコアで割り込みが入り、
+その割り込みハンドラで同じロックを取得しようとした場合、デッドロックして
 コアが割り込みハンドラ内で固まってしまう。
 そのため初めにローカルコア割り込みを OFF にしている。
 割り込みハンドラからロックしないならば、これは不要とも言える。
@@ -461,8 +722,8 @@ struct spinlock {
 <p>次の <code>__sync_lock_test_and_set()</code> がアトミック命令で、ロックの本体である。
 アセンブラで直接書くか、このように gcc 拡張を使って多少ハードウェア非依存っぽく
 書くこともできる。
-このようなコンパイラ拡張は、コンパイラへの並べ替え禁止効果を含んでいて便利である。
-自力でやるときは <code>asm volatile</code> とか使う。多分。</p>
+このようなコンパイラ拡張は、コンパイラへの命令並べ替え禁止効果を含んでいて便利である。
+自力でやるときは <code>asm volatile</code> と <code>memory</code> 指定を使う。</p>
 <p><code>test_and_set</code> は名前と違って atomic_swap に近いらしい。
 「メモリを読んで返す」のと「メモリに第二引数 (1) を書き込む」を同時に行い、
 その途中状態を他のコアから観測されないようにする。
@@ -473,7 +734,7 @@ struct spinlock {
 というだけのことである。
 ロックのキモはたったこれだけではある。
 両方のスレッドからアクセス可能な 1 word 程度のメモリがあれば実現できる。
-ただし、他がやばい。</p>
+ただし、現代の CPU では考慮すべき事項が多い。</p>
 <pre><code class="language-C">// Acquire the lock.
 // Loops (spins) until the lock is acquired.
 void
@@ -529,26 +790,26 @@ release(struct spinlock *lk)
   pop_off();
 }
 </code></pre>
-<p>ロックを使わずアトミック命令でスレッドセーフに書く (ロックを作る時など)
+<p>ロックを使わずアトミック命令でスレッドセーフに書く (ロック自体を作る時など)
 ための条件は以下の通り。</p>
 <ul>
 <li>通常のメモリロードストア命令ではなくアトミック命令を使い、
 途中の状態を他のコアから観測されないようにする。</li>
-<li>コンパイラ最適化を無効にし、特定のラインをまたいだ命令の並べ替えを防止する。</li>
+<li>コンパイラ最適化を無効にし、特定の行をまたいだ命令の並べ替えを防止する。</li>
 <li>メモリバリア命令を置き、それをまたいだ CPU 内での命令の並べ替えを防止する。</li>
 </ul>
-<p>volatile の付与だけでは全然足りないことが分かる。</p>
+<p>volatile の付与だけでは全然足りないことが分かる。
+通常のロードストア命令は自然にアトミックになる CPU も多いが。</p>
 <p>コンパイラによるコンパイル時の並べ替えと CPU による実行時の並べ替えは、
 いつやるかが違うだけで概念としては同じものが使える。
 メモリの読み書きの (物理的な) 順番の制御をメモリオーダリングと呼び、
 手動でそれを防ぐ手段をメモリバリアと呼ぶ。</p>
-<p>ちなみに x86 はメモリオーダリングに関してはかなり「堅い」方で、ARM はユルユルである。
+<p>ちなみに x86 はメモリオーダリングに関してはかなり「堅い」方で、ARM や RISC-V は
+「ゆるゆる」である。
 Google が Android のために JVM を x86 から ARM に持っていったら
 怪奇現象にしか見えないメモリオーダリングのバグに苦労したらしい…。</p>
 <h3 id="スリープロック-普通のロック"><a class="header" href="#スリープロック-普通のロック">スリープロック (普通のロック)</a></h3>
 <h2 id="ロックフリーアルゴリズム-初心者お断り"><a class="header" href="#ロックフリーアルゴリズム-初心者お断り">ロックフリーアルゴリズム (初心者お断り)</a></h2>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="title"><a class="header" href="#title">Title</a></h1>
-<p>Hello, test text.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="参考文献"><a class="header" href="#参考文献">参考文献</a></h1>
 <ul>
 <li>最初から順に読み進めて読破が狙えるものと、それは普通に無理なものが存在する。</li>
@@ -703,7 +964,9 @@ OS のエッセンスは揃っている。</li>
 
         <script>
         window.addEventListener('load', function() {
-            window.setTimeout(window.print, 100);
+            MathJax.Hub.Register.StartupHook('End', function() {
+                window.setTimeout(window.print, 100);
+            });
         });
         </script>
 
