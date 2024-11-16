@@ -10,6 +10,13 @@ Auto build: <https://yappy.github.io/grimoire/>
 cargo install mdbook
 ```
 
+### Update mdBook
+
+```sh
+cargo install cargo-update
+cargo install-update --all
+```
+
 ## Build
 
 ```sh
@@ -23,3 +30,5 @@ mdbook build
 ## Auto Build
 
 See [pages.yaml](./.github/workflows/pages.yaml)
+
+* `- uses: DavidAnson/markdownlint-cli2-action`
