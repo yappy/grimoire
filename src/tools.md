@@ -254,3 +254,218 @@ C 以外で用意したシンボルを C から参照する際は型で混乱し
 extern const unsigned char _binary_yappy_house_jpg_start[];
 extern const unsigned char _binary_yappy_house_jpg_end[];
 ```
+
+## ELF ファイル情報
+
+ELF (Exectable and Linking Format) は名前の通り、実行可能形式および
+その前のリンク中のデータのフォーマット。
+EXE (PE) と違ってまだ実行可能でないオブジェクトファイルもこの形式で出力される。
+
+実は file コマンドでも結構それなりに表示される。
+
+```sh
+$ file /usr/bin/ls
+/usr/bin/ls: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV),
+dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]
+=15dfff3239aa7c3b16a71e6b2e3b6e4009dab998, for GNU/Linux 3.2.0, stripped
+```
+
+`readelf -h` でヘッダをパースしてくれる。
+
+```sh
+$ readelf -h /usr/bin/ls
+ELF Header:
+  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
+  Class:                             ELF64
+  Data:                              2 s complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              DYN (Position-Independent Executable file)
+  Machine:                           Advanced Micro Devices X86-64
+  Version:                           0x1
+  Entry point address:               0x61d0
+  Start of program headers:          64 (bytes into file)
+  Start of section headers:          149360 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               64 (bytes)
+  Size of program headers:           56 (bytes)
+  Number of program headers:         13
+  Size of section headers:           64 (bytes)
+  Number of section headers:         31
+  Section header string table index: 30
+```
+
+ELF ヘッダに続くプログラムヘッダは `readelf -l` で。
+ファイル中の何バイト目から何バイトをメモリの何バイト目にロードすれば
+よいかが書かれている。
+
+```sh
+$ readelf -l /usr/bin/ls
+
+Elf file type is DYN (Position-Independent Executable file)
+Entry point 0x61d0
+There are 13 program headers, starting at offset 64
+
+Program Headers:
+  Type           Offset             VirtAddr           PhysAddr
+                 FileSiz            MemSiz              Flags  Align
+  PHDR           0x0000000000000040 0x0000000000000040 0x0000000000000040
+                 0x00000000000002d8 0x00000000000002d8  R      0x8
+  INTERP         0x0000000000000318 0x0000000000000318 0x0000000000000318
+                 0x000000000000001c 0x000000000000001c  R      0x1
+      [Requesting program interpreter: /lib64/ld-linux-x86-64.so.2]
+  LOAD           0x0000000000000000 0x0000000000000000 0x0000000000000000
+                 0x00000000000036c0 0x00000000000036c0  R      0x1000
+  LOAD           0x0000000000004000 0x0000000000004000 0x0000000000004000
+                 0x0000000000015759 0x0000000000015759  R E    0x1000
+  LOAD           0x000000000001a000 0x000000000001a000 0x000000000001a000
+                 0x0000000000008ed0 0x0000000000008ed0  R      0x1000
+  LOAD           0x00000000000232b0 0x00000000000232b0 0x00000000000232b0
+                 0x0000000000001310 0x00000000000025f8  RW     0x1000
+  DYNAMIC        0x0000000000023d98 0x0000000000023d98 0x0000000000023d98
+                 0x00000000000001f0 0x00000000000001f0  RW     0x8
+  NOTE           0x0000000000000338 0x0000000000000338 0x0000000000000338
+                 0x0000000000000020 0x0000000000000020  R      0x8
+  NOTE           0x0000000000000358 0x0000000000000358 0x0000000000000358
+                 0x0000000000000044 0x0000000000000044  R      0x4
+  GNU_PROPERTY   0x0000000000000338 0x0000000000000338 0x0000000000000338
+                 0x0000000000000020 0x0000000000000020  R      0x8
+  GNU_EH_FRAME   0x000000000001ef7c 0x000000000001ef7c 0x000000000001ef7c
+                 0x00000000000009fc 0x00000000000009fc  R      0x4
+  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
+                 0x0000000000000000 0x0000000000000000  RW     0x10
+  GNU_RELRO      0x00000000000232b0 0x00000000000232b0 0x00000000000232b0
+                 0x0000000000000d50 0x0000000000000d50  R      0x1
+```
+
+セクションヘッダは `readelf -S`。
+.text や .data、.bss などのセクション (に加えて意味の分からないものも大量に)
+が見える。
+
+```sh
+$ readelf -S /usr/bin/ls
+There are 31 section headers, starting at offset 0x24770:
+
+Section Headers:
+  [Nr] Name              Type             Address           Offset
+       Size              EntSize          Flags  Link  Info  Align
+  [ 0]                   NULL             0000000000000000  00000000
+       0000000000000000  0000000000000000           0     0     0
+  [ 1] .interp           PROGBITS         0000000000000318  00000318
+       000000000000001c  0000000000000000   A       0     0     1
+  [ 2] .note.gnu.pr[...] NOTE             0000000000000338  00000338
+       0000000000000020  0000000000000000   A       0     0     8
+  [ 3] .note.gnu.bu[...] NOTE             0000000000000358  00000358
+       0000000000000024  0000000000000000   A       0     0     4
+  [ 4] .note.ABI-tag     NOTE             000000000000037c  0000037c
+       0000000000000020  0000000000000000   A       0     0     4
+  [ 5] .gnu.hash         GNU_HASH         00000000000003a0  000003a0
+       00000000000000b8  0000000000000000   A       6     0     8
+  [ 6] .dynsym           DYNSYM           0000000000000458  00000458
+       0000000000000be8  0000000000000018   A       7     1     8
+  [ 7] .dynstr           STRTAB           0000000000001040  00001040
+       00000000000005d9  0000000000000000   A       0     0     1
+  [ 8] .gnu.version      VERSYM           000000000000161a  0000161a
+       00000000000000fe  0000000000000002   A       6     0     2
+  [ 9] .gnu.version_r    VERNEED          0000000000001718  00001718
+       00000000000000d0  0000000000000000   A       7     2     8
+  [10] .rela.dyn         RELA             00000000000017e8  000017e8
+       0000000000001560  0000000000000018   A       6     0     8
+  [11] .rela.plt         RELA             0000000000002d48  00002d48
+       0000000000000978  0000000000000018  AI       6    25     8
+  [12] .init             PROGBITS         0000000000004000  00004000
+       0000000000000017  0000000000000000  AX       0     0     4
+  [13] .plt              PROGBITS         0000000000004020  00004020
+       0000000000000660  0000000000000010  AX       0     0     16
+  [14] .plt.got          PROGBITS         0000000000004680  00004680
+       0000000000000030  0000000000000008  AX       0     0     8
+  [15] .text             PROGBITS         00000000000046b0  000046b0
+       000000000001509e  0000000000000000  AX       0     0     16
+  [16] .fini             PROGBITS         0000000000019750  00019750
+       0000000000000009  0000000000000000  AX       0     0     4
+  [17] .rodata           PROGBITS         000000000001a000  0001a000
+       0000000000004f7a  0000000000000000   A       0     0     32
+  [18] .eh_frame_hdr     PROGBITS         000000000001ef7c  0001ef7c
+       00000000000009fc  0000000000000000   A       0     0     4
+  [19] .eh_frame         PROGBITS         000000000001f978  0001f978
+       0000000000003558  0000000000000000   A       0     0     8
+  [20] .init_array       INIT_ARRAY       00000000000232b0  000232b0
+       0000000000000008  0000000000000008  WA       0     0     8
+  [21] .fini_array       FINI_ARRAY       00000000000232b8  000232b8
+       0000000000000008  0000000000000008  WA       0     0     8
+  [22] .data.rel.ro      PROGBITS         00000000000232c0  000232c0
+       0000000000000ad8  0000000000000000  WA       0     0     32
+  [23] .dynamic          DYNAMIC          0000000000023d98  00023d98
+       00000000000001f0  0000000000000010  WA       7     0     8
+  [24] .got              PROGBITS         0000000000023f88  00023f88
+       0000000000000050  0000000000000008  WA       0     0     8
+  [25] .got.plt          PROGBITS         0000000000023fe8  00023fe8
+       0000000000000340  0000000000000008  WA       0     0     8
+  [26] .data             PROGBITS         0000000000024340  00024340
+       0000000000000280  0000000000000000  WA       0     0     32
+  [27] .bss              NOBITS           00000000000245c0  000245c0
+       00000000000012e8  0000000000000000  WA       0     0     32
+  [28] .gnu_debugaltlink PROGBITS         0000000000000000  000245c0
+       0000000000000049  0000000000000000           0     0     1
+  [29] .gnu_debuglink    PROGBITS         0000000000000000  0002460c
+       0000000000000034  0000000000000000           0     0     4
+  [30] .shstrtab         STRTAB           0000000000000000  00024640
+       000000000000012f  0000000000000000           0     0     1
+```
+
+### シンボル一覧
+
+`nm` が便利。
+strip されていると消えて見えない。。
+
+```sh
+$ nm /usr/bin/ls
+nm: /usr/bin/ls: no symbols
+```
+
+シンボルタイプは1文字で表されるが、覚えられない。
+`U` (おそらく undefined) が未定義シンボル (他のファイルにあるシンボルへの参照) で、
+リンク時に他のオブジェクトファイルから提供される必要がある。
+
+なお、libc (C 標準ライブラリ) などは基本的に動的リンクが選択されるので、
+実行可能形式までリンクされた後でもまだ未解決シンボルは残る。
+動的リンク周りは理屈自体はそこまで難しくはない
+(リンカの行っている作業を一部実行時にまで遅延させているだけ) ものの、
+実際にその動作を追おうとすると、全人類がお世話になっている割には
+書いた人しか分からない魔境と化しているため踏み入るには注意が必要。
+
+```sh
+$ nm rshanghai | grep U
+                 U abort@GLIBC_2.2.5
+                 U accept4@GLIBC_2.10
+                 U bcmp@GLIBC_2.2.5
+                 U bind@GLIBC_2.2.5
+                 U BIO_clear_flags@OPENSSL_3.0.0
+                 U BIO_get_data@OPENSSL_3.0.0
+                 U BIO_meth_free@OPENSSL_3.0.0
+                 U BIO_meth_new@OPENSSL_3.0.0
+                 U BIO_meth_set_create@OPENSSL_3.0.0
+                 U BIO_meth_set_ctrl@OPENSSL_3.0.0
+                 U BIO_meth_set_destroy@OPENSSL_3.0.0
+                 U BIO_meth_set_puts@OPENSSL_3.0.0
+                 U BIO_meth_set_read@OPENSSL_3.0.0
+                 U BIO_meth_set_write@OPENSSL_3.0.0
+                 U BIO_new@OPENSSL_3.0.0
+                 U BIO_set_data@OPENSSL_3.0.0
+                 U BIO_set_flags@OPENSSL_3.0.0
+                 U BIO_set_init@OPENSSL_3.0.0
+                 U calloc@GLIBC_2.2.5
+                 U ceilf@GLIBC_2.2.5
+                 U ceil@GLIBC_2.2.5
+                 U chdir@GLIBC_2.2.5
+                 U chown@GLIBC_2.2.5
+                 U chroot@GLIBC_2.2.5
+...
+```
+
+シンボルはアドレスに振られたラベルであり、型情報は消えている。
+なので変数や関数の型 (シグネチャ) と名前を書いたヘッダファイルは複数ソース間で
+同じものを使わないとリンクまで成功してしまい、実行時に壊れる。
+また、アドレスはリンクして実行可能ファイルになるまでは仮の値
+(ゼロスタート) になっている。
