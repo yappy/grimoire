@@ -7,10 +7,16 @@
 
 ```sh
 $ file rshanghai
-rshanghai: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=82b09bf2c510acc4e66f5a8bd9b65d0120968da6, for GNU/Linux 3.7.0, not stripped
+rshanghai: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV),
+dynamically linked, interpreter /lib/ld-linux-aarch64.so.1,
+BuildID[sha1]=82b09bf2c510acc4e66f5a8bd9b65d0120968da6,
+for GNU/Linux 3.7.0, not stripped
 
 $ file yappy_house_full.jpg
-yappy_house_full.jpg: JPEG image data, JFIF standard 1.01, resolution (DPI), density 350x350, segment length 16, Exif Standard: [TIFF image data, big-endian, direntries=14], baseline, precision 8, 3118x3118, components 3
+yappy_house_full.jpg: JPEG image data, JFIF standard 1.01, resolution (DPI),
+density 350x350, segment length 16, Exif Standard:
+[TIFF image data, big-endian, direntries=14],
+baseline, precision 8, 3118x3118, components 3
 
 $ file src/tools.md
 src/tools.md: Unicode text, UTF-8 text
@@ -208,13 +214,18 @@ man に例があるので
 ```sh
 $ man objcopy
 --rename-section oldname=newname[,flags]
-    Rename a section from oldname to newname, optionally changing the section's flags to flags in the process.
-    This has the advantage over using a linker script to perform the rename in that the output stays as an
-    object file and does not become a linked executable.  This option accepts the same set of flags as the
+    Rename a section from oldname to newname, optionally changing the section's
+    flags to flags in the process.
+    This has the advantage over using a linker script to perform the rename
+    in that the output stays as an
+    object file and does not become a linked executable.
+    This option accepts the same set of flags as the
     --sect-section-flags option.
 
-    This option is particularly helpful when the input format is binary, since this will always create a
-    section called .data.  If for example, you wanted instead to create a section called .rodata containing
+    This option is particularly helpful when the input format is binary,
+    since this will always create a
+    section called .data.  If for example, you wanted instead to create
+    a section called .rodata containing
     binary data you could use the following command line to achieve it:
 
               objcopy -I binary -O <output_format> -B <architecture> \
