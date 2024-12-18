@@ -1,0 +1,758 @@
+<!DOCTYPE HTML>
+<html lang="ja" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>交流回路 - 3日ではなれないかもしれない人形遣い</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">3日ではなれないかもしれない人形遣い</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="交流"><a class="header" href="#交流">交流</a></h1>
+<h2 id="実数"><a class="header" href="#実数">実数</a></h2>
+<p>交流電源電圧 (単位は V: ボルト) を</p>
+<p>\[
+V(t) = V_0 \sin (\omega t + \phi)
+\]</p>
+<p>とする。</p>
+<ul>
+<li>\( V_0 \): 振幅 (V)
+<ul>
+<li>三角関数は -1 から 1 の間を振動するので、電圧は
+\( - V_0 \leq V(t) \leq V_0 \) の間を振動する。</li>
+</ul>
+</li>
+<li>\( \omega \): 角周波数 (rad/s)
+<ul>
+<li>時刻を角度に変換する比例定数。振動の速さを表す。</li>
+</ul>
+</li>
+<li>\( t \): 時刻 (s)</li>
+<li>\( \phi \): 初期位相 (rad)
+<ul>
+<li>三角関数の中身 (rad) のことを位相と呼ぶ。
+位相は時間的な位置を角度の単位で表したもの。</li>
+<li>初期位相は \( t = 0 \) のときの位相のこと。</li>
+</ul>
+</li>
+</ul>
+<p>角周波数と周期、周波数について。
+どれか1つが決まれば他もすべて自動的に決まる。</p>
+<ul>
+<li>\( \omega \): 角周波数 (rad/s)
+<ul>
+<li>1秒間に位相が何 rad 進むか。</li>
+</ul>
+</li>
+<li>\( T \): 周期 (T)
+<ul>
+<li>振動が1回にかかる時間。</li>
+</ul>
+</li>
+<li>\( f \): 周波数 (Hz = 1/s)
+<ul>
+<li>1秒に何回振動するか。</li>
+</ul>
+</li>
+</ul>
+<p>三角関数は位相が 360 度進むと一周する。
+角速度 \( \omega \) (rad/s) で角度 \( 2 \pi \) (rad) を進むのにかかる時間が
+周期 \( T \) (s) である。</p>
+<p>\[
+\begin{eqnarray}
+\omega T = 2 \pi \\
+T = \frac{ 2 \pi }{ \omega } \\
+\end{eqnarray}
+\]</p>
+<p>周期と周波数は逆数の関係にある。</p>
+<p>\[
+\begin{eqnarray}
+f &amp;=&amp; \frac{ 1 }{ T } \\
+T &amp;=&amp; \frac{ 1 }{ f } \\
+\end{eqnarray}
+\]</p>
+<p>以上で困ることはないはずだが、以下の表式は他の式から導くのではなく覚えておくと便利。</p>
+<p>\[
+\begin{eqnarray}
+\omega &amp;=&amp; 2 \pi f \\
+V(t) &amp;=&amp; V_0 \sin (2 \pi f t + \phi) \\
+\end{eqnarray}
+\]</p>
+<h3 id="抵抗"><a class="header" href="#抵抗">抵抗</a></h3>
+<p>\[
+\begin{eqnarray}
+V(t) &amp;=&amp; R I(t) \\
+I(t) &amp;=&amp; \frac{ 1 }{ R } V(t) \\
+&amp;=&amp; \frac{ 1 }{ R } V_0 \sin (\omega t + \phi) \\
+\end{eqnarray}
+\]</p>
+<h3 id="コンデンサ"><a class="header" href="#コンデンサ">コンデンサ</a></h3>
+<p>\[
+Q(t) = C V(t)
+\]</p>
+<p>コンデンサに流れ込む電流 (A = C/s) がコンデンサに蓄えられた電荷 (C) の
+単位時間あたりの増加量であるので、両辺を時間で微分して、</p>
+<p>\[
+\begin{eqnarray}
+I(t) &amp;=&amp; \frac{ d }{ dt } Q(t) \\
+&amp;=&amp; C V'(t) \\
+&amp;=&amp; \omega C V_0 \cos (\omega t + \phi) \\
+&amp;=&amp; \omega C V_0 \sin (\omega t  +\phi + 90^{\circ}) \\
+\end{eqnarray}
+\]</p>
+<ul>
+<li>電圧に比べて電流は位相は 90 度(1/4 周期) 進んでいる。</li>
+<li>位相差は実数では取り扱いにくいので、一旦無視して電圧と電流の振幅の比から
+「抵抗のようなもの」を考える。これを (容量性) <strong>リアクタンス</strong> という。
+電圧/電流なので単位はオーム。</li>
+</ul>
+<p>\[
+\begin{eqnarray}
+I_0 &amp;=&amp; \omega C V_0  \\
+V_0 &amp;=&amp; X_C I_0 \\
+X_C &amp;=&amp; \frac{ V_0 }{ I_0 } \\
+&amp;=&amp; \frac{ 1 }{\omega C} \\
+\end{eqnarray}
+\]</p>
+<ul>
+<li>静電容量が大きいほどリアクタンスは小さい。
+コンデンサの容量が大きいほど大きな電流が流れる。</li>
+<li>角周波数が大きいほどリアクタンスは小さい。
+頻繁に充放電の方向が切り替わると、大きな電流が流れる。</li>
+</ul>
+<h3 id="コイル"><a class="header" href="#コイル">コイル</a></h3>
+<p>\[
+V(t) = L \frac{ d }{ dt } I(t)
+\]
+(符号に注意。キルヒホッフの法則で電圧の上昇下降の和が 0 になる式を立てる時に
+コイルの起電力がマイナスになる。)</p>
+<p>両辺を t で積分して (積分定数の処理が面倒だがどうせ 0 になる)</p>
+<p>\[
+\begin{eqnarray}
+\int V(t) dt &amp;=&amp; L I(t) \\
+I(t) &amp;=&amp; \frac{ 1 }{ L } \int V(t) dt \\
+&amp;=&amp; - \frac{ 1 }{ \omega L } V_0 \cos (\omega t + \phi) \\
+&amp;=&amp; \frac{ 1 }{ \omega L } V_0 \sin (\omega t + \phi - 90^{\circ}) \\
+\end{eqnarray}
+\]</p>
+<ul>
+<li>電圧に比べて電流は位相は 90 度(1/4 周期) 遅れている。</li>
+<li>コンデンサと同様に位相差は一旦無視して電圧と電流の振幅の比から
+「抵抗のようなもの」を考える。これを (誘導性) <strong>リアクタンス</strong> という。
+電圧/電流なので単位はオーム。</li>
+</ul>
+<p>\[
+\begin{eqnarray}
+I_0 &amp;=&amp; \frac{ 1 }{ \omega L } V_0  \\
+V_0 &amp;=&amp; X_L I_0 \\
+X_L &amp;=&amp; \frac{ V_0 }{ I_0 } \\
+&amp;=&amp; \omega L \\
+\end{eqnarray}
+\]</p>
+<ul>
+<li>自己インダクタンスが大きいほどリアクタンスは大きい。
+コイルが強いほど、電流は流れにくくなる。</li>
+<li>角周波数が大きいほどリアクタンスは大きい。
+頻繁に電圧の正負が切り替わって電流を激しく変化させようとすると、
+コイルに激しく抵抗されて電流は小さくなる。</li>
+</ul>
+<h3 id="rlc-直列回路"><a class="header" href="#rlc-直列回路">RLC 直列回路</a></h3>
+<p>交流電源にコイルやコンデンサを1つだけつないだ場合は微分または積分を1回行うだけで
+何とかなったが、実際の回路はそれをいくつもつなげるわけで、
+対応できるかちょっと不安になってくる。
+RLC を直列に並べたときの電圧のつり合いを考えると、</p>
+<p>\[
+R I(t) + L \frac{ d }{ dt } I(t) + \frac{ 1 }{ C } Q(t) = V(t)
+\]</p>
+<p>両辺 t で微分して Q を I に揃える。</p>
+<p>\[
+\begin{eqnarray}
+R I'(t) + L I''(t) + \frac{ 1 }{ C } I(t) &amp;=&amp; V'(t) \\
+R I'(t) + L I''(t) + \frac{ 1 }{ C } I(t) &amp;=&amp;
+\omega V_0 \cos (\omega t + \phi) \\
+I'' + \frac{R}{L} I' + \frac{1}{LC} I &amp;=&amp;
+\frac{\omega V_0}{L} \cos (\omega t + \phi) \\
+\end{eqnarray}
+\]</p>
+<p>これは I(t) に関する二階線形微分方程式 (非斉次, 非同次) になっている。
+実際にやると結構大変だが、解き方は確立されているので
+その通りにやれば解けるといえば解ける。</p>
+<ul>
+<li>右辺を 0 とした同次形を解く。</li>
+<li>非同次形の特解を何か1つ気合で見つける。</li>
+<li>上記2つを足したものが非同次形の一般解となる。</li>
+</ul>
+<p>とにかく右辺が 0 になっていないところが苦しい (0 ならば比較的簡単に解ける) ので、
+右辺を消すことを考える。
+ここで、苦しいもののなんとか特解を1つでも見つけることができれば、
+辺々引き算することで右辺を 0 にすることができる。</p>
+<p>同次形は特性方程式を解き、2つの指数関数の線形和が一般解になる。
+問題は非同次形の特解を求めるところで、今回はここが三角関数になっているケースであるので、
+攻略法を調べて特解は \( A \sin \omega t + B \cos \omega t \) という形に
+なるらしいという情報からいい感じに係数を決定してやる。</p>
+<p>このように、解けると言えば解けるのだがはっきり言って結構大変なため、
+もっと簡単な方法を導入する。</p>
+<h3 id="補足-rlc-並列回路"><a class="header" href="#補足-rlc-並列回路">(補足) RLC 並列回路</a></h3>
+<p>R, L, C が並列につないだ場合、それぞれの両端に同じ交流電圧
+\( V(t) \) がかかるので、
+別個に電流を計算して最後に足し合わせればよい。
+あまり問題として出てこないのはこのように簡単なためである。</p>
+<h2 id="複素数"><a class="header" href="#複素数">複素数</a></h2>
+<p>事情により、まず sin を cos にしておく。
+sin も cos も同じ形の関数で位相が 1/4 周期ずれているだけなので、
+この差は初期位相 \( \phi \) の部分に吸収されるため、どちらでもよい。</p>
+<p>\[
+V(t) = V_0 \cos (\omega t + \phi)
+\]</p>
+<p>t-V グラフのまま考えるのは筋が悪いので、2次元平面での等速円運動を考える。</p>
+<p>\[
+\begin{eqnarray}
+V(t) = x(t) &amp;=&amp; V_0 \cos (\omega t + \phi) \\
+y(t) &amp;=&amp; V_0 \sin (\omega t + \phi) \\
+r &amp;=&amp; V_0 \\
+\theta(t) &amp;=&amp; \omega t + \phi \\
+\end{eqnarray}
+\]</p>
+<p>y 座標を追加することで角速度一定の円運動としてとらえられるようにした。
+すると、円運動なので極座標で考えると半径が定数関数、角度が一次関数になり、
+より簡単に表せるようになる。
+ここから y 座標を無視したもの (x 軸への射影) が電源電圧であると考える。</p>
+<p>y 座標は極座標へ持ち込むために人為的に追加したものであるので、
+逆に言えば何でもいいということにもなる。
+極座標と言えば複素平面なので、y 軸を虚軸とし、また、オイラーの公式により
+三角関数による複素平面での xy 直交座標表示と指数関数による極座標表示が等しい。
+虚数単位として i を使ってしまうと電流と混同する危険があるので、次の文字である
+j を使う。</p>
+<p>\[
+\begin{eqnarray}
+\dot{V}(t) &amp;=&amp; x(t) + j y(t) \\
+&amp;=&amp; r e^{ j \theta(t) } \\
+x(t) &amp;=&amp; V_0 \cos (\omega t + \phi) \\
+y(t) &amp;=&amp; V_0 \sin (\omega t + \phi) \\
+r &amp;=&amp; V_0 \\
+\theta(t) &amp;=&amp; \omega t + \phi \\
+\end{eqnarray}
+\]</p>
+<p>電圧に y 座標を虚部として追加した <strong>複素電圧</strong> を導入した。
+上部のドットは複素数であることを示す印である(逆にドットの無いものは実数である)。
+この虚部は複素平面上での等速円運動ととらえるために計算の都合で追加したもので、
+現実に観測される電圧電流とは関係がない。</p>
+<p>具体的に代入すると</p>
+<p>\[
+\begin{eqnarray}
+\dot{V}(t) &amp;=&amp; V_0 e^{ j (\omega t + \phi) } \\
+&amp;=&amp; V_0 e^{ j \phi } e^{ j \omega t } \\
+&amp;=&amp; \dot{V}_0 e^{ j \omega t } \\
+\dot{V}_0 &amp;=&amp; V_0 e^{ j \phi } \\
+\end{eqnarray}
+\]</p>
+<p>\( \dot{V}_0 \) には振幅と初期位相の情報を1つの複素数に埋め込んでいる。
+長さが振幅 \( V_0 \) に等しい棒を、
+初期位相 \( \phi \) の角度だけ回転させたものになっている。
+それを \( \omega t \) だけさらに回転させたものが時刻 t における複素電圧である。</p>
+<p>複素電圧から実際に観測される電圧を取り出すには、y 座標 (虚部) を無視して
+x 座標 (実部) だけを取り出せばよい。</p>
+<p>\[
+\begin{eqnarray}
+V(t) = x(t) &amp;=&amp; \mathrm{Re} (\dot{V}(t)) \\
+&amp;=&amp; V_0 \cos (\omega t + \phi) \\
+\end{eqnarray}
+\]</p>
+<h3 id="コンデンサ-複素数"><a class="header" href="#コンデンサ-複素数">コンデンサ (複素数)</a></h3>
+<p>コンデンサの電流を求める式の電圧を複素電圧に置き換えてみる。
+複素数の微分の実数倍だから、電流も複素数になる。
+実際に観測される電流はこの実部である。
+オイラーの功績により複素数の微分積分は実数の場合と全く同じ法則が成り立ち、
+指数関数の微分なので三角関数より楽である。</p>
+<p>\[
+\begin{eqnarray}
+\dot{I}(t) &amp;=&amp; C \dot{V}'(t) \\
+&amp;=&amp; C (\dot{V}_0 e^{ j \omega t })' \\
+&amp;=&amp; j \omega C \dot{V}_0 e^{ j \omega t } \\
+&amp;=&amp; j \omega C \dot{V}(t) \\
+\end{eqnarray}
+\]</p>
+<p>複素電圧と複素電流が (虚数単位が含まれることを受け入れれば)
+定数倍の関係になっているので、
+その比から「抵抗っぽいもの」を求めることができる。
+複素数を複素数で割るので複素数になる。</p>
+<p>\[
+\begin{eqnarray}
+\dot{Z}_C &amp;=&amp; \frac{ \dot{V}(t) }{ \dot{I}(t) } \\
+&amp;=&amp; \frac{1}{ j \omega C } \\
+\end{eqnarray}
+\]</p>
+<p>これを (複素) <strong>インピーダンス</strong> と呼ぶ。</p>
+<p>\[
+\begin{eqnarray}
+\dot{V}(t) &amp;=&amp; \dot{Z}_C \dot{I}(t) \\
+\dot{I}(t) &amp;=&amp; \frac{1}{ \dot{Z}_C } \dot{V}(t) \\
+\end{eqnarray}
+\]</p>
+<p>電流と電圧を複素化し、その比も抵抗を複素化したもの (インピーダンス) とみなすことで、
+オームの法則の自然な拡張となっている。
+インピーダンスの極形式での絶対値と偏角をみると、</p>
+<p>\[
+\begin{eqnarray}
+|\dot{Z}_C| &amp;=&amp; \frac{1}{ \omega C } \\
+\arg (\dot{Z}_C) &amp;=&amp; -90^{\circ}
+\end{eqnarray}
+\]</p>
+<ul>
+<li>複素数の掛け算は絶対値の掛け算と偏角の足し算</li>
+<li>複素数の割り算は絶対値の割り算と偏角の引き算</li>
+</ul>
+<p>\[
+\begin{eqnarray}
+r_1 e^{ j \theta_1 } \cdot r_2 e^{ j \theta_2 }
+&amp;=&amp; (r_1 r_2 ) e^{ j (\theta_1 + \theta_2) } \\
+&amp;=&amp; r_3 e^{ j \theta_3 } \\
+r_3 &amp;=&amp; r_1 r_2 \\
+\theta_3 &amp;=&amp; \theta_1 + \theta_2 \\
+\end{eqnarray}
+\]</p>
+<p>だから、</p>
+<ul>
+<li>インピーダンスの絶対値は電圧と電流の振幅の比を表す。
+<ul>
+<li>これはリアクタンスに等しい。</li>
+</ul>
+</li>
+<li>インピーダンスの偏角は電圧と電流の位相の差を表す。</li>
+</ul>
+<p>実数では位相差の話は難しいので諦めて振幅の比のみをリアクタンスとして求めたが、
+複素インピーダンスには振幅の比に加えて位相差の情報も同時に含めることに成功している。</p>
+<p>電圧から電流を求めるためにはインピーダンスを掛けるのではなくインピーダンスで
+割らなければならないことに注意して、</p>
+<ul>
+<li>角周波数や静電容量が大きいと電流の振幅はそれに比例して大きくなる。</li>
+<li>電流の位相は 90 度早まる。</li>
+</ul>
+<p>ことが分かる。
+これは実数の範囲で微積で求めた結果と一致する。</p>
+<h3 id="コイル-複素数"><a class="header" href="#コイル-複素数">コイル (複素数)</a></h3>
+<p>\[
+\begin{eqnarray}
+L \dot{I}'(t) &amp;=&amp; \dot{V}(t) \\
+L \dot{I}(t) &amp;=&amp; \int \dot{V}(t) dt \\
+\dot{I}(t) &amp;=&amp; \frac{1}{L} \int \dot{V}_0 e^{ j \omega t } dt \\
+&amp;=&amp; \frac{1}{ j \omega L } \dot{V}_0 e^{ j \omega t } \\
+&amp;=&amp; \frac{1}{ j \omega L } \dot{V}(t) \\
+\end{eqnarray}
+\]</p>
+<p>コイルも同じく電圧と電流が複素数の世界で比例関係になり、</p>
+<p>\[
+\begin{eqnarray}
+\dot{Z}_L &amp;=&amp; \frac{ \dot{V}(t) }{ \dot{I}(t) } \\
+&amp;=&amp; j \omega L \\
+\end{eqnarray}
+\]</p>
+<p>\[
+\begin{eqnarray}
+|\dot{Z}_L| &amp;=&amp; \omega L \\
+\arg (\dot{Z}_L) &amp;=&amp; +90^{\circ}
+\end{eqnarray}
+\]</p>
+<h3 id="rlc-直列回路-複素数"><a class="header" href="#rlc-直列回路-複素数">RLC 直列回路 (複素数)</a></h3>
+<p>複素電圧、電流、インピーダンスを導入した状態で、もう一度 RLC 直列回路を考えてみよう。</p>
+<ul>
+<li>RLC 各素子の両端にかかる電圧はよく分からない。
+ただしそれら3つをすべて合計すると電源電圧となる。
+電源電圧は既知の振幅・周波数・初期位相の三角関数、に虚部を加えて複素化したもの。</li>
+<li>RLC 各素子に流れる電流は同一である。それを求めたい。</li>
+<li>RLC 各素子の両端にかかる電圧と電流はその素子の複素インピーダンスを用いて
+オームの法則のようなものが成り立っている。</li>
+</ul>
+<p>\[
+\begin{eqnarray}
+\dot{V}(t) &amp;=&amp; \dot{V}_0 e^{ j \omega t }
+= \dot{V}_R(t) + \dot{V}_L(t) + \dot{V}_C(t) \\
+\dot{V}_R(t) &amp;=&amp; R \dot{I}(t) \\
+\dot{V}_L(t) &amp;=&amp; j \omega L \dot{I}(t) \\
+\dot{V}_C(t) &amp;=&amp; \frac{1}{ j \omega C } \dot{I}(t) \\
+\end{eqnarray}
+\]</p>
+<p>よって</p>
+<p>\[
+\begin{eqnarray}
+R \dot{I}(t) + j \omega L \dot{I}(t) + \frac{1}{ j \omega C } \dot{I}(t)
+&amp;=&amp; \dot{V}_0 e^{ j \omega t } \\
+(R + j \omega L + \frac{1}{ j \omega C }) \dot{I}(t)
+&amp;=&amp; \dot{V}_0 e^{ j \omega t } \\
+\dot{Z} \dot{I}(t) &amp;=&amp; \dot{V}_0 e^{ j \omega t } \\
+\end{eqnarray}
+\]</p>
+<p>\[
+\begin{eqnarray}
+\dot{Z} &amp;=&amp; R + j \omega L + \frac{1}{ j \omega C } \\
+&amp;=&amp; R + j (\omega L - \frac{1}{ \omega C }) \\
+\end{eqnarray}
+\]</p>
+<p>抵抗が直列に並んでいるとき、その抵抗値の和を合成抵抗として置き換えられたように、
+インピーダンスが直列に並んでいるときは、その和を <strong>合成インピーダンス</strong> として
+置き換えることができる。
+オームの法則の形を全く変えずに各パラメータを複素化しただけなので、
+計算が複素数同士の演算になること以外は <strong>オームの法則と全く同じ</strong> 法則が成り立つ。
+RLC を並列に接続した場合でも、並列な合成抵抗の式が成り立つ。
+直列と並列が複雑に絡み合っても合成抵抗の公式を繰り返し適用していくだけで
+合成インピーダンスを求めることができる。
+合成インピーダンスには振幅の比だけではなく、位相のずれの情報も入っている。</p>
+<p>合成インピーダンスが求まったら複素電源電圧をそのインピーダンスで割ったものが
+複素電流である。
+実際に流れる電流値を取り出したいならば、虚部を捨てて実部のみ取り出せば完了である。</p>
+<p>\[
+\begin{eqnarray}
+\dot{Z} &amp;=&amp; R + j \omega L - j \frac{1}{ \omega C } \\
+\dot{I}(t) &amp;=&amp; \frac{ \dot{V}_0 }{ \dot{Z} } e^{ j \omega t } \\
+I(t) &amp;=&amp; \mathrm{Re} (\dot{I}(t)) \\
+&amp;=&amp; I_0 \sin (\omega t + \phi_I) \\
+I_0 &amp;=&amp; \frac{ |\dot{V}_0| }{ |\dot{Z}| } \\
+\phi_I &amp;=&amp; \arg \frac{ \dot{V}_0 }{ \dot{Z} }
+\end{eqnarray}
+\]</p>
+<p>このように、複素数の四則演算ができれば微分方程式を解かずとも、オームの法則から
+電流を求めるのと同じ要領で電流がどのような波か分かってしまう。</p>
+<h3 id="rlc-直列共振回路"><a class="header" href="#rlc-直列共振回路">RLC 直列共振回路</a></h3>
+<p>合成インピーダンスの式をよく見ると、</p>
+<p>\[
+\begin{eqnarray}
+\dot{Z} = R + j \omega L + \frac{1}{ j \omega C }\\
+\end{eqnarray}
+\]</p>
+<p>R, L, C を固定しても角周波数が変わるとインピーダンスの値が変わることが分かる。
+\( \omega \longrightarrow +0 \) および
+\( \omega \longrightarrow \infty \) の極限を考えると、
+どちらの場合でも片方は 0 に収束するが、もう片方が無限大に発散してしまう。
+つまり、周波数がほぼ 0 の直流のような電圧に対してはコンデンサは
+(過渡現象を無視すると) 電流をほとんど通さず、周波数が非常に高い電圧に対しては
+コイルがほとんど電流を通さない。</p>
+<p>では周波数が程よい値だった場合どうなるだろうか。
+\( R, L, C \gt 0 \) それぞれのインピーダンスを複素平面で考えると、</p>
+<ul>
+<li>R: 実数なので常に原点から <strong>右向き</strong>。角周波数によって変化しない。</li>
+<li>L: 虚数成分しか持たず、常に原点から <strong>上向き</strong>。
+<ul>
+<li>\( \omega \longrightarrow 0 \):
+絶対値は 0 に近づく。</li>
+<li>\( \omega \longrightarrow \infty \)
+絶対値は無限大に発散する。</li>
+</ul>
+</li>
+<li>C: 虚数成分しか持たず、常に原点から <strong>下向き</strong>。
+<ul>
+<li>\( \omega \longrightarrow 0 \):
+絶対値は無限大に発散する。</li>
+<li>\( \omega \longrightarrow \infty \)
+絶対値は 0 に近づく。</li>
+</ul>
+</li>
+</ul>
+<p>複素数の足し算は2次元ベクトルの足し算と同じなので、まず上下方向のベクトルだけ
+足し算すると、</p>
+<p>\[
+j (\omega L - \frac{1}{ \omega C }) \\
+\]</p>
+<p>これは引き算の結果が正のとき上向き、負のとき下向きのベクトルである。
+そして \( \omega \) 以外を固定して \( \omega \) を 0 から無限大の間で
+動かしてやると、各項は単調増加および単調減少なので、どこかで1回絶対値が等しくなり
+結果が 0 になる \( \omega \) が存在する。それは</p>
+<p>\[
+\begin{eqnarray}
+\omega L &amp;=&amp; \frac{1}{ \omega C } \\
+\omega^2 LC &amp;=&amp; 1 \\
+\omega^2 &amp;=&amp; \frac{1}{LC} \\
+\omega &amp;=&amp; \frac{1}{ \sqrt{LC} } \\
+T &amp;=&amp; \frac{ 2 \pi }{ \omega } \\
+f &amp;=&amp; \frac{ \omega }{ 2 \pi } \\
+&amp;=&amp; \frac{1}{ 2 \pi \sqrt{LC} } \\
+\end{eqnarray}
+\]</p>
+<p>最後、角周波数を周波数に直したが、これが <strong>共振周波数</strong> で、
+この周波数の電圧に対して電流の振幅が最も大きくなる。
+そして高校物理ではこの共振周波数の最終結果を覚えることになっている。なんでやねん。</p>
+<p>そして最後に R (右向きのベクトル) と足し合わせるが、
+真上または真下またはゼロベクトルと右向きのベクトルを足すので、
+結果の絶対値 (ベクトルの長さ) が最小となるのはコイルとコンデンサのインピーダンスの和が
+ゼロになるときである。
+このとき RLC の合成インピーダンスは R (実数) に等しくなる。</p>
+<h2 id="消費電力"><a class="header" href="#消費電力">消費電力</a></h2>
+<ul>
+<li>P (W=J/s): 1秒あたりに回路から失われる (電気から他の形になる) エネルギー。消費電力。
+電気抵抗では主に熱エネルギーに変わって放出される。</li>
+<li>I (A=C/s): 1秒あたりに流れる電気量。電流。</li>
+<li>V (V=J/C): +1C が電位が高いところから低いところへ移動したときに得るエネルギー。
+すなわち失う位置エネルギー。
+正確には位置エネルギーではないことの方が多い気がするが、混同してしまっても
+そこまで問題にはならない。
+電位差という言い方は正確さに欠くことがあるが、電圧とか言っておけばごまかせる。</li>
+</ul>
+<p>\[
+\begin{eqnarray}
+P(t) = I(t) V(t)
+\end{eqnarray}
+\]</p>
+<p>最初は公式を丸覚えさせられる気もするが、定義や単位を見ながら考えれば割と
+当然のことを言っているだけの式である。</p>
+<h3 id="消費電力-実数"><a class="header" href="#消費電力-実数">消費電力 (実数)</a></h3>
+<p>交流の場合は電圧と電流が時間変化によって絶えず変化しているが、
+瞬間的な電圧と電流を掛ければその瞬間の消費電力になる。
+これに微小時間を掛けて出てくる微小エネルギーを足し合わせる (積分する) ことによって
+ある時間内に消費されるエネルギーを計算することができる。</p>
+<p>\[
+\begin{eqnarray}
+V(t) &amp;=&amp; V_0 \sin \omega t \\
+I(t) &amp;=&amp; \frac{ V_0 }{ R } \sin \omega t \\
+P(t) &amp;=&amp; I(t) V(t) \\
+&amp;=&amp; \frac{ V_0^2 }{ R } \sin^2 \omega t \\
+\end{eqnarray}
+\]</p>
+<p>しかし例えば 50 Hz の交流電圧の周期は 0.02 s であり、
+実用上欲しいのはそんな短い時間中での細かい消費電力変化の詳細ではなく、
+何分・何時間・何日動かし続けたときにどのくらいのエネルギーが消費されるかという方である。
+そのためには1周期分の消費エネルギーを時間で割った平均の消費電力を求めれば十分で、</p>
+<p>\[
+\begin{eqnarray}
+P(t) &amp;=&amp; \frac{ V_0^2 }{ R } \sin^2 \omega t \\
+\bar{P} &amp;=&amp; \frac{1}{T} \int_0^T P(t) dt \\
+&amp;=&amp; \frac{1}{T} \int_0^T \frac{ V_0^2 }{ R } \sin^2 \omega t dt \\
+&amp;=&amp; \frac{1}{T} \frac{ V_0^2 }{ R } \int_0^T \sin^2 \omega t dt \\
+\end{eqnarray}
+\]</p>
+<p>結局 sin の2乗を (その sin の) 1周期で積分するとどうなるかということに帰着した。
+積の積分は難しいので何らかの手を打つ必要があるが、三角関数同士の積は加法定理を
+右から左に使うと角度の和に変換して次数を下げることができる。</p>
+<p>\[
+\begin{eqnarray}
+\sin (\alpha \pm \beta) = \sin \alpha \cos \beta \pm \cos \alpha \sin \beta \\
+\cos (\alpha \pm \beta) = \cos \alpha \cos \beta \mp \sin \alpha \sin \beta \\
+\end{eqnarray}
+\]</p>
+<ul>
+<li>積の内訳
+<ul>
+<li>sin 同士、または cos 同士の場合: cos の加法定理を使う。</li>
+<li>sin と cos の積の場合: sin の加法定理を使う。</li>
+</ul>
+</li>
+<li>角度の内訳
+<ul>
+<li>角度が同じ場合:
+\( \beta = \alpha \) とし、角度のプラスを取る。(倍角・半角の公式)</li>
+<li>角度が異なる場合:
+複号を変えた式を2つ用意し、欲しい積のみが残るよう辺々足し算 or 引き算する。
+(積和・和積の公式)</li>
+</ul>
+</li>
+</ul>
+<p>角度の等しい sin 同士の積を三角関数の1乗に直したいので、
+cos の加法定理を同じ角度同士の和に適用する。
+\( \sin^2 \alpha + \cos^2 \beta = 1 \) よりこの2つは相互に変換できるので
+今欲しい sin 同士の積のみの形にする
+(cos の2乗が欲しいならそちらのみの形にすればよい)。</p>
+<p>\[
+\begin{eqnarray}
+\cos (\alpha + \alpha) &amp;=&amp; \cos^2 \alpha - \sin^2 \alpha \\
+\cos 2 \alpha &amp;=&amp; (1 - \sin^2 \alpha) - \sin^2 \alpha \\
+&amp;=&amp; 1 - 2 \sin^2 \alpha \\
+\end{eqnarray}
+\]</p>
+<h3 id="消費電力-複素数"><a class="header" href="#消費電力-複素数">消費電力 (複素数)</a></h3>
+<p>TODO: 内積は複素共役を取って掛ける</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="refer.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="fib.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="refer.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="fib.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

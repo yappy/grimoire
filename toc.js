@@ -8,7 +8,7 @@ class MDBookSidebarScrollbox extends HTMLElement {
         super();
     }
     connectedCallback() {
-        this.innerHTML = '<ol class="chapter"><li class="chapter-item expanded "><a href="nand.html"><strong aria-hidden="true">1.</strong> NandGame 攻略</a></li><li class="chapter-item expanded "><a href="mt.html"><strong aria-hidden="true">2.</strong> マルチコアと同期</a></li><li class="chapter-item expanded "><a href="asm.html"><strong aria-hidden="true">3.</strong> インラインアセンブラ</a></li><li class="chapter-item expanded "><a href="refer.html"><strong aria-hidden="true">4.</strong> 参考文献</a></li></ol>';
+        this.innerHTML = '<ol class="chapter"><li class="chapter-item expanded "><a href="nand.html"><strong aria-hidden="true">1.</strong> NandGame 攻略</a></li><li class="chapter-item expanded "><a href="mt.html"><strong aria-hidden="true">2.</strong> マルチコアと同期</a></li><li class="chapter-item expanded "><a href="tools.html"><strong aria-hidden="true">3.</strong> サバイバルツール</a></li><li class="chapter-item expanded "><a href="asm.html"><strong aria-hidden="true">4.</strong> インラインアセンブラ</a></li><li class="chapter-item expanded "><a href="refer.html"><strong aria-hidden="true">5.</strong> 参考文献</a></li><li class="chapter-item expanded affix "><li class="spacer"></li><li class="chapter-item expanded "><a href="ac.html"><strong aria-hidden="true">6.</strong> 交流回路</a></li><li class="chapter-item expanded "><a href="fib.html"><strong aria-hidden="true">7.</strong> フィボナッチ数列</a></li></ol>';
         // Set the current, active page, and reveal it if it's hidden
         let current_page = document.location.href.toString();
         if (current_page.endsWith("/")) {

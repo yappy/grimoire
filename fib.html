@@ -1,0 +1,1048 @@
+<!DOCTYPE HTML>
+<html lang="ja" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>フィボナッチ数列 - 3日ではなれないかもしれない人形遣い</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">3日ではなれないかもしれない人形遣い</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="フィボナッチ数列"><a class="header" href="#フィボナッチ数列">フィボナッチ数列</a></h1>
+<p>\[
+\begin{eqnarray}
+F_{n+2} &amp;=&amp; F_{n+1} + F_{n} \\
+F_1 &amp;=&amp; 1 \\
+F_2 &amp;=&amp; 1 \\
+\end{eqnarray}
+\]</p>
+<h2 id="例"><a class="header" href="#例">例</a></h2>
+<p>\[
+\begin{eqnarray}
+F_0 &amp;=&amp; 0 \\
+F_1 &amp;=&amp; 1 \\
+F_2 &amp;=&amp; 1 \\
+F_3 &amp;=&amp; 2 \\
+F_4 &amp;=&amp; 3 \\
+F_5 &amp;=&amp; 5 \\
+F_6 &amp;=&amp; 8 \\
+F_7 &amp;=&amp; 13 \\
+F_8 &amp;=&amp; 21 \\
+F_9 &amp;=&amp; 34 \\
+F_{10} &amp;=&amp; 55 \\
+\end{eqnarray}
+\]</p>
+<p>小学校の足し算ができれば遊べるフレンドリーな問題です。</p>
+<h3 id="補足"><a class="header" href="#補足">補足</a></h3>
+<p>ちょっと考えると、別に n を増やす方向にしか使えないわけではなく、
+連続する3項のうち2項が分かっていて「抜け」が1つだけなら他の2項から求めることができる。
+したがって、マイナスの方向にも進んでいくこともできる。
+これにより \( F_0 = 0 \) とできるし、0番目から始めてもよい。</p>
+<h2 id="隣接三項間漸化式"><a class="header" href="#隣接三項間漸化式">隣接三項間漸化式</a></h2>
+<p>\[ 1 \cdot F_{n+2} = 1 \cdot F_{n+1} + 1 \cdot F_{n} \]</p>
+<p>この漸化式はよく見ると全係数が1の線形和の形になっており、
+高校数学に出てくる隣接三項間漸化式である。
+なので例の謎解法を用いて解く (一般解を得る) ことができる。</p>
+<p>漸化式から謎ルールにより特性方程式は</p>
+<p>\[
+\begin{eqnarray}
+F_{n+2} &amp;=&amp; F_{n+1} + F_{n} \\
+x^2 &amp;=&amp; x + 1 \\
+x^2 &amp;-&amp; x - 1 = 0
+\end{eqnarray} \]</p>
+<p>で、これは幸いにも実数解が2つ得られて、</p>
+<p>\[ x = \frac{ 1 \pm \sqrt{5} }{2} \]</p>
+<p>通常高校生に解かせる問題はここがきれいな整数になるよう調整されているが、
+係数が全部1できれいだと思わせておいて、このような無理数になってしまう。
+何度も書くのはツラいので、文字で置き換えることとする。
+( \( \alpha \) は <strong>黄金比</strong> と呼ばれる数で、人が「きれいに」感じる比率である。
+自然界にも多く存在する。)</p>
+<p>\[
+\begin{eqnarray}
+\alpha &amp;=&amp; \dfrac{ 1 + \sqrt{5} }{2} \\
+\beta  &amp;=&amp; \dfrac{ 1 - \sqrt{5} }{2}
+\end{eqnarray}
+\]</p>
+<p>この特性方程式の解を使うと謎解法により、漸化式は以下の2通りに変形できる。</p>
+<p>\[
+\begin{eqnarray}
+F_{n+2} - \alpha F_{n+1} &amp;=&amp; \beta  ( F_{n+1} - \alpha F_{n} ) \\
+F_{n+2} - \beta  F_{n+1} &amp;=&amp; \alpha ( F_{n+1} - \beta  F_{n} )
+\end{eqnarray}
+\]</p>
+<p>どこからこんな変形が出てくるのか本当に意味が分からないと思われる (意味は後述) が、
+展開して検算してみると確かにどちらも元の式に戻る。
+これらの式は以下のような新しい数列を考えると、単純な等比数列になることを示している。
+公比は順に \( \beta, \alpha \) である。</p>
+<p>\[
+\begin{eqnarray}
+a_n = F_{n+1} - \alpha F_n \\
+b_n = F_{n+1} - \beta  F_n
+\end{eqnarray}
+\]</p>
+<p>等比数列は簡単に一般項を表現できて、n 番目の値は 1 番目の値に公比を n - 1 回
+かけたものだから、以下の一般項を得る。</p>
+<p>\[
+\begin{eqnarray}
+a_n &amp;=&amp; a_1 \cdot \beta ^{n-1} \\
+b_n &amp;=&amp; b_1 \cdot \alpha^{n-1} \\
+a_1 &amp;=&amp; F_2 - \alpha F_1 = 1 - \alpha \\
+&amp;=&amp; \beta \\
+b_1 &amp;=&amp; F_2 - \beta  F_1 = 1 - \beta \\
+&amp;=&amp; \alpha
+\end{eqnarray}
+\]</p>
+<p>\( \alpha + \beta \) を計算してみると1になることから、初項は1文字できれいに
+表すことができる。
+それ以外に関しては高校数学のテンプレ解法をなぞっただけである。
+まとめるとやたらきれいになる (うまく文字で置き換えたからでもあるが)。</p>
+<p>\[
+\begin{eqnarray}
+a_n &amp;=&amp; \beta  ^ n \\
+b_n &amp;=&amp; \alpha ^ n
+\end{eqnarray}
+\]</p>
+<p>新しく作った数列をもとのフィボナッチ数列に戻してやると</p>
+<p>\[
+\begin{eqnarray}
+F_{n+1} - \alpha F_n &amp;=&amp; \beta  ^ n \\
+F_{n+1} - \beta  F_n &amp;=&amp; \alpha ^ n
+\end{eqnarray}
+\]</p>
+<p>辺々引き算すると \( F_{n+1} \) を消去できる。</p>
+<p>\[ ( \alpha - \beta ) F_n = \alpha ^ n - \beta ^ n　\]</p>
+<p>これはもう解けていて、フィボナッチ数列の一般項を求められている。
+\( \alpha, \beta\) を代入すると</p>
+<p>\[
+\begin{eqnarray}
+\alpha &amp;=&amp; \frac{ 1 + \sqrt 5 }{2} , \quad
+\beta  = \frac{ 1 - \sqrt 5 }{2} \\
+F_n &amp;=&amp; \frac{ 1 }{ \alpha - \beta } ( \alpha ^ n - \beta ^ n ) \\
+F_n &amp;=&amp; \frac{ 1 }{ \sqrt 5 } \left \{
+\left ( \frac{ 1 + \sqrt{5} }{2} \right ) ^ n -
+\left ( \frac{ 1 - \sqrt{5} }{2} \right ) ^ n
+\right \}
+\end{eqnarray}
+\]</p>
+<p>とても整数になるようには見えないが、フィボナッチ数列の定義より明らかに
+全ての整数 \( n \) について \( F_n \) は整数である。
+実際、\( n \) に具体的な整数を代入してみると魔法のように整数になる。</p>
+<h2 id="なんやねんこれは"><a class="header" href="#なんやねんこれは">なんやねんこれは</a></h2>
+<p>フィボナッチ数列の問題というよりは、隣接三項間漸化式の解き方だけを高校生に教えており
+なぜこれで解けるのか意味が分からないところが問題である。</p>
+<p>実は線形和になっている隣接三項間漸化式は <strong>二階の線形微分方程式(同次形)</strong> と
+解き方がそっくりである。そっくりどころか、数学的にしっかり解析すると
+<strong>同型</strong> であるとまで言えてしまう。</p>
+<p>漸化式の \( a_{n+1} - a_n \) のことを <strong>差分</strong> とも呼び、
+これに関する方程式を <strong>差分方程式</strong> とも呼ぶ。
+\(y\) を \(x\) の関数とするとき、\( y' = \frac{ dy }{ dx } \) を
+<strong>微分</strong> と呼び、これに関する方程式を <strong>微分方程式</strong> と呼ぶ。
+差分方程式は、連続的な関数に関する微分方程式を、離散的な関数 (数列) で考える
+バージョンだととらえることができる。</p>
+<p>フィボナッチ数列に <em>そっくりな</em> 微分方程式は以下のようになる。</p>
+<p>\[
+\begin{eqnarray}
+y'' = y' + y \\
+y'' - y' - y = 0
+\end{eqnarray}
+\]</p>
+<p>このような形の方程式は解き方が確立されている。
+高校では取り扱わないのだが、同型だと言った通り、隣接三項間漸化式の解き方という扱いで
+日本の高校生は実質的に解かされている…。</p>
+<p>しかしながら高校物理における単振動は運動方程式がこの形の微分方程式であり、
+(実数)解が三角関数になるという結果を暗記させられる。
+これもどうかという気はするが、微分方程式は解くのは (非常に) 難しいが
+解の候補が正しいかは実際に微分して代入して成り立つか調べるだけで確認できるため、
+ギリギリ許せるかもしれない。
+しかし \( t \) の係数である角周波数 \( \omega \) が質量とばね定数から
+決定できて振動の周期や (周波数) を確定できるというのは、
+さすがに微積分なしという建前の上でかなりの無茶をやっている気がする。。</p>
+<p>\[
+\begin{eqnarray}
+m \frac{ d^2 x }{ d t^2 } = - k x \\
+m x'' + kx = 0 \\
+x'' + \frac{k}{m} x = 0 \\
+x'' + \omega ^2 x = 0 \\
+\cdots \\
+x(t) = A \sin ( \omega t + \phi )\\
+\omega = \sqrt{\frac{k}{m}}
+\end{eqnarray}
+\]</p>
+<p>とにかく、階数 (微分回数) に関わらず線形微分方程式の解き方は確立されていて、
+それは以下の考察による。</p>
+<p>\( f(x), g(x) \) が解のとき、</p>
+<ul>
+<li>定数倍 \( c f(x) \) も解である。</li>
+<li>\( f(x) + g(x) \) も解である。</li>
+</ul>
+<p>これは以下の微分の性質を線形微分方程式に代入すれば確認できる。</p>
+<ul>
+<li>\( \{ c f (x) \}' = c f'(x) \)</li>
+<li>\( \{ f(x) + g(x) \}' = f'(x) + g'(x) \)</li>
+</ul>
+<p>これを踏まえた解法は以下のようになる。</p>
+<ol>
+<li>なんでもいいから頑張って特殊解 (特解) を2つ (二階の場合) 探す。
+ただし定数倍の関係になっているものは除く(<strong>一次独立</strong>という)。</li>
+<li>その2つを \( f(x), g(x) \) とすると、
+\( C f(x) \) や \( D g(x) \) も解だし、
+解の和もまた解である。</li>
+<li>\( y = C f(x) + D g(x) \) が解全体 (一般解) となる (C, D は任意定数)。</li>
+<li><strong>初期条件</strong> を1つ与えられると、任意定数を1つ決定することができる。
+二階の場合は2つ出てくるので、任意性を消すためには初期条件が2つ必要である。
+これはフィボナッチ数列で言えば最初の2項が必要であることに相当する。</li>
+</ol>
+<p>これの他に解が無いことはどう証明するのか？などと考えてしまいそうになるが、
+とんでもなく難しい話になるので気にしてはいけない (数学科へ GO)。
+2回の微分を行っているので、任意定数 (積分定数みたいなもの) が2つ出てくれば
+全部の解を覆いつくせていると考えておけば OK ではないが OK。</p>
+<p>問題は一般解でなくていいとはいえ特殊解をどうやって探すかだが、</p>
+<p>\[
+y'' - y' - y = 0
+\]</p>
+<p>この式をよく見ると y を微分したりもう一回微分したりしても、元の y の定数倍にしか
+ならないようなものしか解にならなそうに見える。
+微分 <strong>方程式</strong> と名前がついているが、イコールが成り立つ x を求めるのではなく、
+これが x についての <strong>恒等式</strong> (x に何を入れても成り立つ) になるような y が
+どのような x の関数なのかを求める問題である。</p>
+<p>解を指数関数と仮定して微分も行うと、</p>
+<p>\[
+\begin{eqnarray}
+y   &amp;=&amp; e ^ { \lambda x } \\
+y'  &amp;=&amp;  \lambda e ^ { \lambda x } = \lambda y \\
+y'' &amp;=&amp; \lambda ^ 2 e ^ { \lambda x } = \lambda ^ 2 y \\
+\end{eqnarray}
+\]</p>
+<p>となり、このまま線形微分方程式に代入してやる。</p>
+<p>\[
+\begin{eqnarray}
+y'' - y' - y = 0 \\
+\lambda ^ 2 y - \lambda y - y = 0 \\
+( \lambda ^ 2 - \lambda - 1 ) y = 0 \\
+( \lambda ^ 2 - \lambda - 1 ) e ^ { \lambda x } = 0 \\
+\lambda ^ 2 - \lambda - 1 = 0 \quad ( \because e^{\lambda x} \neq 0) \\
+\end{eqnarray}
+\]</p>
+<p>最後の式がまさに例の高校数学謎解法でも使われる <strong>特性方程式</strong> である。
+差分方程式 (漸化式) も微分方程式と同じようなもの (どころか同型) なので
+<strong>同じ用語を使う</strong>。</p>
+<p>二階の場合は二次方程式になるので、その解は</p>
+<ul>
+<li>異なる2つの実数解</li>
+<li>実数の重解</li>
+<li>異なる2つの虚数解</li>
+</ul>
+<p>のいずれかになる。
+二つの異なる解があれば \( y = e ^ { \lambda_1 x}, y = e ^ { \lambda_2 x}\)
+という一次独立な (定数倍でない) 二解が得られるので楽だが、
+重解の場合はちょっと (結構？) 困る。
+しかし定数変化法で何とかなることは確立しているので安心してよい。</p>
+<p>フィボナッチ数列の係数の場合は2つの実数解が得られるので、</p>
+<p>\[
+\begin{eqnarray}
+y = C e^{ \alpha x } + D e^{ \beta x}
+\end{eqnarray}
+\]</p>
+<p>これが一般解である (C, D は任意定数)。</p>
+<p>ちなみに単振動の場合は</p>
+<p>\[
+\begin{eqnarray}
+\lambda^2 + \omega^2 = 0 \\
+\lambda^2 = - \omega^2 \\
+\lambda = \pm i \omega
+\end{eqnarray}
+\]</p>
+<p>二つの虚解となる。
+複素指数関数は複素数であるので、任意定数も複素数として</p>
+<p>\[
+x(t) = C e^{ i \omega t } + D e^{ - i \omega t }
+\]</p>
+<p>ただしこれだと x 座標が複素数になってしまうので、実数になるような条件で
+絞ってやる必要がある。
+オイラーの公式</p>
+<p>\[
+e^{ i \theta } = \cos \theta + i \sin \theta
+\]</p>
+<p>を使って指数関数の極形式を三角関数の直交座標に直し、虚部が 0 になるよう調整すれば、
+2つの任意の複素数、つまり4つの任意の実数が、2つの任意の実数に制約される。</p>
+<p>\[
+x(t) = A \sin{ \omega t } + B \cos{ \omega t }
+\]</p>
+<p>ここまでやっておいてなんだが、システマティックに複素指数関数の一般解から頑張らなくても、
+運動方程式をガン見すればお互いに定数倍でない実数関数の特解2つは見つかる。</p>
+<p>\[
+\begin{eqnarray}
+x(t) = A \sin{ \omega t } \\
+x(t) = B \cos{ \omega t }
+\end{eqnarray}
+\]</p>
+<p>別に sin と cos でないといけないわけではないが、(sin, -sin) のように
+位相が 180 度ずれると-1 倍となってしまい、一次独立ではなくなってしまうため注意。</p>
+<p>周波数の同じ三角関数の和は、同じ周波数の三角関数になる。
+高校数学だと三角関数の合成という名目で加法定理の逆として教えられるが、
+これも謎の決まったテクニックとして教えられておりよろしくない。
+とにかく任意の振幅で位相差が 0 度や 180 度でない三角関数同士を合成すると、
+任意の振幅かつ任意の位相差の三角関数になる。
+sin と cos に限定するなら高校数学の三角関数の合成で証明できる。</p>
+<p>\[
+\begin{eqnarray}
+x(t) = C \sin{ (\omega t + D) }
+\end{eqnarray}
+\]</p>
+<p>文字が被ってしまったが実数任意定数を置き直した。
+微分して代入すればきちんと解になっていることが分かる。</p>
+<p>三角関数の中身の時刻 t の係数 \( \omega \) が分かれば、
+三角関数は 360 度 ( \( 2 \pi \) rad ) で一周するので、
+振動の一周にかかる時間 (周期) はここまでくれば、</p>
+<p>\[
+\begin{eqnarray}
+T &amp;=&amp; \frac{ 2 \pi }{ \omega }
+&amp;=&amp; 2 \pi \sqrt{ \frac{m}{k} }
+\end{eqnarray}
+\]</p>
+<p>と簡単に求められる。
+が、これを微積なしの建前で暗記させるのはさすがに無茶が過ぎるようにも感じる。</p>
+<h3 id="解の補足"><a class="header" href="#解の補足">解の補足</a></h3>
+<p>特解を探す際に指数関数が解になりそう、と言ったが、よく考えると (よく考えなくても)
+指数関数ではなく 0 という x によらない定数関数も条件を満たすことが分かる。
+よってこれも立派な微分方程式の解である
+(ただし、<strong>自明な解</strong> と呼ばれることもある…)。</p>
+<p>\[
+\begin{eqnarray}
+y'' - y' - y = 0 \\
+y(x) = 0
+\end{eqnarray}
+\]</p>
+<p>ただ、これは特解の定数倍を考えたときに</p>
+<p>\[
+\begin{eqnarray}
+y = C e^{ \lambda t }
+\end{eqnarray}
+\]</p>
+<p>ここで \( C = 0 \) とすると、これは x に関する指数関数ではなく
+定数関数になってしまうが、ちょうど自明な解と一致している。
+なので、指数関数にならない \( C \neq 0 \) という断りを入れずに
+任意の実数とすることで解を合成している。
+このあたり、テキストによっては軽く触れられていることもあれば、
+完全に省略されてしまっている場合もある。</p>
+<p>自然科学 (物理学) は適当にやってみて、何か説明のつかない自然現象が起きてから
+よく見直してみたら数学的にまずいことをやっていたのを発見し、
+ならばそれを直す、というようなアプローチを取りがちなので、要はいい加減である。
+たまに (よく) 物理学者と数学者で衝突が発生しているが、生温かい目で見守っておけばよい。</p>
+<h2 id="漸化式を線形微分方程式のように解いてみる"><a class="header" href="#漸化式を線形微分方程式のように解いてみる">漸化式を線形微分方程式のように解いてみる</a></h2>
+<p>\[
+\begin{eqnarray}
+F_{n+2} &amp;=&amp; F_{n+1} + F_{n} \\
+F_1 &amp;=&amp; 1 \\
+F_2 &amp;=&amp; 1 \\
+\end{eqnarray}
+\]</p>
+<ul>
+<li>初めの式は、項間の関係を示している。これは二階線形微分方程式 (同次) に対応し、
+ここから任意定数2つを含む一般解が得られる。</li>
+<li>残りの式は初期条件である。2つあるのですべての任意定数を消去し、
+解を1つに確定させることができる。</li>
+</ul>
+<p>これに線形微分方程式の解法を適用してみよう。</p>
+<ul>
+<li>まず、漸化式をよく見ると、ある数列がこの漸化式を満たす場合、それを定数倍した
+数列もまた解になることが分かる。</li>
+<li>また、ある2つの数列がこの漸化式を満たす場合、それを足したものもまた解になる
+ことが分かる。ただし、2つの式が定数倍の場合は第一の性質で事足りるので除く。</li>
+<li>証明は難しいが、2つの数列と2つの任意定数で解空間全体を覆いつくすことができる。</li>
+</ul>
+<p>となれば、まずは初期条件を無視し、まだ一般解でなくていいので漸化式を満たすような
+特解を2つ、なんとかして見つけられないかという話になる。
+微分方程式のときは微分すると元の関数の定数倍になるような関数ならよさそう、
+そしてそれは指数関数が該当していた。
+次の項が今の項の定数倍となるような数列が思い当たる。
+そしてそれは等比数列である。
+また、その定数倍も条件を満たすが、一般性はまだいらないので初項は適当でよい。
+初項を公比と同じにしておけば式が簡単になる。</p>
+<p>\[
+\begin{eqnarray}
+y' &amp;=&amp; \lambda y \\
+y &amp;=&amp; e^{ \lambda x } \\
+F_{n+1} &amp;=&amp; r F_n \\
+F_n &amp;=&amp; r^n \\
+\end{eqnarray}
+\]</p>
+<p>では等比数列を漸化式に代入すると</p>
+<p>\[
+\begin{eqnarray}
+F_{n+2} - F_{n+1} - F_n &amp;=&amp; 0 \\
+F_n &amp;=&amp; r^n \\
+r^2 \cdot r^n - r \cdot r^n - r^n &amp;=&amp; 0 \\
+(r^2 - r - 1) r^n &amp;=&amp; 0 \\
+r^2 - r - 1 &amp;=&amp; 0 \quad (\because r^n \neq 0)
+\end{eqnarray}
+\]</p>
+<p>これは <strong>特性方程式である</strong> 。
+この解 \( \alpha, \beta \) を底とした等比数列 (指数関数) は漸化式を満たす。
+また、その定数倍も漸化式を満たし、解である。
+また、2つの解を足し合わせたものも解である。
+(特性方程式の解が整数にならないと検算が大変なので、適当な高校数学の問題で確認するとよい)</p>
+<p>\[
+\begin{eqnarray}
+F_{n+2} - F_{n+1} - F_n = 0 \\
+F_n = \alpha^n, \ \beta^n \\
+F_n = C \cdot \alpha^n, \ D \cdot \beta^n \\
+F_n = C \cdot \alpha^n + D \cdot \beta^n \\
+\end{eqnarray}
+\]</p>
+<p>これがフィボナッチ数列から初期条件を取り除いた一般解である。
+ここから一般性を取り除くには初期条件が2つ必要で、</p>
+<p>\[
+\begin{eqnarray}
+F_n &amp;=&amp; C \cdot \alpha^n + D \cdot \beta^n \\
+F_0 &amp;=&amp; 0 = C + D \\
+F_1 &amp;=&amp; 1 = \alpha C + \beta D
+\end{eqnarray}
+\]</p>
+<p>C と D の式が2つあるのでそれぞれ決定できる。</p>
+<p>\[
+\begin{eqnarray}
+D &amp;=&amp; -C \\
+(\alpha - \beta) C &amp;=&amp; 1 \\
+C &amp;=&amp; \frac{1}{ \alpha - \beta } \\
+D &amp;=&amp; - \frac{1}{ \alpha - \beta } \\
+F_n &amp;=&amp; \dfrac{ 1 }{ \alpha - \beta } ( \alpha ^ n - \beta ^ n ) \\
+F_n &amp;=&amp; \dfrac{ 1 }{ \sqrt 5 } \left \{
+\left ( \dfrac{ 1 + \sqrt{5} }{2} \right ) ^ n -
+\left ( \dfrac{ 1 - \sqrt{5} }{2} \right ) ^ n
+\right \}
+\end{eqnarray}
+\]</p>
+<p>高校数学の謎解法と全く同じ解が得られた。</p>
+<p>謎解法と言っても、当然この解構造を意識して作られたもので、
+解空間全体を網羅できているか明らかでない (示せるが超大変) という弱点を
+うまく解消している。
+その代わり、特性方程式がどこから出てきたアイデアなのかが全く示されておらず、
+テクニックの丸暗記状態となってしまっている。
+そもそも高校数学では微分方程式はまったくやらないか、ほんの少し基本的な問題だけ、
+という状態なのに、二階線形微分方程式と同型な問題をこっそり解かせているということであり、
+どうかと思う。</p>
+<h2 id="線形代数からのアプローチ"><a class="header" href="#線形代数からのアプローチ">線形代数からのアプローチ</a></h2>
+<p>まず漸化式が線形和の形になっているし、線形微分方程式の解も線形代数の考え方が
+ベースになっている。
+特解を基底とした2次元空間 (指数関数をベクトルのように見なしている) が
+解空間となっている。
+そもそも線形でない微分方程式などほとんどの場合とてもじゃないが解けやしない。</p>
+<p>というわけで、漸化式が線形なのをヒントに、線形代数の言葉で書き直してみる。
+線形和はベクトルの内積だと考えて、</p>
+<p>\[
+\begin{eqnarray}
+F_{n+2} &amp;=&amp; F_{n+1} + F_n \\
+F_{n+2} &amp;=&amp;
+\begin{pmatrix} 1 &amp; 1 \end{pmatrix}
+\begin{pmatrix} F_{n+1} \\ F_n \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>(行ベクトルを上の方によせたいが、やり方が分からない。ごめんなさい。)</p>
+<p>これで例えば \( (F_2, F_1) \) というベクトルに \( (1, 1) \) というベクトルを
+かける (内積) と、\( F_3 \) になる、と考えることができる。
+しかし次にやりたいのは \( F_4 \) を求めることで、そのためには
+\( (F_3, F_2) \) に係数ベクトルをかける必要がある。
+つまり \( F_3 \) だけでなく \( F_2 \) も同時に欲しいのだが、
+\( (F_2, F_1) \) から \( F_2 \) への変換はとても簡単で、\( (1, 0)\) を
+かければよい。
+一般化すると</p>
+<p>\[
+\begin{eqnarray}
+F_{n+1} &amp;=&amp; 1 \cdot F_{n+1} + 0 \cdot F_n \\
+F_{n+1} &amp;=&amp;
+\begin{pmatrix} 1 &amp; 0 \end{pmatrix}
+\begin{pmatrix} F_{n+1} \\ F_n \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>2つの変換を合体させて、ベクトル \( (F_{n+1}, F_n) \) を
+ベクトル \( (F_{n+2}, F_{n+1}) \) に <strong>行列</strong> をかけて変換すると
+考えることができる。</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} F_{n+2} \\ F_{n+1} \end{pmatrix} =
+\begin{pmatrix} 1 &amp;&amp; 1 \\ 1 &amp;&amp; 0 \end{pmatrix}
+\begin{pmatrix} F_{n+1} \\ F_n \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>つまり、この行列 \( \begin{pmatrix} 1 &amp;&amp; 1 \\ 1 &amp;&amp; 0 \end{pmatrix} \) は、
+フィボナッチ数列の隣り合う2項からなるベクトルを、1つ隣の2項からなるベクトルへ
+一次変換するものだと考えることができる。
+またこの式は、スカラーの等比数列からベクトルの等比数列への
+自然な拡張とみなすことができる。公比にあたるものは行列となっている。</p>
+<p>行列を1回かけると数列の添え字が1つ増えることから、</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} F_{n+1} \\ F_{n} \end{pmatrix} =
+\begin{pmatrix} 1 &amp;&amp; 1 \\ 1 &amp;&amp; 0 \end{pmatrix} ^n
+\begin{pmatrix} F_1 \\ F_0 \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>と一般に表せる。
+ここで律儀にベクトルに行列を左からかける、という操作を n 回行う必要はない。
+行列のかけ算は左右を入れ替えてはいけないが、どちらから先に計算するかは変えてもよい。
+一次変換の一次変換はまた一次変換である、ということで、それが行列の積の計算規則でもある。
+要は行列の n 乗の部分だけ先に積を計算できれば、初項ベクトルにそれを左からかけるだけで
+一般解とできそうである。</p>
+<p>さて、\( \begin{pmatrix} 1 &amp;&amp; 1 \\ 1 &amp;&amp; 0 \end{pmatrix} ^n \) を
+計算できそうか、という話になったが、別の解法により答えは大体分かっており、
+あまり簡単には表せない気がする。
+試しに2乗や3乗を計算してみても、各要素にフィボナッチ数列のようなものが
+現れるだけ (当たり前) で、これを眺めていてもフィボナッチ数列を眺めて
+直接一般項を出そうとするのと話は変わらない。</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} 1 &amp;&amp; 1 \\ 1 &amp;&amp; 0 \end{pmatrix}
+\begin{pmatrix} 1 &amp;&amp; 1 \\ 1 &amp;&amp; 0 \end{pmatrix} =
+\begin{pmatrix} 2 &amp;&amp; 1 \\ 1 &amp;&amp; 1 \end{pmatrix} \\
+\begin{pmatrix} 2 &amp;&amp; 1 \\ 1 &amp;&amp; 1 \end{pmatrix}
+\begin{pmatrix} 1 &amp;&amp; 1 \\ 1 &amp;&amp; 0 \end{pmatrix} =
+\begin{pmatrix} 3 &amp;&amp; 2 \\ 2 &amp;&amp; 1 \end{pmatrix} \\
+\begin{pmatrix} 3 &amp;&amp; 2 \\ 2 &amp;&amp; 1 \end{pmatrix}
+\begin{pmatrix} 1 &amp;&amp; 1 \\ 1 &amp;&amp; 0 \end{pmatrix} =
+\begin{pmatrix} 5 &amp;&amp; 3 \\ 3 &amp;&amp; 2 \end{pmatrix} \\
+\end{eqnarray}
+\]</p>
+<p>行列の n 乗を簡単に求められるようにする方法として、線形代数の授業内容に
+大抵入っている <strong>対角化</strong> という手法が有効である。
+対角行列のべき乗は</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix}
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix} =
+\begin{pmatrix} \alpha^2 &amp; 0 \\ 0 &amp; \beta^2 \end{pmatrix} \\
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix} ^n =
+\begin{pmatrix} \alpha^n &amp; 0 \\ 0 &amp; \beta^n \end{pmatrix} \\
+\end{eqnarray}
+\]</p>
+<p>という風に非常に簡単に計算できる。
+そもそも対角行列がどういうものかというと、</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix}
+\begin{pmatrix} x \\ y \end{pmatrix} =
+\begin{pmatrix} \alpha x \\ \beta y \end{pmatrix} \\
+\end{eqnarray}
+\]</p>
+<p>x と y をそれぞれ単純に定数倍するような行列のことである
+(拡大縮小を表すので 3D グラフィクスではスケーリング行列と呼ばれることもある)。
+もちろんフィボナッチ数列の前進行列はこのような都合のいい形をしていないので、
+なんとかしてこの形に持ち込めないかを考えてみる。</p>
+<h3 id="固有値と固有ベクトル"><a class="header" href="#固有値と固有ベクトル">固有値と固有ベクトル</a></h3>
+<p>さて、ある行列が与えられたとき、ある方向のベクトルにその行列をかけたときに
+ベクトルの方向が変わらず単にスカラー定数倍になる場合がある。
+その方向ベクトルを <strong>固有ベクトル</strong> といい、その倍率を <strong>固有値</strong> と呼ぶ。
+名前の通り、その行列の性質を表す非常に重要な方向や倍率である。
+この単なる定数倍というところが今の課題にうまく使えそうな気がする。
+線形代数の授業ではよく分からないままとりあえず求め方を訓練させられるので、
+とりあえずフィボナッチ数列の行列の固有ベクトルと固有値を求めてみよう。
+求め方はシステム化されていて、あるベクトルに与えられた行列をかけたら
+単なるベクトルのスカラー倍になったという条件から、</p>
+<p>\[
+\begin{eqnarray}
+A \boldsymbol{v} &amp;=&amp; \lambda \boldsymbol{v} \\
+A \boldsymbol{v} &amp;=&amp; \lambda E \boldsymbol{v} \\
+(A - \lambda E) \boldsymbol{v} &amp;=&amp; \boldsymbol{0} \\
+\left (
+\begin{pmatrix} 1 &amp; 1 \\ 1 &amp; 0 \end{pmatrix} -
+\begin{pmatrix} \lambda &amp; 0 \\ 0 &amp; \lambda \end{pmatrix}
+\right)
+\boldsymbol{v} &amp;=&amp; \boldsymbol{0} \\
+\begin{pmatrix} 1 - \lambda &amp; 1 \\ 1 &amp; - \lambda \end{pmatrix}
+\boldsymbol{v} &amp;=&amp; \boldsymbol{0} \\
+\end{eqnarray}
+\]</p>
+<p>ここで \( \boldsymbol{v} \) で括りたかったが、行列とスカラーは直接足し算引き算が
+できないので、単位行列を補って行列同士の減算に書き換えるテクニックを使った。</p>
+<p>左辺の行列に逆行列が存在すると仮定すると、両辺に左からその逆行列をかけることができ、
+\( \boldsymbol{v} = \boldsymbol{0} \) という解のみになってしまう。
+今固有ベクトルとして欲しいのは方向ベクトルであり、方向のないゼロベクトルは
+不適である (固有ベクトルの定義式を満たしはするが、固有ベクトルの定義に含めない)。
+つまり、(ゼロでない) 固有ベクトルが存在するならば、
+この行列は正則でないという必要条件が得られる。
+行列が正則であるということの必要十分条件は非常によく研究されており、
+その中の「行列式がゼロならば正則ではない (逆も成り立つ)」という条件を使うと</p>
+<p>\[
+\begin{eqnarray}
+\begin{vmatrix} 1 - \lambda &amp; 1 \\ 1 &amp; - \lambda \end{vmatrix} = 0 \\
+(1 - \lambda)(- \lambda) - 1 \cdot 1 = 0 \\
+\lambda^2 - \lambda - 1 = 0
+\end{eqnarray}
+\]</p>
+<p>これは2次方程式であり、この解が固有値となる (本当は十分性を確認しなければならないが、
+結論から言うと固有値になる)。
+このように固有値を解に持つ多項式を <strong>固有方程式</strong> と呼ぶ。
+一般に n 次正方行列の固有方程式は n 次方程式になり、複素数の範囲かつ重解を別個に
+カウントすれば、解は n 個ある。
+今回は 2x2 行列なので 2 次方程式になっている。
+形が完全に特性方程式と同じになっていることから、解も同じで</p>
+<p>\[
+\begin{eqnarray}
+\lambda^2 - \lambda - 1 = 0 \\
+(\lambda - \alpha)(\lambda - \beta) = 0 \\
+\lambda^2 - (\alpha + \beta) \lambda - \alpha \beta = 0 \\
+\alpha, \beta = \frac{ 1 \pm \sqrt 5 }{2} \\
+\alpha + \beta = 1 \\
+\alpha \beta = -1 \\
+\end{eqnarray}
+\]</p>
+<p>つまりフィボナッチ数列を表す行列の固有値は \( \alpha, \beta \) の2つである。
+\( \lambda = \alpha \) を代入し、行列がランク落ちしていること
+(連立一次方程式として見たときに実質的に同じ式が2つ並んでいること。
+正則でないことと同値。) と、
+特性方程式より和が 1 で積が -1 であることに気を付けつつ整理すると</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} 1 - \alpha &amp; 1 \\ 1 &amp; - \alpha \end{pmatrix}
+\boldsymbol{v} &amp;=&amp; \boldsymbol{0} \\
+\begin{pmatrix} \beta &amp; 1 \\ 1 &amp; \frac{1}{\beta} \end{pmatrix}
+\begin{pmatrix} x \\ y \end{pmatrix} &amp;=&amp; \boldsymbol{0} \\
+\beta x + y = 0 \\
+y = k \Rightarrow x = - \frac{1}{\beta} k = \alpha k \\
+\boldsymbol{v} = k \begin{pmatrix} \alpha \\ 1 \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>つまり、\( (\alpha, 1) \) に平行なベクトルに行列 A をかけると方向は変わらず、
+単に \( \alpha \) 倍になるということである。
+固有値 \( \beta \) についても同様に、固有ベクトル \( (\beta, 1) \)
+(の定数倍) を得る。</p>
+<h3 id="基底"><a class="header" href="#基底">基底</a></h3>
+<p>\( (\alpha, 1) \) と \( (\beta, 1) \) という方向をベースに考えると
+よいのではないか、というアイデアが得られた。</p>
+<p>ここで座標という考え方を改めて見直してみる。</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} x \\ y \end{pmatrix} =
+x \begin{pmatrix} 1 \\ 0 \end{pmatrix} +
+y \begin{pmatrix} 0 \\ 1 \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>式自体はあまりにも当たり前のものになっているが、これは座標 \( (x , y) \) を
+\( (1, 0) \) の方向に \( x \) 倍だけ、\( (0, 1) \) の方向に \( y \) 倍だけ
+進んだ先のこととする、という気持ちを表している。
+この2つのベクトルのことを <strong>基底</strong> といい、すべての長さが1のとき <strong>正規</strong>、
+お互いに垂直のとき <strong>直交</strong> をつけて、<strong>正規直交基底</strong> という。
+この例は正規直交基底である。</p>
+<p>ここでのアイデアは、基底は正規でも直交でもなくても構わないのではないか？
+というところにある。
+実際、2次元平面を覆いつくすには正規でも直交でもなくてもいいので
+<strong>平行でない</strong> (<strong>一時独立</strong>な) ベクトルが2本あれば十分である
+(むしろ正確には必要な基底ベクトルの数を <strong>次元</strong> と定義する)。
+垂直でない規定による座標系を <strong>斜交座標系</strong> と言ったりする。</p>
+<p>例えば A の固有ベクトルは平行ではないので、任意の正規直交基底による座標は</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} x \\ y \end{pmatrix} &amp;=&amp;
+x' \begin{pmatrix} \alpha \\ 1 \end{pmatrix} +
+y' \begin{pmatrix} \beta  \\ 1 \end{pmatrix} \\
+&amp;=&amp;
+\begin{pmatrix} \alpha &amp; \beta \\ 1 &amp; 1 \end{pmatrix}
+\begin{pmatrix} x' \\ y' \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>のように書ける。
+これは斜交座標 (x', y') を決めると正規直交座標 (x, y) が一意に決まるという
+気持ちを表している。
+行列で表せていることから、この <strong>座標変換</strong> は <strong>一次変換</strong> であることが分かる。</p>
+<p>さらに、 \( (\alpha, 1), (\beta, 1) \) は平行ではないから
+この変換行列は正則で逆行列が存在し、それを両辺に左からかけると</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} \alpha &amp; \beta \\ 1 &amp; 1 \end{pmatrix} ^{-1}
+\begin{pmatrix} x \\ y \end{pmatrix} =
+\begin{pmatrix} x' \\ y' \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>とも表せる。
+これは (x, y) から (x', y') への変換も同様に <strong>一次変換</strong> であるということを
+表している。</p>
+<h3 id="対角化"><a class="header" href="#対角化">対角化</a></h3>
+<p>固有値と座標変換 (基底の変換) を組み合わせて考えてみよう。
+まず元の正規直交基底による座標を、固有ベクトルを基底とする座標系に変換してやる。</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} x' \\ y' \end{pmatrix} =
+\begin{pmatrix} \alpha &amp; \beta \\ 1 &amp; 1 \end{pmatrix} ^{-1}
+\begin{pmatrix} x \\ y \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>この座標系に対して、フィボナッチ数列の行列 A を左からかけてみる
+(スカラー倍に関してはかけ算の左右を交換しても問題ない)。</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} x \\ y \end{pmatrix} &amp;=&amp;
+x' \begin{pmatrix} \alpha \\ 1 \end{pmatrix} +
+y' \begin{pmatrix} \beta  \\ 1 \end{pmatrix} \\
+A \begin{pmatrix} x \\ y \end{pmatrix} &amp;=&amp;
+x' A \begin{pmatrix} \alpha \\ 1 \end{pmatrix} +
+y' A \begin{pmatrix} \beta  \\ 1 \end{pmatrix} \\
+\end{eqnarray}
+\]</p>
+<p>ここで、基底を固有ベクトルに取ったことが生きてくる。
+固有ベクトルとはその方向に行列をかけたら対応する固有値 (スカラー) 倍になるという
+ものだったから、行列 A の代わりに固有値倍となって、</p>
+<p>\[
+\begin{eqnarray}
+A \begin{pmatrix} x \\ y \end{pmatrix} &amp;=&amp;
+x' A \begin{pmatrix} \alpha \\ 1 \end{pmatrix} +
+y' A \begin{pmatrix} \beta  \\ 1 \end{pmatrix} \\
+&amp;=&amp;
+x' \alpha \begin{pmatrix} \alpha \\ 1 \end{pmatrix} +
+y' \beta  \begin{pmatrix} \beta  \\ 1 \end{pmatrix} \\
+&amp;=&amp;
+\alpha x' \begin{pmatrix} \alpha \\ 1 \end{pmatrix} +
+\beta  y' \begin{pmatrix} \beta  \\ 1 \end{pmatrix} \\
+\end{eqnarray}
+\]</p>
+<p>これは (x, y) に左から A をかけるということは、
+(x', y') 座標系では単に x' を \( \alpha \) 倍、y' を \( \beta \) 倍するだけ
+であるということを示している。
+(x', y') 座標系ではこの変換を行列表現すると</p>
+<p>\[ \begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix} \]</p>
+<p>である。
+これを用いて (x, y) に左から行列 A をかけるのを以下のように表現する。</p>
+<ol>
+<li>与えられた (x, y) を一次変換し、(x', y') に座標変換する。</li>
+<li>\( (x', y') \) を \( (x'', y'') = (\alpha x', \beta y') \) に変換する。
+この変換は対角行列
+\( \begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix} \)
+で表される。
+これは (x, y) 座標系では行列 A を左からかけているのに相当する。</li>
+<li>移動後の (x'', y'') を逆変換し、(x', y') に直したものが求める答えとなる。</li>
+</ol>
+<p>固有ベクトルを基底とする座標系への変換行列を \( P^{-1} \) とすると、
+これらの操作は以下のように表せる。</p>
+<p>\[
+\begin{eqnarray}
+A \begin{pmatrix} x \\ y \end{pmatrix} &amp;=&amp;
+P
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix}
+P^{-1}
+\begin{pmatrix} x \\ y \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<ol>
+<li>(x, y) に左から P の逆行列をかけて固有ベクトルによる斜交座標に変換</li>
+<li>固有ベクトルの性質より、固有値による単純なスケーリング変換を左からかける</li>
+<li>左から P をかけて元の正規直交座標に戻す</li>
+</ol>
+<p>ここで、左から A を何度もかけることを考えると、行列とその逆行列との積は
+単位行列になることに注意して、</p>
+<p>\[
+\begin{eqnarray}
+A A \begin{pmatrix} x \\ y \end{pmatrix} &amp;=&amp;
+P
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix}
+P^{-1}
+P
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix}
+P^{-1}
+\begin{pmatrix} x \\ y \end{pmatrix} \\
+&amp;=&amp;
+P
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix} ^2
+P^{-1}
+\begin{pmatrix} x \\ y \end{pmatrix} \\
+A^n \begin{pmatrix} x \\ y \end{pmatrix}
+&amp;=&amp;
+P
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix} ^n
+P^{-1}
+\begin{pmatrix} x \\ y \end{pmatrix} \\
+&amp;=&amp;
+P
+\begin{pmatrix} \alpha^n &amp; 0 \\ 0 &amp; \beta^n \end{pmatrix}
+P^{-1}
+\begin{pmatrix} x \\ y \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>教科書的に書くとこうだが、新しい座標系の中でスケーリングしたのち、
+元の座標系に戻し、また新しい座標系に変換してスケーリングするのは無駄なので、</p>
+<ol>
+<li>新しい座標系に変換する</li>
+<li>n 回スケーリングする</li>
+<li>元の座標系に戻す</li>
+</ol>
+<p>の方が早いよね、というだけのことである。</p>
+<p>これはもう解けており、具体的な値を代入すれば、</p>
+<p>\[
+\begin{eqnarray}
+F_0 = 0 \\
+F_1 = 1 \\
+\end{eqnarray}
+\]</p>
+<p>\[
+\begin{eqnarray}
+\alpha &amp;=&amp; \dfrac{ 1 + \sqrt{5} }{2} \\
+\beta  &amp;=&amp; \dfrac{ 1 - \sqrt{5} }{2}
+\end{eqnarray}
+\]</p>
+<p>\[
+\begin{eqnarray}
+P &amp;=&amp; \begin{pmatrix} \alpha &amp; \beta \\ 1 &amp; 1 \end{pmatrix} \\
+P^{-1}
+&amp;=&amp;
+\frac{1}{|P|} \begin{pmatrix} 1 &amp; -\beta \\ -1 &amp; \alpha \end{pmatrix} \\
+&amp;=&amp;
+\frac{1}{\alpha - \beta}
+\begin{pmatrix} 1 &amp; -\beta \\ -1 &amp; \alpha \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} F_{n+1} \\ F_n \end{pmatrix}
+&amp;=&amp;
+A^n \begin{pmatrix} F_1 \\ F_0 \end{pmatrix} \\
+&amp;=&amp;
+P
+\begin{pmatrix} \alpha^n &amp; 0 \\ 0 &amp; \beta^n \end{pmatrix}
+P^{-1}
+\begin{pmatrix} F_1 \\ F_0 \end{pmatrix} \\
+&amp;=&amp;
+\begin{pmatrix} \alpha &amp; \beta \\ 1 &amp; 1 \end{pmatrix}
+\begin{pmatrix} \alpha^n &amp; 0 \\ 0 &amp; \beta^n \end{pmatrix}
+\frac{1}{\alpha - \beta}
+\begin{pmatrix} 1 &amp; -\beta \\ -1 &amp; \alpha \end{pmatrix}
+\begin{pmatrix} 1 \\ 0 \end{pmatrix} \\
+&amp;=&amp;
+\frac{1}{\alpha - \beta}
+\begin{pmatrix}
+\alpha^{n+1} - \beta^{n+1} &amp;
+- \alpha^{n+1} \beta + \alpha \beta^{n+1} \\
+\alpha^n - \beta^n &amp;
+- \alpha^n \beta + \alpha \beta^n
+\end{pmatrix}
+\begin{pmatrix} 1 \\ 0 \end{pmatrix} \\
+&amp;=&amp;
+\frac{1}{\alpha - \beta}
+\begin{pmatrix}
+\alpha^{n+1} - \beta^{n+1} \\
+\alpha^n - \beta^n
+\end{pmatrix} \\
+F_n
+&amp;=&amp;
+\frac{1}{\alpha - \beta} (\alpha^n - \beta^n) \\
+&amp;=&amp;
+\frac{ 1 }{ \sqrt 5 } \left \{
+\left ( \frac{ 1 + \sqrt{5} }{2} \right ) ^ n -
+\left ( \frac{ 1 - \sqrt{5} }{2} \right ) ^ n
+\right \}
+\end{eqnarray}
+\]</p>
+<h3 id="余談"><a class="header" href="#余談">余談</a></h3>
+<p>行列の n 乗の形に持っていけている時点で、それが対角化されていなくても
+繰り返し二乗法を適用することで比較的少ない計算量で値を直接計算することができる。
+一般解が求まれば n を代入するだけで計算量 \( O (1) \) で \( F_n \) が求まるが、
+それができなくても、</p>
+<p>\begin{eqnarray}
+a^8 &amp;=&amp; a^4 \cdot a^4 \\
+a^4 &amp;=&amp; a^2 \cdot a^2 \\
+a^2 &amp;=&amp; a \cdot a \\
+\end{eqnarray}</p>
+<p>のように n 乗はより小さな n/2 乗を求めるという部分問題の解を使って
+(漸化式や数学的帰納法の考え方) 高速に求めることができる(<strong>分割統治法</strong>)。
+計算量は \( O(\log n) \) になる (底は 2)。
+これは行列のべき乗にもそのまま適用できる。
+このテクニックは行列累乗と呼ばれるが、競プロの中でだけかもしれない。
+\( \log_2 n \) は指数関数の逆関数であり、まったく大きくならないので、
+それなりの大きさの n に関しては実用上、ほぼ定数として扱える。</p>
+<p>\begin{eqnarray}
+2^8 &amp;=&amp; 256 \\
+log_2 256 &amp;=&amp; 8 \\
+2^{16} &amp;=&amp; 65536 \\<br />
+log_2 65536 &amp;=&amp; 16 \\
+2^{32} &amp;=&amp; 4294967296 \\
+log_2 4294967296 &amp;=&amp; 32 \\
+\end{eqnarray}</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="ac.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="ac.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

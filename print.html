@@ -950,6 +950,433 @@ Google が Android のために JVM を x86 から ARM に持っていったら
 怪奇現象にしか見えないメモリオーダリングのバグに苦労したらしい…。</p>
 <h3 id="スリープロック-普通のロック"><a class="header" href="#スリープロック-普通のロック">スリープロック (普通のロック)</a></h3>
 <h2 id="ロックフリーアルゴリズム-初心者お断り"><a class="header" href="#ロックフリーアルゴリズム-初心者お断り">ロックフリーアルゴリズム (初心者お断り)</a></h2>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="サバイバルツール類"><a class="header" href="#サバイバルツール類">サバイバルツール類</a></h1>
+<h2 id="よく分からないファイルを調べる"><a class="header" href="#よく分からないファイルを調べる">よく分からないファイルを調べる</a></h2>
+<p>ヘッダ情報をパースしてくれたり、テキストファイルならエンコーディングを調べてくれたり、
+既に種類が分かっているファイル相手でもいい感じで要約された情報が得られる。</p>
+<pre><code class="language-sh">$ file rshanghai
+rshanghai: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV),
+dynamically linked, interpreter /lib/ld-linux-aarch64.so.1,
+BuildID[sha1]=82b09bf2c510acc4e66f5a8bd9b65d0120968da6,
+for GNU/Linux 3.7.0, not stripped
+
+$ file yappy_house_full.jpg
+yappy_house_full.jpg: JPEG image data, JFIF standard 1.01, resolution (DPI),
+density 350x350, segment length 16, Exif Standard:
+[TIFF image data, big-endian, direntries=14],
+baseline, precision 8, 3118x3118, components 3
+
+$ file src/tools.md
+src/tools.md: Unicode text, UTF-8 text
+</code></pre>
+<h2 id="バイナリファイルのうち文字列として解釈可能な部分を表示"><a class="header" href="#バイナリファイルのうち文字列として解釈可能な部分を表示">バイナリファイルのうち文字列として解釈可能な部分を表示</a></h2>
+<p>何らかの手掛かりを得たい場合や、
+バイナリファイルに流出するとまずい情報が含まれていないか調べる時などに。</p>
+<p><code>-n &lt;文字数&gt;</code> で最低文字列長を指定できる。
+デフォルトは 4 らしい。</p>
+<pre><code class="language-sh">$ strings rshanghai
+/lib/ld-linux-aarch64.so.1
+_ITM_deregisterTMCloneTable
+__gmon_start__
+_ITM_registerTMCloneTable
+SSL_get_verify_result
+SSL_shutdown
+SSL_CTX_new
+SSL_set_verify
+SSL_get0_param
+SSL_CTX_get_cert_store
+...
+</code></pre>
+<h2 id="バイナリ表示"><a class="header" href="#バイナリ表示">バイナリ表示</a></h2>
+<pre><code class="language-sh">$ xxd rshanghai | head
+00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
+00000010: 0300 b700 0100 0000 c070 1a00 0000 0000  .........p......
+00000020: 4000 0000 0000 0000 6831 0302 0000 0000  @.......h1......
+00000030: 0000 0000 4000 3800 0a00 4000 2000 1f00  ....@.8...@. ...
+00000040: 0600 0000 0400 0000 4000 0000 0000 0000  ........@.......
+00000050: 4000 0000 0000 0000 4000 0000 0000 0000  @.......@.......
+00000060: 3002 0000 0000 0000 3002 0000 0000 0000  0.......0.......
+00000070: 0800 0000 0000 0000 0300 0000 0400 0000  ................
+00000080: 7002 0000 0000 0000 7002 0000 0000 0000  p.......p.......
+00000090: 7002 0000 0000 0000 1b00 0000 0000 0000  p...............
+
+$ xxd -g 1 rshanghai | head
+00000000: 7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00  .ELF............
+00000010: 03 00 b7 00 01 00 00 00 c0 70 1a 00 00 00 00 00  .........p......
+00000020: 40 00 00 00 00 00 00 00 68 31 03 02 00 00 00 00  @.......h1......
+00000030: 00 00 00 00 40 00 38 00 0a 00 40 00 20 00 1f 00  ....@.8...@. ...
+00000040: 06 00 00 00 04 00 00 00 40 00 00 00 00 00 00 00  ........@.......
+00000050: 40 00 00 00 00 00 00 00 40 00 00 00 00 00 00 00  @.......@.......
+00000060: 30 02 00 00 00 00 00 00 30 02 00 00 00 00 00 00  0.......0.......
+00000070: 08 00 00 00 00 00 00 00 03 00 00 00 04 00 00 00  ................
+00000080: 70 02 00 00 00 00 00 00 70 02 00 00 00 00 00 00  p.......p.......
+00000090: 70 02 00 00 00 00 00 00 1b 00 00 00 00 00 00 00  p...............
+
+# エンディアンのせいで変。。
+$ hexdump rshanghai | head
+0000000 457f 464c 0102 0001 0000 0000 0000 0000
+0000010 0003 00b7 0001 0000 70c0 001a 0000 0000
+0000020 0040 0000 0000 0000 3168 0203 0000 0000
+0000030 0000 0000 0040 0038 000a 0040 0020 001f
+0000040 0006 0000 0004 0000 0040 0000 0000 0000
+0000050 0040 0000 0000 0000 0040 0000 0000 0000
+0000060 0230 0000 0000 0000 0230 0000 0000 0000
+0000070 0008 0000 0000 0000 0003 0000 0004 0000
+0000080 0270 0000 0000 0000 0270 0000 0000 0000
+0000090 0270 0000 0000 0000 001b 0000 0000 0000
+
+# -C でいい感じになる
+$ hexdump -C rshanghai | head
+00000000  7f 45 4c 46 02 01 01 00  00 00 00 00 00 00 00 00  |.ELF............|
+00000010  03 00 b7 00 01 00 00 00  c0 70 1a 00 00 00 00 00  |.........p......|
+00000020  40 00 00 00 00 00 00 00  68 31 03 02 00 00 00 00  |@.......h1......|
+00000030  00 00 00 00 40 00 38 00  0a 00 40 00 20 00 1f 00  |....@.8...@. ...|
+00000040  06 00 00 00 04 00 00 00  40 00 00 00 00 00 00 00  |........@.......|
+00000050  40 00 00 00 00 00 00 00  40 00 00 00 00 00 00 00  |@.......@.......|
+00000060  30 02 00 00 00 00 00 00  30 02 00 00 00 00 00 00  |0.......0.......|
+00000070  08 00 00 00 00 00 00 00  03 00 00 00 04 00 00 00  |................|
+00000080  70 02 00 00 00 00 00 00  70 02 00 00 00 00 00 00  |p.......p.......|
+00000090  70 02 00 00 00 00 00 00  1b 00 00 00 00 00 00 00  |p...............|
+
+# octal dump なのでデフォルトは8進数になる
+$ od rshanghai | head
+0000000 042577 043114 000402 000001 000000 000000 000000 000000
+0000020 000003 000267 000001 000000 070300 000032 000000 000000
+0000040 000100 000000 000000 000000 030550 001003 000000 000000
+0000060 000000 000000 000100 000070 000012 000100 000040 000037
+0000100 000006 000000 000004 000000 000100 000000 000000 000000
+0000120 000100 000000 000000 000000 000100 000000 000000 000000
+0000140 001060 000000 000000 000000 001060 000000 000000 000000
+0000160 000010 000000 000000 000000 000003 000000 000004 000000
+0000200 001160 000000 000000 000000 001160 000000 000000 000000
+0000220 001160 000000 000000 000000 000033 000000 000000 000000
+
+# 16進デフォルトは 16 bit ごとの上にエンディアンのせいで変。。
+$ od -x rshanghai | head
+0000000 457f 464c 0102 0001 0000 0000 0000 0000
+0000020 0003 00b7 0001 0000 70c0 001a 0000 0000
+0000040 0040 0000 0000 0000 3168 0203 0000 0000
+0000060 0000 0000 0040 0038 000a 0040 0020 001f
+0000100 0006 0000 0004 0000 0040 0000 0000 0000
+0000120 0040 0000 0000 0000 0040 0000 0000 0000
+0000140 0230 0000 0000 0000 0230 0000 0000 0000
+0000160 0008 0000 0000 0000 0003 0000 0004 0000
+0000200 0270 0000 0000 0000 0270 0000 0000 0000
+0000220 0270 0000 0000 0000 001b 0000 0000 0000
+
+$ od -t x1 rshanghai | head
+0000000 7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
+0000020 03 00 b7 00 01 00 00 00 c0 70 1a 00 00 00 00 00
+0000040 40 00 00 00 00 00 00 00 68 31 03 02 00 00 00 00
+0000060 00 00 00 00 40 00 38 00 0a 00 40 00 20 00 1f 00
+0000100 06 00 00 00 04 00 00 00 40 00 00 00 00 00 00 00
+0000120 40 00 00 00 00 00 00 00 40 00 00 00 00 00 00 00
+0000140 30 02 00 00 00 00 00 00 30 02 00 00 00 00 00 00
+0000160 08 00 00 00 00 00 00 00 03 00 00 00 04 00 00 00
+0000200 70 02 00 00 00 00 00 00 70 02 00 00 00 00 00 00
+0000220 70 02 00 00 00 00 00 00 1b 00 00 00 00 00 00 00
+</code></pre>
+<p>コマンドラインパラメータを覚えられないので、デフォルトで見やすい <code>xxd</code> を
+第一選択肢に覚えておくのがいい気がする。
+コマンド名の覚えやすさで行くなら <code>hexdump -C</code>。</p>
+<p>なんでいろいろあるの？</p>
+<ul>
+<li>xxd は vim についてくるツールらしい。</li>
+<li>hexdump は BSD 由来で Linux にも入っている系らしい。</li>
+<li>od は由緒正しく POSIX でも規定されているコマンドらしい。
+<ul>
+<li>由緒正しすぎて 8 進ダンプは現代ではほぼ使われないのではないかとも思う。</li>
+</ul>
+</li>
+</ul>
+<h2 id="バイナリファイルを編集する"><a class="header" href="#バイナリファイルを編集する">バイナリファイルを編集する</a></h2>
+<p><code>xxd</code> が vim についてくるというのはこうやって使えということらしい。
+<del>やったことがない。</del>
+<code>xxd -r</code> でテキストダンプからバイナリに逆変換できる。</p>
+<pre><code class="language-sh">$ vi -b file.bin
+:%!xxd
+:%!xxd -r
+:wq
+</code></pre>
+<h2 id="バイナリファイルを-c-ヘッダに変換する"><a class="header" href="#バイナリファイルを-c-ヘッダに変換する">バイナリファイルを C ヘッダに変換する</a></h2>
+<p>こういうのでいいんだよこういうので。
+圧倒的なポータビリティを誇る。</p>
+<pre><code class="language-sh">$ xxd -i rshanghai | head
+unsigned char rshanghai[] = {
+  0x7f, 0x45, 0x4c, 0x46, 0x02, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0xb7, 0x00, 0x01, 0x00, 0x00, 0x00,
+  0xc0, 0x70, 0x1a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x68, 0x31, 0x03, 0x02, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x38, 0x00, 0x0a, 0x00, 0x40, 0x00,
+  0x20, 0x00, 0x1f, 0x00, 0x06, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
+  0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x30, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0x02, 0x00, 0x00,
+
+# -C で変数名を大文字に
+# -name で変数名を変更
+$ xxd -i -C -name myname rshanghai | head
+unsigned char MYNAME[] = {
+  0x7f, 0x45, 0x4c, 0x46, 0x02, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0xb7, 0x00, 0x01, 0x00, 0x00, 0x00,
+  0xc0, 0x70, 0x1a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x68, 0x31, 0x03, 0x02, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x38, 0x00, 0x0a, 0x00, 0x40, 0x00,
+  0x20, 0x00, 0x1f, 0x00, 0x06, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
+  0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x30, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0x02, 0x00, 0x00,
+</code></pre>
+<h2 id="バイナリファイルをオブジェクトファイルに変換してリンクする"><a class="header" href="#バイナリファイルをオブジェクトファイルに変換してリンクする">バイナリファイルをオブジェクトファイルに変換してリンクする</a></h2>
+<p>objcopy はオブジェクトファイルのコピーを行うが、ただのフルコピーなら <code>cp</code> コマンドで
+いい訳で、実質的にフォーマット変換コマンドである。
+<code>-I</code> や <code>-O</code> で入出力フォーマットを指定できるが、ここに <code>binary</code> が指定可能である。</p>
+<pre><code class="language-sh"># -B を指定しないとリンカエラーになる気がする
+$ objcopy -I binary -O elf64-little yappy_house.jpg  yappy_house.o
+</code></pre>
+<p>デフォルトだと <code>.data</code> (読み書き可能グローバル変数領域) セクションに
+配置されてしまうので、気になるなら <code>--rename-section</code> を使う。
+man に例があるので
+<code>--rename-section .data=.rodata,alloc,load,readonly,data,contents</code>
+をコピーして使えばよさそう。</p>
+<pre><code class="language-sh">$ man objcopy
+--rename-section oldname=newname[,flags]
+    Rename a section from oldname to newname, optionally changing the section's
+    flags to flags in the process.
+    This has the advantage over using a linker script to perform the rename
+    in that the output stays as an
+    object file and does not become a linked executable.
+    This option accepts the same set of flags as the
+    --sect-section-flags option.
+
+    This option is particularly helpful when the input format is binary,
+    since this will always create a
+    section called .data.  If for example, you wanted instead to create
+    a section called .rodata containing
+    binary data you could use the following command line to achieve it:
+
+              objcopy -I binary -O &lt;output_format&gt; -B &lt;architecture&gt; \
+              --rename-section .data=.rodata,alloc,load,readonly,data,contents \
+              &lt;input_binary_file&gt; &lt;output_object_file&gt;
+</code></pre>
+<p>オブジェクトファイルには以下のようなシンボルが定義される。</p>
+<pre><code class="language-sh">$ nm yappy_house.o
+00000000000218b7 D _binary_yappy_house_jpg_end
+00000000000218b7 A _binary_yappy_house_jpg_size
+0000000000000000 D _binary_yappy_house_jpg_start
+
+# リンク後
+$ nm a.out | grep _binary
+00000000000418ef D _binary_yappy_house_jpg_end
+00000000000218b7 A _binary_yappy_house_jpg_size
+0000000000020038 D _binary_yappy_house_jpg_start
+</code></pre>
+<p>size は分かりづらいが、absolute シンボルとして定義され、リンクしても値が変わらない。
+シンボルアドレスがファイルサイズになっている。
+なので奇数サイズのファイルの場合、奇数アドレスのシンボルができる。気持ち悪い。
+1 byte 型のポインタとして <code>end - start</code> を計算すれば出てくるので、
+size は使わなくてもいいかもしれない…。</p>
+<p>C 以外で用意したシンボルを C から参照する際は型で混乱しやすいので注意。
+シンボル情報のレベルでは型情報が消えているので無難な 1 byte 型にしてやるとよい。</p>
+<pre><code class="language-C">// unsigned char _binary_yappy_house_jpg_start[SIZE] = {...};
+// を定義すると
+// "_binary_yappy_house_jpg_start"
+// という配列の先頭アドレスを指すシンボルが生成されると考える
+extern const unsigned char _binary_yappy_house_jpg_start[];
+extern const unsigned char _binary_yappy_house_jpg_end[];
+</code></pre>
+<h2 id="elf-ファイル情報"><a class="header" href="#elf-ファイル情報">ELF ファイル情報</a></h2>
+<p>ELF (Exectable and Linking Format) は名前の通り、実行可能形式および
+その前のリンク中のデータのフォーマット。
+EXE (PE) と違ってまだ実行可能でないオブジェクトファイルもこの形式で出力される。</p>
+<p>実は file コマンドでも結構それなりに表示される。</p>
+<pre><code class="language-sh">$ file /usr/bin/ls
+/usr/bin/ls: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV),
+dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]
+=15dfff3239aa7c3b16a71e6b2e3b6e4009dab998, for GNU/Linux 3.2.0, stripped
+</code></pre>
+<p><code>readelf -h</code> でヘッダをパースしてくれる。</p>
+<pre><code class="language-sh">$ readelf -h /usr/bin/ls
+ELF Header:
+  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
+  Class:                             ELF64
+  Data:                              2 s complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              DYN (Position-Independent Executable file)
+  Machine:                           Advanced Micro Devices X86-64
+  Version:                           0x1
+  Entry point address:               0x61d0
+  Start of program headers:          64 (bytes into file)
+  Start of section headers:          149360 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               64 (bytes)
+  Size of program headers:           56 (bytes)
+  Number of program headers:         13
+  Size of section headers:           64 (bytes)
+  Number of section headers:         31
+  Section header string table index: 30
+</code></pre>
+<p>ELF ヘッダに続くプログラムヘッダは <code>readelf -l</code> で。
+ファイル中の何バイト目から何バイトをメモリの何バイト目にロードすれば
+よいかが書かれている。</p>
+<pre><code class="language-sh">$ readelf -l /usr/bin/ls
+
+Elf file type is DYN (Position-Independent Executable file)
+Entry point 0x61d0
+There are 13 program headers, starting at offset 64
+
+Program Headers:
+  Type           Offset             VirtAddr           PhysAddr
+                 FileSiz            MemSiz              Flags  Align
+  PHDR           0x0000000000000040 0x0000000000000040 0x0000000000000040
+                 0x00000000000002d8 0x00000000000002d8  R      0x8
+  INTERP         0x0000000000000318 0x0000000000000318 0x0000000000000318
+                 0x000000000000001c 0x000000000000001c  R      0x1
+      [Requesting program interpreter: /lib64/ld-linux-x86-64.so.2]
+  LOAD           0x0000000000000000 0x0000000000000000 0x0000000000000000
+                 0x00000000000036c0 0x00000000000036c0  R      0x1000
+  LOAD           0x0000000000004000 0x0000000000004000 0x0000000000004000
+                 0x0000000000015759 0x0000000000015759  R E    0x1000
+  LOAD           0x000000000001a000 0x000000000001a000 0x000000000001a000
+                 0x0000000000008ed0 0x0000000000008ed0  R      0x1000
+  LOAD           0x00000000000232b0 0x00000000000232b0 0x00000000000232b0
+                 0x0000000000001310 0x00000000000025f8  RW     0x1000
+  DYNAMIC        0x0000000000023d98 0x0000000000023d98 0x0000000000023d98
+                 0x00000000000001f0 0x00000000000001f0  RW     0x8
+  NOTE           0x0000000000000338 0x0000000000000338 0x0000000000000338
+                 0x0000000000000020 0x0000000000000020  R      0x8
+  NOTE           0x0000000000000358 0x0000000000000358 0x0000000000000358
+                 0x0000000000000044 0x0000000000000044  R      0x4
+  GNU_PROPERTY   0x0000000000000338 0x0000000000000338 0x0000000000000338
+                 0x0000000000000020 0x0000000000000020  R      0x8
+  GNU_EH_FRAME   0x000000000001ef7c 0x000000000001ef7c 0x000000000001ef7c
+                 0x00000000000009fc 0x00000000000009fc  R      0x4
+  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
+                 0x0000000000000000 0x0000000000000000  RW     0x10
+  GNU_RELRO      0x00000000000232b0 0x00000000000232b0 0x00000000000232b0
+                 0x0000000000000d50 0x0000000000000d50  R      0x1
+</code></pre>
+<p>セクションヘッダは <code>readelf -S</code>。
+.text や .data、.bss などのセクション (に加えて意味の分からないものも大量に)
+が見える。</p>
+<pre><code class="language-sh">$ readelf -S /usr/bin/ls
+There are 31 section headers, starting at offset 0x24770:
+
+Section Headers:
+  [Nr] Name              Type             Address           Offset
+       Size              EntSize          Flags  Link  Info  Align
+  [ 0]                   NULL             0000000000000000  00000000
+       0000000000000000  0000000000000000           0     0     0
+  [ 1] .interp           PROGBITS         0000000000000318  00000318
+       000000000000001c  0000000000000000   A       0     0     1
+  [ 2] .note.gnu.pr[...] NOTE             0000000000000338  00000338
+       0000000000000020  0000000000000000   A       0     0     8
+  [ 3] .note.gnu.bu[...] NOTE             0000000000000358  00000358
+       0000000000000024  0000000000000000   A       0     0     4
+  [ 4] .note.ABI-tag     NOTE             000000000000037c  0000037c
+       0000000000000020  0000000000000000   A       0     0     4
+  [ 5] .gnu.hash         GNU_HASH         00000000000003a0  000003a0
+       00000000000000b8  0000000000000000   A       6     0     8
+  [ 6] .dynsym           DYNSYM           0000000000000458  00000458
+       0000000000000be8  0000000000000018   A       7     1     8
+  [ 7] .dynstr           STRTAB           0000000000001040  00001040
+       00000000000005d9  0000000000000000   A       0     0     1
+  [ 8] .gnu.version      VERSYM           000000000000161a  0000161a
+       00000000000000fe  0000000000000002   A       6     0     2
+  [ 9] .gnu.version_r    VERNEED          0000000000001718  00001718
+       00000000000000d0  0000000000000000   A       7     2     8
+  [10] .rela.dyn         RELA             00000000000017e8  000017e8
+       0000000000001560  0000000000000018   A       6     0     8
+  [11] .rela.plt         RELA             0000000000002d48  00002d48
+       0000000000000978  0000000000000018  AI       6    25     8
+  [12] .init             PROGBITS         0000000000004000  00004000
+       0000000000000017  0000000000000000  AX       0     0     4
+  [13] .plt              PROGBITS         0000000000004020  00004020
+       0000000000000660  0000000000000010  AX       0     0     16
+  [14] .plt.got          PROGBITS         0000000000004680  00004680
+       0000000000000030  0000000000000008  AX       0     0     8
+  [15] .text             PROGBITS         00000000000046b0  000046b0
+       000000000001509e  0000000000000000  AX       0     0     16
+  [16] .fini             PROGBITS         0000000000019750  00019750
+       0000000000000009  0000000000000000  AX       0     0     4
+  [17] .rodata           PROGBITS         000000000001a000  0001a000
+       0000000000004f7a  0000000000000000   A       0     0     32
+  [18] .eh_frame_hdr     PROGBITS         000000000001ef7c  0001ef7c
+       00000000000009fc  0000000000000000   A       0     0     4
+  [19] .eh_frame         PROGBITS         000000000001f978  0001f978
+       0000000000003558  0000000000000000   A       0     0     8
+  [20] .init_array       INIT_ARRAY       00000000000232b0  000232b0
+       0000000000000008  0000000000000008  WA       0     0     8
+  [21] .fini_array       FINI_ARRAY       00000000000232b8  000232b8
+       0000000000000008  0000000000000008  WA       0     0     8
+  [22] .data.rel.ro      PROGBITS         00000000000232c0  000232c0
+       0000000000000ad8  0000000000000000  WA       0     0     32
+  [23] .dynamic          DYNAMIC          0000000000023d98  00023d98
+       00000000000001f0  0000000000000010  WA       7     0     8
+  [24] .got              PROGBITS         0000000000023f88  00023f88
+       0000000000000050  0000000000000008  WA       0     0     8
+  [25] .got.plt          PROGBITS         0000000000023fe8  00023fe8
+       0000000000000340  0000000000000008  WA       0     0     8
+  [26] .data             PROGBITS         0000000000024340  00024340
+       0000000000000280  0000000000000000  WA       0     0     32
+  [27] .bss              NOBITS           00000000000245c0  000245c0
+       00000000000012e8  0000000000000000  WA       0     0     32
+  [28] .gnu_debugaltlink PROGBITS         0000000000000000  000245c0
+       0000000000000049  0000000000000000           0     0     1
+  [29] .gnu_debuglink    PROGBITS         0000000000000000  0002460c
+       0000000000000034  0000000000000000           0     0     4
+  [30] .shstrtab         STRTAB           0000000000000000  00024640
+       000000000000012f  0000000000000000           0     0     1
+</code></pre>
+<h3 id="シンボル一覧"><a class="header" href="#シンボル一覧">シンボル一覧</a></h3>
+<p><code>nm</code> が便利。
+strip されていると消えて見えない。。</p>
+<pre><code class="language-sh">$ nm /usr/bin/ls
+nm: /usr/bin/ls: no symbols
+</code></pre>
+<p>シンボルタイプは1文字で表されるが、覚えられない。
+<code>U</code> (おそらく undefined) が未定義シンボル (他のファイルにあるシンボルへの参照) で、
+リンク時に他のオブジェクトファイルから提供される必要がある。</p>
+<p>なお、libc (C 標準ライブラリ) などは基本的に動的リンクが選択されるので、
+実行可能形式までリンクされた後でもまだ未解決シンボルは残る。
+動的リンク周りは理屈自体はそこまで難しくはない
+(リンカの行っている作業を一部実行時にまで遅延させているだけ) ものの、
+実際にその動作を追おうとすると、全人類がお世話になっている割には
+書いた人しか分からない魔境と化しているため踏み入るには注意が必要。</p>
+<pre><code class="language-sh">$ nm rshanghai | grep U
+                 U abort@GLIBC_2.2.5
+                 U accept4@GLIBC_2.10
+                 U bcmp@GLIBC_2.2.5
+                 U bind@GLIBC_2.2.5
+                 U BIO_clear_flags@OPENSSL_3.0.0
+                 U BIO_get_data@OPENSSL_3.0.0
+                 U BIO_meth_free@OPENSSL_3.0.0
+                 U BIO_meth_new@OPENSSL_3.0.0
+                 U BIO_meth_set_create@OPENSSL_3.0.0
+                 U BIO_meth_set_ctrl@OPENSSL_3.0.0
+                 U BIO_meth_set_destroy@OPENSSL_3.0.0
+                 U BIO_meth_set_puts@OPENSSL_3.0.0
+                 U BIO_meth_set_read@OPENSSL_3.0.0
+                 U BIO_meth_set_write@OPENSSL_3.0.0
+                 U BIO_new@OPENSSL_3.0.0
+                 U BIO_set_data@OPENSSL_3.0.0
+                 U BIO_set_flags@OPENSSL_3.0.0
+                 U BIO_set_init@OPENSSL_3.0.0
+                 U calloc@GLIBC_2.2.5
+                 U ceilf@GLIBC_2.2.5
+                 U ceil@GLIBC_2.2.5
+                 U chdir@GLIBC_2.2.5
+                 U chown@GLIBC_2.2.5
+                 U chroot@GLIBC_2.2.5
+...
+</code></pre>
+<p>シンボルはアドレスに振られたラベルであり、型情報は消えている。
+なので変数や関数の型 (シグネチャ) と名前を書いたヘッダファイルは複数ソース間で
+同じものを使わないとリンクまで成功してしまい、実行時に壊れる。
+また、アドレスはリンクして実行可能ファイルになるまでは仮の値
+(ゼロスタート) になっている。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="インラインアセンブラ"><a class="header" href="#インラインアセンブラ">インラインアセンブラ</a></h1>
 <p>C/C++ ソースの中にアセンブラを埋め込める。
 C コードの途中にだいたいどこでも埋め込めるため、気軽にアセンブラ入門できる。</p>
@@ -1354,6 +1781,1402 @@ OS のエッセンスは揃っている。</li>
 </ul>
 </li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="交流"><a class="header" href="#交流">交流</a></h1>
+<h2 id="実数"><a class="header" href="#実数">実数</a></h2>
+<p>交流電源電圧 (単位は V: ボルト) を</p>
+<p>\[
+V(t) = V_0 \sin (\omega t + \phi)
+\]</p>
+<p>とする。</p>
+<ul>
+<li>\( V_0 \): 振幅 (V)
+<ul>
+<li>三角関数は -1 から 1 の間を振動するので、電圧は
+\( - V_0 \leq V(t) \leq V_0 \) の間を振動する。</li>
+</ul>
+</li>
+<li>\( \omega \): 角周波数 (rad/s)
+<ul>
+<li>時刻を角度に変換する比例定数。振動の速さを表す。</li>
+</ul>
+</li>
+<li>\( t \): 時刻 (s)</li>
+<li>\( \phi \): 初期位相 (rad)
+<ul>
+<li>三角関数の中身 (rad) のことを位相と呼ぶ。
+位相は時間的な位置を角度の単位で表したもの。</li>
+<li>初期位相は \( t = 0 \) のときの位相のこと。</li>
+</ul>
+</li>
+</ul>
+<p>角周波数と周期、周波数について。
+どれか1つが決まれば他もすべて自動的に決まる。</p>
+<ul>
+<li>\( \omega \): 角周波数 (rad/s)
+<ul>
+<li>1秒間に位相が何 rad 進むか。</li>
+</ul>
+</li>
+<li>\( T \): 周期 (T)
+<ul>
+<li>振動が1回にかかる時間。</li>
+</ul>
+</li>
+<li>\( f \): 周波数 (Hz = 1/s)
+<ul>
+<li>1秒に何回振動するか。</li>
+</ul>
+</li>
+</ul>
+<p>三角関数は位相が 360 度進むと一周する。
+角速度 \( \omega \) (rad/s) で角度 \( 2 \pi \) (rad) を進むのにかかる時間が
+周期 \( T \) (s) である。</p>
+<p>\[
+\begin{eqnarray}
+\omega T = 2 \pi \\
+T = \frac{ 2 \pi }{ \omega } \\
+\end{eqnarray}
+\]</p>
+<p>周期と周波数は逆数の関係にある。</p>
+<p>\[
+\begin{eqnarray}
+f &amp;=&amp; \frac{ 1 }{ T } \\
+T &amp;=&amp; \frac{ 1 }{ f } \\
+\end{eqnarray}
+\]</p>
+<p>以上で困ることはないはずだが、以下の表式は他の式から導くのではなく覚えておくと便利。</p>
+<p>\[
+\begin{eqnarray}
+\omega &amp;=&amp; 2 \pi f \\
+V(t) &amp;=&amp; V_0 \sin (2 \pi f t + \phi) \\
+\end{eqnarray}
+\]</p>
+<h3 id="抵抗"><a class="header" href="#抵抗">抵抗</a></h3>
+<p>\[
+\begin{eqnarray}
+V(t) &amp;=&amp; R I(t) \\
+I(t) &amp;=&amp; \frac{ 1 }{ R } V(t) \\
+&amp;=&amp; \frac{ 1 }{ R } V_0 \sin (\omega t + \phi) \\
+\end{eqnarray}
+\]</p>
+<h3 id="コンデンサ"><a class="header" href="#コンデンサ">コンデンサ</a></h3>
+<p>\[
+Q(t) = C V(t)
+\]</p>
+<p>コンデンサに流れ込む電流 (A = C/s) がコンデンサに蓄えられた電荷 (C) の
+単位時間あたりの増加量であるので、両辺を時間で微分して、</p>
+<p>\[
+\begin{eqnarray}
+I(t) &amp;=&amp; \frac{ d }{ dt } Q(t) \\
+&amp;=&amp; C V'(t) \\
+&amp;=&amp; \omega C V_0 \cos (\omega t + \phi) \\
+&amp;=&amp; \omega C V_0 \sin (\omega t  +\phi + 90^{\circ}) \\
+\end{eqnarray}
+\]</p>
+<ul>
+<li>電圧に比べて電流は位相は 90 度(1/4 周期) 進んでいる。</li>
+<li>位相差は実数では取り扱いにくいので、一旦無視して電圧と電流の振幅の比から
+「抵抗のようなもの」を考える。これを (容量性) <strong>リアクタンス</strong> という。
+電圧/電流なので単位はオーム。</li>
+</ul>
+<p>\[
+\begin{eqnarray}
+I_0 &amp;=&amp; \omega C V_0  \\
+V_0 &amp;=&amp; X_C I_0 \\
+X_C &amp;=&amp; \frac{ V_0 }{ I_0 } \\
+&amp;=&amp; \frac{ 1 }{\omega C} \\
+\end{eqnarray}
+\]</p>
+<ul>
+<li>静電容量が大きいほどリアクタンスは小さい。
+コンデンサの容量が大きいほど大きな電流が流れる。</li>
+<li>角周波数が大きいほどリアクタンスは小さい。
+頻繁に充放電の方向が切り替わると、大きな電流が流れる。</li>
+</ul>
+<h3 id="コイル"><a class="header" href="#コイル">コイル</a></h3>
+<p>\[
+V(t) = L \frac{ d }{ dt } I(t)
+\]
+(符号に注意。キルヒホッフの法則で電圧の上昇下降の和が 0 になる式を立てる時に
+コイルの起電力がマイナスになる。)</p>
+<p>両辺を t で積分して (積分定数の処理が面倒だがどうせ 0 になる)</p>
+<p>\[
+\begin{eqnarray}
+\int V(t) dt &amp;=&amp; L I(t) \\
+I(t) &amp;=&amp; \frac{ 1 }{ L } \int V(t) dt \\
+&amp;=&amp; - \frac{ 1 }{ \omega L } V_0 \cos (\omega t + \phi) \\
+&amp;=&amp; \frac{ 1 }{ \omega L } V_0 \sin (\omega t + \phi - 90^{\circ}) \\
+\end{eqnarray}
+\]</p>
+<ul>
+<li>電圧に比べて電流は位相は 90 度(1/4 周期) 遅れている。</li>
+<li>コンデンサと同様に位相差は一旦無視して電圧と電流の振幅の比から
+「抵抗のようなもの」を考える。これを (誘導性) <strong>リアクタンス</strong> という。
+電圧/電流なので単位はオーム。</li>
+</ul>
+<p>\[
+\begin{eqnarray}
+I_0 &amp;=&amp; \frac{ 1 }{ \omega L } V_0  \\
+V_0 &amp;=&amp; X_L I_0 \\
+X_L &amp;=&amp; \frac{ V_0 }{ I_0 } \\
+&amp;=&amp; \omega L \\
+\end{eqnarray}
+\]</p>
+<ul>
+<li>自己インダクタンスが大きいほどリアクタンスは大きい。
+コイルが強いほど、電流は流れにくくなる。</li>
+<li>角周波数が大きいほどリアクタンスは大きい。
+頻繁に電圧の正負が切り替わって電流を激しく変化させようとすると、
+コイルに激しく抵抗されて電流は小さくなる。</li>
+</ul>
+<h3 id="rlc-直列回路"><a class="header" href="#rlc-直列回路">RLC 直列回路</a></h3>
+<p>交流電源にコイルやコンデンサを1つだけつないだ場合は微分または積分を1回行うだけで
+何とかなったが、実際の回路はそれをいくつもつなげるわけで、
+対応できるかちょっと不安になってくる。
+RLC を直列に並べたときの電圧のつり合いを考えると、</p>
+<p>\[
+R I(t) + L \frac{ d }{ dt } I(t) + \frac{ 1 }{ C } Q(t) = V(t)
+\]</p>
+<p>両辺 t で微分して Q を I に揃える。</p>
+<p>\[
+\begin{eqnarray}
+R I'(t) + L I''(t) + \frac{ 1 }{ C } I(t) &amp;=&amp; V'(t) \\
+R I'(t) + L I''(t) + \frac{ 1 }{ C } I(t) &amp;=&amp;
+\omega V_0 \cos (\omega t + \phi) \\
+I'' + \frac{R}{L} I' + \frac{1}{LC} I &amp;=&amp;
+\frac{\omega V_0}{L} \cos (\omega t + \phi) \\
+\end{eqnarray}
+\]</p>
+<p>これは I(t) に関する二階線形微分方程式 (非斉次, 非同次) になっている。
+実際にやると結構大変だが、解き方は確立されているので
+その通りにやれば解けるといえば解ける。</p>
+<ul>
+<li>右辺を 0 とした同次形を解く。</li>
+<li>非同次形の特解を何か1つ気合で見つける。</li>
+<li>上記2つを足したものが非同次形の一般解となる。</li>
+</ul>
+<p>とにかく右辺が 0 になっていないところが苦しい (0 ならば比較的簡単に解ける) ので、
+右辺を消すことを考える。
+ここで、苦しいもののなんとか特解を1つでも見つけることができれば、
+辺々引き算することで右辺を 0 にすることができる。</p>
+<p>同次形は特性方程式を解き、2つの指数関数の線形和が一般解になる。
+問題は非同次形の特解を求めるところで、今回はここが三角関数になっているケースであるので、
+攻略法を調べて特解は \( A \sin \omega t + B \cos \omega t \) という形に
+なるらしいという情報からいい感じに係数を決定してやる。</p>
+<p>このように、解けると言えば解けるのだがはっきり言って結構大変なため、
+もっと簡単な方法を導入する。</p>
+<h3 id="補足-rlc-並列回路"><a class="header" href="#補足-rlc-並列回路">(補足) RLC 並列回路</a></h3>
+<p>R, L, C が並列につないだ場合、それぞれの両端に同じ交流電圧
+\( V(t) \) がかかるので、
+別個に電流を計算して最後に足し合わせればよい。
+あまり問題として出てこないのはこのように簡単なためである。</p>
+<h2 id="複素数"><a class="header" href="#複素数">複素数</a></h2>
+<p>事情により、まず sin を cos にしておく。
+sin も cos も同じ形の関数で位相が 1/4 周期ずれているだけなので、
+この差は初期位相 \( \phi \) の部分に吸収されるため、どちらでもよい。</p>
+<p>\[
+V(t) = V_0 \cos (\omega t + \phi)
+\]</p>
+<p>t-V グラフのまま考えるのは筋が悪いので、2次元平面での等速円運動を考える。</p>
+<p>\[
+\begin{eqnarray}
+V(t) = x(t) &amp;=&amp; V_0 \cos (\omega t + \phi) \\
+y(t) &amp;=&amp; V_0 \sin (\omega t + \phi) \\
+r &amp;=&amp; V_0 \\
+\theta(t) &amp;=&amp; \omega t + \phi \\
+\end{eqnarray}
+\]</p>
+<p>y 座標を追加することで角速度一定の円運動としてとらえられるようにした。
+すると、円運動なので極座標で考えると半径が定数関数、角度が一次関数になり、
+より簡単に表せるようになる。
+ここから y 座標を無視したもの (x 軸への射影) が電源電圧であると考える。</p>
+<p>y 座標は極座標へ持ち込むために人為的に追加したものであるので、
+逆に言えば何でもいいということにもなる。
+極座標と言えば複素平面なので、y 軸を虚軸とし、また、オイラーの公式により
+三角関数による複素平面での xy 直交座標表示と指数関数による極座標表示が等しい。
+虚数単位として i を使ってしまうと電流と混同する危険があるので、次の文字である
+j を使う。</p>
+<p>\[
+\begin{eqnarray}
+\dot{V}(t) &amp;=&amp; x(t) + j y(t) \\
+&amp;=&amp; r e^{ j \theta(t) } \\
+x(t) &amp;=&amp; V_0 \cos (\omega t + \phi) \\
+y(t) &amp;=&amp; V_0 \sin (\omega t + \phi) \\
+r &amp;=&amp; V_0 \\
+\theta(t) &amp;=&amp; \omega t + \phi \\
+\end{eqnarray}
+\]</p>
+<p>電圧に y 座標を虚部として追加した <strong>複素電圧</strong> を導入した。
+上部のドットは複素数であることを示す印である(逆にドットの無いものは実数である)。
+この虚部は複素平面上での等速円運動ととらえるために計算の都合で追加したもので、
+現実に観測される電圧電流とは関係がない。</p>
+<p>具体的に代入すると</p>
+<p>\[
+\begin{eqnarray}
+\dot{V}(t) &amp;=&amp; V_0 e^{ j (\omega t + \phi) } \\
+&amp;=&amp; V_0 e^{ j \phi } e^{ j \omega t } \\
+&amp;=&amp; \dot{V}_0 e^{ j \omega t } \\
+\dot{V}_0 &amp;=&amp; V_0 e^{ j \phi } \\
+\end{eqnarray}
+\]</p>
+<p>\( \dot{V}_0 \) には振幅と初期位相の情報を1つの複素数に埋め込んでいる。
+長さが振幅 \( V_0 \) に等しい棒を、
+初期位相 \( \phi \) の角度だけ回転させたものになっている。
+それを \( \omega t \) だけさらに回転させたものが時刻 t における複素電圧である。</p>
+<p>複素電圧から実際に観測される電圧を取り出すには、y 座標 (虚部) を無視して
+x 座標 (実部) だけを取り出せばよい。</p>
+<p>\[
+\begin{eqnarray}
+V(t) = x(t) &amp;=&amp; \mathrm{Re} (\dot{V}(t)) \\
+&amp;=&amp; V_0 \cos (\omega t + \phi) \\
+\end{eqnarray}
+\]</p>
+<h3 id="コンデンサ-複素数"><a class="header" href="#コンデンサ-複素数">コンデンサ (複素数)</a></h3>
+<p>コンデンサの電流を求める式の電圧を複素電圧に置き換えてみる。
+複素数の微分の実数倍だから、電流も複素数になる。
+実際に観測される電流はこの実部である。
+オイラーの功績により複素数の微分積分は実数の場合と全く同じ法則が成り立ち、
+指数関数の微分なので三角関数より楽である。</p>
+<p>\[
+\begin{eqnarray}
+\dot{I}(t) &amp;=&amp; C \dot{V}'(t) \\
+&amp;=&amp; C (\dot{V}_0 e^{ j \omega t })' \\
+&amp;=&amp; j \omega C \dot{V}_0 e^{ j \omega t } \\
+&amp;=&amp; j \omega C \dot{V}(t) \\
+\end{eqnarray}
+\]</p>
+<p>複素電圧と複素電流が (虚数単位が含まれることを受け入れれば)
+定数倍の関係になっているので、
+その比から「抵抗っぽいもの」を求めることができる。
+複素数を複素数で割るので複素数になる。</p>
+<p>\[
+\begin{eqnarray}
+\dot{Z}_C &amp;=&amp; \frac{ \dot{V}(t) }{ \dot{I}(t) } \\
+&amp;=&amp; \frac{1}{ j \omega C } \\
+\end{eqnarray}
+\]</p>
+<p>これを (複素) <strong>インピーダンス</strong> と呼ぶ。</p>
+<p>\[
+\begin{eqnarray}
+\dot{V}(t) &amp;=&amp; \dot{Z}_C \dot{I}(t) \\
+\dot{I}(t) &amp;=&amp; \frac{1}{ \dot{Z}_C } \dot{V}(t) \\
+\end{eqnarray}
+\]</p>
+<p>電流と電圧を複素化し、その比も抵抗を複素化したもの (インピーダンス) とみなすことで、
+オームの法則の自然な拡張となっている。
+インピーダンスの極形式での絶対値と偏角をみると、</p>
+<p>\[
+\begin{eqnarray}
+|\dot{Z}_C| &amp;=&amp; \frac{1}{ \omega C } \\
+\arg (\dot{Z}_C) &amp;=&amp; -90^{\circ}
+\end{eqnarray}
+\]</p>
+<ul>
+<li>複素数の掛け算は絶対値の掛け算と偏角の足し算</li>
+<li>複素数の割り算は絶対値の割り算と偏角の引き算</li>
+</ul>
+<p>\[
+\begin{eqnarray}
+r_1 e^{ j \theta_1 } \cdot r_2 e^{ j \theta_2 }
+&amp;=&amp; (r_1 r_2 ) e^{ j (\theta_1 + \theta_2) } \\
+&amp;=&amp; r_3 e^{ j \theta_3 } \\
+r_3 &amp;=&amp; r_1 r_2 \\
+\theta_3 &amp;=&amp; \theta_1 + \theta_2 \\
+\end{eqnarray}
+\]</p>
+<p>だから、</p>
+<ul>
+<li>インピーダンスの絶対値は電圧と電流の振幅の比を表す。
+<ul>
+<li>これはリアクタンスに等しい。</li>
+</ul>
+</li>
+<li>インピーダンスの偏角は電圧と電流の位相の差を表す。</li>
+</ul>
+<p>実数では位相差の話は難しいので諦めて振幅の比のみをリアクタンスとして求めたが、
+複素インピーダンスには振幅の比に加えて位相差の情報も同時に含めることに成功している。</p>
+<p>電圧から電流を求めるためにはインピーダンスを掛けるのではなくインピーダンスで
+割らなければならないことに注意して、</p>
+<ul>
+<li>角周波数や静電容量が大きいと電流の振幅はそれに比例して大きくなる。</li>
+<li>電流の位相は 90 度早まる。</li>
+</ul>
+<p>ことが分かる。
+これは実数の範囲で微積で求めた結果と一致する。</p>
+<h3 id="コイル-複素数"><a class="header" href="#コイル-複素数">コイル (複素数)</a></h3>
+<p>\[
+\begin{eqnarray}
+L \dot{I}'(t) &amp;=&amp; \dot{V}(t) \\
+L \dot{I}(t) &amp;=&amp; \int \dot{V}(t) dt \\
+\dot{I}(t) &amp;=&amp; \frac{1}{L} \int \dot{V}_0 e^{ j \omega t } dt \\
+&amp;=&amp; \frac{1}{ j \omega L } \dot{V}_0 e^{ j \omega t } \\
+&amp;=&amp; \frac{1}{ j \omega L } \dot{V}(t) \\
+\end{eqnarray}
+\]</p>
+<p>コイルも同じく電圧と電流が複素数の世界で比例関係になり、</p>
+<p>\[
+\begin{eqnarray}
+\dot{Z}_L &amp;=&amp; \frac{ \dot{V}(t) }{ \dot{I}(t) } \\
+&amp;=&amp; j \omega L \\
+\end{eqnarray}
+\]</p>
+<p>\[
+\begin{eqnarray}
+|\dot{Z}_L| &amp;=&amp; \omega L \\
+\arg (\dot{Z}_L) &amp;=&amp; +90^{\circ}
+\end{eqnarray}
+\]</p>
+<h3 id="rlc-直列回路-複素数"><a class="header" href="#rlc-直列回路-複素数">RLC 直列回路 (複素数)</a></h3>
+<p>複素電圧、電流、インピーダンスを導入した状態で、もう一度 RLC 直列回路を考えてみよう。</p>
+<ul>
+<li>RLC 各素子の両端にかかる電圧はよく分からない。
+ただしそれら3つをすべて合計すると電源電圧となる。
+電源電圧は既知の振幅・周波数・初期位相の三角関数、に虚部を加えて複素化したもの。</li>
+<li>RLC 各素子に流れる電流は同一である。それを求めたい。</li>
+<li>RLC 各素子の両端にかかる電圧と電流はその素子の複素インピーダンスを用いて
+オームの法則のようなものが成り立っている。</li>
+</ul>
+<p>\[
+\begin{eqnarray}
+\dot{V}(t) &amp;=&amp; \dot{V}_0 e^{ j \omega t }
+= \dot{V}_R(t) + \dot{V}_L(t) + \dot{V}_C(t) \\
+\dot{V}_R(t) &amp;=&amp; R \dot{I}(t) \\
+\dot{V}_L(t) &amp;=&amp; j \omega L \dot{I}(t) \\
+\dot{V}_C(t) &amp;=&amp; \frac{1}{ j \omega C } \dot{I}(t) \\
+\end{eqnarray}
+\]</p>
+<p>よって</p>
+<p>\[
+\begin{eqnarray}
+R \dot{I}(t) + j \omega L \dot{I}(t) + \frac{1}{ j \omega C } \dot{I}(t)
+&amp;=&amp; \dot{V}_0 e^{ j \omega t } \\
+(R + j \omega L + \frac{1}{ j \omega C }) \dot{I}(t)
+&amp;=&amp; \dot{V}_0 e^{ j \omega t } \\
+\dot{Z} \dot{I}(t) &amp;=&amp; \dot{V}_0 e^{ j \omega t } \\
+\end{eqnarray}
+\]</p>
+<p>\[
+\begin{eqnarray}
+\dot{Z} &amp;=&amp; R + j \omega L + \frac{1}{ j \omega C } \\
+&amp;=&amp; R + j (\omega L - \frac{1}{ \omega C }) \\
+\end{eqnarray}
+\]</p>
+<p>抵抗が直列に並んでいるとき、その抵抗値の和を合成抵抗として置き換えられたように、
+インピーダンスが直列に並んでいるときは、その和を <strong>合成インピーダンス</strong> として
+置き換えることができる。
+オームの法則の形を全く変えずに各パラメータを複素化しただけなので、
+計算が複素数同士の演算になること以外は <strong>オームの法則と全く同じ</strong> 法則が成り立つ。
+RLC を並列に接続した場合でも、並列な合成抵抗の式が成り立つ。
+直列と並列が複雑に絡み合っても合成抵抗の公式を繰り返し適用していくだけで
+合成インピーダンスを求めることができる。
+合成インピーダンスには振幅の比だけではなく、位相のずれの情報も入っている。</p>
+<p>合成インピーダンスが求まったら複素電源電圧をそのインピーダンスで割ったものが
+複素電流である。
+実際に流れる電流値を取り出したいならば、虚部を捨てて実部のみ取り出せば完了である。</p>
+<p>\[
+\begin{eqnarray}
+\dot{Z} &amp;=&amp; R + j \omega L - j \frac{1}{ \omega C } \\
+\dot{I}(t) &amp;=&amp; \frac{ \dot{V}_0 }{ \dot{Z} } e^{ j \omega t } \\
+I(t) &amp;=&amp; \mathrm{Re} (\dot{I}(t)) \\
+&amp;=&amp; I_0 \sin (\omega t + \phi_I) \\
+I_0 &amp;=&amp; \frac{ |\dot{V}_0| }{ |\dot{Z}| } \\
+\phi_I &amp;=&amp; \arg \frac{ \dot{V}_0 }{ \dot{Z} }
+\end{eqnarray}
+\]</p>
+<p>このように、複素数の四則演算ができれば微分方程式を解かずとも、オームの法則から
+電流を求めるのと同じ要領で電流がどのような波か分かってしまう。</p>
+<h3 id="rlc-直列共振回路"><a class="header" href="#rlc-直列共振回路">RLC 直列共振回路</a></h3>
+<p>合成インピーダンスの式をよく見ると、</p>
+<p>\[
+\begin{eqnarray}
+\dot{Z} = R + j \omega L + \frac{1}{ j \omega C }\\
+\end{eqnarray}
+\]</p>
+<p>R, L, C を固定しても角周波数が変わるとインピーダンスの値が変わることが分かる。
+\( \omega \longrightarrow +0 \) および
+\( \omega \longrightarrow \infty \) の極限を考えると、
+どちらの場合でも片方は 0 に収束するが、もう片方が無限大に発散してしまう。
+つまり、周波数がほぼ 0 の直流のような電圧に対してはコンデンサは
+(過渡現象を無視すると) 電流をほとんど通さず、周波数が非常に高い電圧に対しては
+コイルがほとんど電流を通さない。</p>
+<p>では周波数が程よい値だった場合どうなるだろうか。
+\( R, L, C \gt 0 \) それぞれのインピーダンスを複素平面で考えると、</p>
+<ul>
+<li>R: 実数なので常に原点から <strong>右向き</strong>。角周波数によって変化しない。</li>
+<li>L: 虚数成分しか持たず、常に原点から <strong>上向き</strong>。
+<ul>
+<li>\( \omega \longrightarrow 0 \):
+絶対値は 0 に近づく。</li>
+<li>\( \omega \longrightarrow \infty \)
+絶対値は無限大に発散する。</li>
+</ul>
+</li>
+<li>C: 虚数成分しか持たず、常に原点から <strong>下向き</strong>。
+<ul>
+<li>\( \omega \longrightarrow 0 \):
+絶対値は無限大に発散する。</li>
+<li>\( \omega \longrightarrow \infty \)
+絶対値は 0 に近づく。</li>
+</ul>
+</li>
+</ul>
+<p>複素数の足し算は2次元ベクトルの足し算と同じなので、まず上下方向のベクトルだけ
+足し算すると、</p>
+<p>\[
+j (\omega L - \frac{1}{ \omega C }) \\
+\]</p>
+<p>これは引き算の結果が正のとき上向き、負のとき下向きのベクトルである。
+そして \( \omega \) 以外を固定して \( \omega \) を 0 から無限大の間で
+動かしてやると、各項は単調増加および単調減少なので、どこかで1回絶対値が等しくなり
+結果が 0 になる \( \omega \) が存在する。それは</p>
+<p>\[
+\begin{eqnarray}
+\omega L &amp;=&amp; \frac{1}{ \omega C } \\
+\omega^2 LC &amp;=&amp; 1 \\
+\omega^2 &amp;=&amp; \frac{1}{LC} \\
+\omega &amp;=&amp; \frac{1}{ \sqrt{LC} } \\
+T &amp;=&amp; \frac{ 2 \pi }{ \omega } \\
+f &amp;=&amp; \frac{ \omega }{ 2 \pi } \\
+&amp;=&amp; \frac{1}{ 2 \pi \sqrt{LC} } \\
+\end{eqnarray}
+\]</p>
+<p>最後、角周波数を周波数に直したが、これが <strong>共振周波数</strong> で、
+この周波数の電圧に対して電流の振幅が最も大きくなる。
+そして高校物理ではこの共振周波数の最終結果を覚えることになっている。なんでやねん。</p>
+<p>そして最後に R (右向きのベクトル) と足し合わせるが、
+真上または真下またはゼロベクトルと右向きのベクトルを足すので、
+結果の絶対値 (ベクトルの長さ) が最小となるのはコイルとコンデンサのインピーダンスの和が
+ゼロになるときである。
+このとき RLC の合成インピーダンスは R (実数) に等しくなる。</p>
+<h2 id="消費電力"><a class="header" href="#消費電力">消費電力</a></h2>
+<ul>
+<li>P (W=J/s): 1秒あたりに回路から失われる (電気から他の形になる) エネルギー。消費電力。
+電気抵抗では主に熱エネルギーに変わって放出される。</li>
+<li>I (A=C/s): 1秒あたりに流れる電気量。電流。</li>
+<li>V (V=J/C): +1C が電位が高いところから低いところへ移動したときに得るエネルギー。
+すなわち失う位置エネルギー。
+正確には位置エネルギーではないことの方が多い気がするが、混同してしまっても
+そこまで問題にはならない。
+電位差という言い方は正確さに欠くことがあるが、電圧とか言っておけばごまかせる。</li>
+</ul>
+<p>\[
+\begin{eqnarray}
+P(t) = I(t) V(t)
+\end{eqnarray}
+\]</p>
+<p>最初は公式を丸覚えさせられる気もするが、定義や単位を見ながら考えれば割と
+当然のことを言っているだけの式である。</p>
+<h3 id="消費電力-実数"><a class="header" href="#消費電力-実数">消費電力 (実数)</a></h3>
+<p>交流の場合は電圧と電流が時間変化によって絶えず変化しているが、
+瞬間的な電圧と電流を掛ければその瞬間の消費電力になる。
+これに微小時間を掛けて出てくる微小エネルギーを足し合わせる (積分する) ことによって
+ある時間内に消費されるエネルギーを計算することができる。</p>
+<p>\[
+\begin{eqnarray}
+V(t) &amp;=&amp; V_0 \sin \omega t \\
+I(t) &amp;=&amp; \frac{ V_0 }{ R } \sin \omega t \\
+P(t) &amp;=&amp; I(t) V(t) \\
+&amp;=&amp; \frac{ V_0^2 }{ R } \sin^2 \omega t \\
+\end{eqnarray}
+\]</p>
+<p>しかし例えば 50 Hz の交流電圧の周期は 0.02 s であり、
+実用上欲しいのはそんな短い時間中での細かい消費電力変化の詳細ではなく、
+何分・何時間・何日動かし続けたときにどのくらいのエネルギーが消費されるかという方である。
+そのためには1周期分の消費エネルギーを時間で割った平均の消費電力を求めれば十分で、</p>
+<p>\[
+\begin{eqnarray}
+P(t) &amp;=&amp; \frac{ V_0^2 }{ R } \sin^2 \omega t \\
+\bar{P} &amp;=&amp; \frac{1}{T} \int_0^T P(t) dt \\
+&amp;=&amp; \frac{1}{T} \int_0^T \frac{ V_0^2 }{ R } \sin^2 \omega t dt \\
+&amp;=&amp; \frac{1}{T} \frac{ V_0^2 }{ R } \int_0^T \sin^2 \omega t dt \\
+\end{eqnarray}
+\]</p>
+<p>結局 sin の2乗を (その sin の) 1周期で積分するとどうなるかということに帰着した。
+積の積分は難しいので何らかの手を打つ必要があるが、三角関数同士の積は加法定理を
+右から左に使うと角度の和に変換して次数を下げることができる。</p>
+<p>\[
+\begin{eqnarray}
+\sin (\alpha \pm \beta) = \sin \alpha \cos \beta \pm \cos \alpha \sin \beta \\
+\cos (\alpha \pm \beta) = \cos \alpha \cos \beta \mp \sin \alpha \sin \beta \\
+\end{eqnarray}
+\]</p>
+<ul>
+<li>積の内訳
+<ul>
+<li>sin 同士、または cos 同士の場合: cos の加法定理を使う。</li>
+<li>sin と cos の積の場合: sin の加法定理を使う。</li>
+</ul>
+</li>
+<li>角度の内訳
+<ul>
+<li>角度が同じ場合:
+\( \beta = \alpha \) とし、角度のプラスを取る。(倍角・半角の公式)</li>
+<li>角度が異なる場合:
+複号を変えた式を2つ用意し、欲しい積のみが残るよう辺々足し算 or 引き算する。
+(積和・和積の公式)</li>
+</ul>
+</li>
+</ul>
+<p>角度の等しい sin 同士の積を三角関数の1乗に直したいので、
+cos の加法定理を同じ角度同士の和に適用する。
+\( \sin^2 \alpha + \cos^2 \beta = 1 \) よりこの2つは相互に変換できるので
+今欲しい sin 同士の積のみの形にする
+(cos の2乗が欲しいならそちらのみの形にすればよい)。</p>
+<p>\[
+\begin{eqnarray}
+\cos (\alpha + \alpha) &amp;=&amp; \cos^2 \alpha - \sin^2 \alpha \\
+\cos 2 \alpha &amp;=&amp; (1 - \sin^2 \alpha) - \sin^2 \alpha \\
+&amp;=&amp; 1 - 2 \sin^2 \alpha \\
+\end{eqnarray}
+\]</p>
+<h3 id="消費電力-複素数"><a class="header" href="#消費電力-複素数">消費電力 (複素数)</a></h3>
+<p>TODO: 内積は複素共役を取って掛ける</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="フィボナッチ数列"><a class="header" href="#フィボナッチ数列">フィボナッチ数列</a></h1>
+<p>\[
+\begin{eqnarray}
+F_{n+2} &amp;=&amp; F_{n+1} + F_{n} \\
+F_1 &amp;=&amp; 1 \\
+F_2 &amp;=&amp; 1 \\
+\end{eqnarray}
+\]</p>
+<h2 id="例-1"><a class="header" href="#例-1">例</a></h2>
+<p>\[
+\begin{eqnarray}
+F_0 &amp;=&amp; 0 \\
+F_1 &amp;=&amp; 1 \\
+F_2 &amp;=&amp; 1 \\
+F_3 &amp;=&amp; 2 \\
+F_4 &amp;=&amp; 3 \\
+F_5 &amp;=&amp; 5 \\
+F_6 &amp;=&amp; 8 \\
+F_7 &amp;=&amp; 13 \\
+F_8 &amp;=&amp; 21 \\
+F_9 &amp;=&amp; 34 \\
+F_{10} &amp;=&amp; 55 \\
+\end{eqnarray}
+\]</p>
+<p>小学校の足し算ができれば遊べるフレンドリーな問題です。</p>
+<h3 id="補足"><a class="header" href="#補足">補足</a></h3>
+<p>ちょっと考えると、別に n を増やす方向にしか使えないわけではなく、
+連続する3項のうち2項が分かっていて「抜け」が1つだけなら他の2項から求めることができる。
+したがって、マイナスの方向にも進んでいくこともできる。
+これにより \( F_0 = 0 \) とできるし、0番目から始めてもよい。</p>
+<h2 id="隣接三項間漸化式"><a class="header" href="#隣接三項間漸化式">隣接三項間漸化式</a></h2>
+<p>\[ 1 \cdot F_{n+2} = 1 \cdot F_{n+1} + 1 \cdot F_{n} \]</p>
+<p>この漸化式はよく見ると全係数が1の線形和の形になっており、
+高校数学に出てくる隣接三項間漸化式である。
+なので例の謎解法を用いて解く (一般解を得る) ことができる。</p>
+<p>漸化式から謎ルールにより特性方程式は</p>
+<p>\[
+\begin{eqnarray}
+F_{n+2} &amp;=&amp; F_{n+1} + F_{n} \\
+x^2 &amp;=&amp; x + 1 \\
+x^2 &amp;-&amp; x - 1 = 0
+\end{eqnarray} \]</p>
+<p>で、これは幸いにも実数解が2つ得られて、</p>
+<p>\[ x = \frac{ 1 \pm \sqrt{5} }{2} \]</p>
+<p>通常高校生に解かせる問題はここがきれいな整数になるよう調整されているが、
+係数が全部1できれいだと思わせておいて、このような無理数になってしまう。
+何度も書くのはツラいので、文字で置き換えることとする。
+( \( \alpha \) は <strong>黄金比</strong> と呼ばれる数で、人が「きれいに」感じる比率である。
+自然界にも多く存在する。)</p>
+<p>\[
+\begin{eqnarray}
+\alpha &amp;=&amp; \dfrac{ 1 + \sqrt{5} }{2} \\
+\beta  &amp;=&amp; \dfrac{ 1 - \sqrt{5} }{2}
+\end{eqnarray}
+\]</p>
+<p>この特性方程式の解を使うと謎解法により、漸化式は以下の2通りに変形できる。</p>
+<p>\[
+\begin{eqnarray}
+F_{n+2} - \alpha F_{n+1} &amp;=&amp; \beta  ( F_{n+1} - \alpha F_{n} ) \\
+F_{n+2} - \beta  F_{n+1} &amp;=&amp; \alpha ( F_{n+1} - \beta  F_{n} )
+\end{eqnarray}
+\]</p>
+<p>どこからこんな変形が出てくるのか本当に意味が分からないと思われる (意味は後述) が、
+展開して検算してみると確かにどちらも元の式に戻る。
+これらの式は以下のような新しい数列を考えると、単純な等比数列になることを示している。
+公比は順に \( \beta, \alpha \) である。</p>
+<p>\[
+\begin{eqnarray}
+a_n = F_{n+1} - \alpha F_n \\
+b_n = F_{n+1} - \beta  F_n
+\end{eqnarray}
+\]</p>
+<p>等比数列は簡単に一般項を表現できて、n 番目の値は 1 番目の値に公比を n - 1 回
+かけたものだから、以下の一般項を得る。</p>
+<p>\[
+\begin{eqnarray}
+a_n &amp;=&amp; a_1 \cdot \beta ^{n-1} \\
+b_n &amp;=&amp; b_1 \cdot \alpha^{n-1} \\
+a_1 &amp;=&amp; F_2 - \alpha F_1 = 1 - \alpha \\
+&amp;=&amp; \beta \\
+b_1 &amp;=&amp; F_2 - \beta  F_1 = 1 - \beta \\
+&amp;=&amp; \alpha
+\end{eqnarray}
+\]</p>
+<p>\( \alpha + \beta \) を計算してみると1になることから、初項は1文字できれいに
+表すことができる。
+それ以外に関しては高校数学のテンプレ解法をなぞっただけである。
+まとめるとやたらきれいになる (うまく文字で置き換えたからでもあるが)。</p>
+<p>\[
+\begin{eqnarray}
+a_n &amp;=&amp; \beta  ^ n \\
+b_n &amp;=&amp; \alpha ^ n
+\end{eqnarray}
+\]</p>
+<p>新しく作った数列をもとのフィボナッチ数列に戻してやると</p>
+<p>\[
+\begin{eqnarray}
+F_{n+1} - \alpha F_n &amp;=&amp; \beta  ^ n \\
+F_{n+1} - \beta  F_n &amp;=&amp; \alpha ^ n
+\end{eqnarray}
+\]</p>
+<p>辺々引き算すると \( F_{n+1} \) を消去できる。</p>
+<p>\[ ( \alpha - \beta ) F_n = \alpha ^ n - \beta ^ n　\]</p>
+<p>これはもう解けていて、フィボナッチ数列の一般項を求められている。
+\( \alpha, \beta\) を代入すると</p>
+<p>\[
+\begin{eqnarray}
+\alpha &amp;=&amp; \frac{ 1 + \sqrt 5 }{2} , \quad
+\beta  = \frac{ 1 - \sqrt 5 }{2} \\
+F_n &amp;=&amp; \frac{ 1 }{ \alpha - \beta } ( \alpha ^ n - \beta ^ n ) \\
+F_n &amp;=&amp; \frac{ 1 }{ \sqrt 5 } \left \{
+\left ( \frac{ 1 + \sqrt{5} }{2} \right ) ^ n -
+\left ( \frac{ 1 - \sqrt{5} }{2} \right ) ^ n
+\right \}
+\end{eqnarray}
+\]</p>
+<p>とても整数になるようには見えないが、フィボナッチ数列の定義より明らかに
+全ての整数 \( n \) について \( F_n \) は整数である。
+実際、\( n \) に具体的な整数を代入してみると魔法のように整数になる。</p>
+<h2 id="なんやねんこれは"><a class="header" href="#なんやねんこれは">なんやねんこれは</a></h2>
+<p>フィボナッチ数列の問題というよりは、隣接三項間漸化式の解き方だけを高校生に教えており
+なぜこれで解けるのか意味が分からないところが問題である。</p>
+<p>実は線形和になっている隣接三項間漸化式は <strong>二階の線形微分方程式(同次形)</strong> と
+解き方がそっくりである。そっくりどころか、数学的にしっかり解析すると
+<strong>同型</strong> であるとまで言えてしまう。</p>
+<p>漸化式の \( a_{n+1} - a_n \) のことを <strong>差分</strong> とも呼び、
+これに関する方程式を <strong>差分方程式</strong> とも呼ぶ。
+\(y\) を \(x\) の関数とするとき、\( y' = \frac{ dy }{ dx } \) を
+<strong>微分</strong> と呼び、これに関する方程式を <strong>微分方程式</strong> と呼ぶ。
+差分方程式は、連続的な関数に関する微分方程式を、離散的な関数 (数列) で考える
+バージョンだととらえることができる。</p>
+<p>フィボナッチ数列に <em>そっくりな</em> 微分方程式は以下のようになる。</p>
+<p>\[
+\begin{eqnarray}
+y'' = y' + y \\
+y'' - y' - y = 0
+\end{eqnarray}
+\]</p>
+<p>このような形の方程式は解き方が確立されている。
+高校では取り扱わないのだが、同型だと言った通り、隣接三項間漸化式の解き方という扱いで
+日本の高校生は実質的に解かされている…。</p>
+<p>しかしながら高校物理における単振動は運動方程式がこの形の微分方程式であり、
+(実数)解が三角関数になるという結果を暗記させられる。
+これもどうかという気はするが、微分方程式は解くのは (非常に) 難しいが
+解の候補が正しいかは実際に微分して代入して成り立つか調べるだけで確認できるため、
+ギリギリ許せるかもしれない。
+しかし \( t \) の係数である角周波数 \( \omega \) が質量とばね定数から
+決定できて振動の周期や (周波数) を確定できるというのは、
+さすがに微積分なしという建前の上でかなりの無茶をやっている気がする。。</p>
+<p>\[
+\begin{eqnarray}
+m \frac{ d^2 x }{ d t^2 } = - k x \\
+m x'' + kx = 0 \\
+x'' + \frac{k}{m} x = 0 \\
+x'' + \omega ^2 x = 0 \\
+\cdots \\
+x(t) = A \sin ( \omega t + \phi )\\
+\omega = \sqrt{\frac{k}{m}}
+\end{eqnarray}
+\]</p>
+<p>とにかく、階数 (微分回数) に関わらず線形微分方程式の解き方は確立されていて、
+それは以下の考察による。</p>
+<p>\( f(x), g(x) \) が解のとき、</p>
+<ul>
+<li>定数倍 \( c f(x) \) も解である。</li>
+<li>\( f(x) + g(x) \) も解である。</li>
+</ul>
+<p>これは以下の微分の性質を線形微分方程式に代入すれば確認できる。</p>
+<ul>
+<li>\( \{ c f (x) \}' = c f'(x) \)</li>
+<li>\( \{ f(x) + g(x) \}' = f'(x) + g'(x) \)</li>
+</ul>
+<p>これを踏まえた解法は以下のようになる。</p>
+<ol>
+<li>なんでもいいから頑張って特殊解 (特解) を2つ (二階の場合) 探す。
+ただし定数倍の関係になっているものは除く(<strong>一次独立</strong>という)。</li>
+<li>その2つを \( f(x), g(x) \) とすると、
+\( C f(x) \) や \( D g(x) \) も解だし、
+解の和もまた解である。</li>
+<li>\( y = C f(x) + D g(x) \) が解全体 (一般解) となる (C, D は任意定数)。</li>
+<li><strong>初期条件</strong> を1つ与えられると、任意定数を1つ決定することができる。
+二階の場合は2つ出てくるので、任意性を消すためには初期条件が2つ必要である。
+これはフィボナッチ数列で言えば最初の2項が必要であることに相当する。</li>
+</ol>
+<p>これの他に解が無いことはどう証明するのか？などと考えてしまいそうになるが、
+とんでもなく難しい話になるので気にしてはいけない (数学科へ GO)。
+2回の微分を行っているので、任意定数 (積分定数みたいなもの) が2つ出てくれば
+全部の解を覆いつくせていると考えておけば OK ではないが OK。</p>
+<p>問題は一般解でなくていいとはいえ特殊解をどうやって探すかだが、</p>
+<p>\[
+y'' - y' - y = 0
+\]</p>
+<p>この式をよく見ると y を微分したりもう一回微分したりしても、元の y の定数倍にしか
+ならないようなものしか解にならなそうに見える。
+微分 <strong>方程式</strong> と名前がついているが、イコールが成り立つ x を求めるのではなく、
+これが x についての <strong>恒等式</strong> (x に何を入れても成り立つ) になるような y が
+どのような x の関数なのかを求める問題である。</p>
+<p>解を指数関数と仮定して微分も行うと、</p>
+<p>\[
+\begin{eqnarray}
+y   &amp;=&amp; e ^ { \lambda x } \\
+y'  &amp;=&amp;  \lambda e ^ { \lambda x } = \lambda y \\
+y'' &amp;=&amp; \lambda ^ 2 e ^ { \lambda x } = \lambda ^ 2 y \\
+\end{eqnarray}
+\]</p>
+<p>となり、このまま線形微分方程式に代入してやる。</p>
+<p>\[
+\begin{eqnarray}
+y'' - y' - y = 0 \\
+\lambda ^ 2 y - \lambda y - y = 0 \\
+( \lambda ^ 2 - \lambda - 1 ) y = 0 \\
+( \lambda ^ 2 - \lambda - 1 ) e ^ { \lambda x } = 0 \\
+\lambda ^ 2 - \lambda - 1 = 0 \quad ( \because e^{\lambda x} \neq 0) \\
+\end{eqnarray}
+\]</p>
+<p>最後の式がまさに例の高校数学謎解法でも使われる <strong>特性方程式</strong> である。
+差分方程式 (漸化式) も微分方程式と同じようなもの (どころか同型) なので
+<strong>同じ用語を使う</strong>。</p>
+<p>二階の場合は二次方程式になるので、その解は</p>
+<ul>
+<li>異なる2つの実数解</li>
+<li>実数の重解</li>
+<li>異なる2つの虚数解</li>
+</ul>
+<p>のいずれかになる。
+二つの異なる解があれば \( y = e ^ { \lambda_1 x}, y = e ^ { \lambda_2 x}\)
+という一次独立な (定数倍でない) 二解が得られるので楽だが、
+重解の場合はちょっと (結構？) 困る。
+しかし定数変化法で何とかなることは確立しているので安心してよい。</p>
+<p>フィボナッチ数列の係数の場合は2つの実数解が得られるので、</p>
+<p>\[
+\begin{eqnarray}
+y = C e^{ \alpha x } + D e^{ \beta x}
+\end{eqnarray}
+\]</p>
+<p>これが一般解である (C, D は任意定数)。</p>
+<p>ちなみに単振動の場合は</p>
+<p>\[
+\begin{eqnarray}
+\lambda^2 + \omega^2 = 0 \\
+\lambda^2 = - \omega^2 \\
+\lambda = \pm i \omega
+\end{eqnarray}
+\]</p>
+<p>二つの虚解となる。
+複素指数関数は複素数であるので、任意定数も複素数として</p>
+<p>\[
+x(t) = C e^{ i \omega t } + D e^{ - i \omega t }
+\]</p>
+<p>ただしこれだと x 座標が複素数になってしまうので、実数になるような条件で
+絞ってやる必要がある。
+オイラーの公式</p>
+<p>\[
+e^{ i \theta } = \cos \theta + i \sin \theta
+\]</p>
+<p>を使って指数関数の極形式を三角関数の直交座標に直し、虚部が 0 になるよう調整すれば、
+2つの任意の複素数、つまり4つの任意の実数が、2つの任意の実数に制約される。</p>
+<p>\[
+x(t) = A \sin{ \omega t } + B \cos{ \omega t }
+\]</p>
+<p>ここまでやっておいてなんだが、システマティックに複素指数関数の一般解から頑張らなくても、
+運動方程式をガン見すればお互いに定数倍でない実数関数の特解2つは見つかる。</p>
+<p>\[
+\begin{eqnarray}
+x(t) = A \sin{ \omega t } \\
+x(t) = B \cos{ \omega t }
+\end{eqnarray}
+\]</p>
+<p>別に sin と cos でないといけないわけではないが、(sin, -sin) のように
+位相が 180 度ずれると-1 倍となってしまい、一次独立ではなくなってしまうため注意。</p>
+<p>周波数の同じ三角関数の和は、同じ周波数の三角関数になる。
+高校数学だと三角関数の合成という名目で加法定理の逆として教えられるが、
+これも謎の決まったテクニックとして教えられておりよろしくない。
+とにかく任意の振幅で位相差が 0 度や 180 度でない三角関数同士を合成すると、
+任意の振幅かつ任意の位相差の三角関数になる。
+sin と cos に限定するなら高校数学の三角関数の合成で証明できる。</p>
+<p>\[
+\begin{eqnarray}
+x(t) = C \sin{ (\omega t + D) }
+\end{eqnarray}
+\]</p>
+<p>文字が被ってしまったが実数任意定数を置き直した。
+微分して代入すればきちんと解になっていることが分かる。</p>
+<p>三角関数の中身の時刻 t の係数 \( \omega \) が分かれば、
+三角関数は 360 度 ( \( 2 \pi \) rad ) で一周するので、
+振動の一周にかかる時間 (周期) はここまでくれば、</p>
+<p>\[
+\begin{eqnarray}
+T &amp;=&amp; \frac{ 2 \pi }{ \omega }
+&amp;=&amp; 2 \pi \sqrt{ \frac{m}{k} }
+\end{eqnarray}
+\]</p>
+<p>と簡単に求められる。
+が、これを微積なしの建前で暗記させるのはさすがに無茶が過ぎるようにも感じる。</p>
+<h3 id="解の補足"><a class="header" href="#解の補足">解の補足</a></h3>
+<p>特解を探す際に指数関数が解になりそう、と言ったが、よく考えると (よく考えなくても)
+指数関数ではなく 0 という x によらない定数関数も条件を満たすことが分かる。
+よってこれも立派な微分方程式の解である
+(ただし、<strong>自明な解</strong> と呼ばれることもある…)。</p>
+<p>\[
+\begin{eqnarray}
+y'' - y' - y = 0 \\
+y(x) = 0
+\end{eqnarray}
+\]</p>
+<p>ただ、これは特解の定数倍を考えたときに</p>
+<p>\[
+\begin{eqnarray}
+y = C e^{ \lambda t }
+\end{eqnarray}
+\]</p>
+<p>ここで \( C = 0 \) とすると、これは x に関する指数関数ではなく
+定数関数になってしまうが、ちょうど自明な解と一致している。
+なので、指数関数にならない \( C \neq 0 \) という断りを入れずに
+任意の実数とすることで解を合成している。
+このあたり、テキストによっては軽く触れられていることもあれば、
+完全に省略されてしまっている場合もある。</p>
+<p>自然科学 (物理学) は適当にやってみて、何か説明のつかない自然現象が起きてから
+よく見直してみたら数学的にまずいことをやっていたのを発見し、
+ならばそれを直す、というようなアプローチを取りがちなので、要はいい加減である。
+たまに (よく) 物理学者と数学者で衝突が発生しているが、生温かい目で見守っておけばよい。</p>
+<h2 id="漸化式を線形微分方程式のように解いてみる"><a class="header" href="#漸化式を線形微分方程式のように解いてみる">漸化式を線形微分方程式のように解いてみる</a></h2>
+<p>\[
+\begin{eqnarray}
+F_{n+2} &amp;=&amp; F_{n+1} + F_{n} \\
+F_1 &amp;=&amp; 1 \\
+F_2 &amp;=&amp; 1 \\
+\end{eqnarray}
+\]</p>
+<ul>
+<li>初めの式は、項間の関係を示している。これは二階線形微分方程式 (同次) に対応し、
+ここから任意定数2つを含む一般解が得られる。</li>
+<li>残りの式は初期条件である。2つあるのですべての任意定数を消去し、
+解を1つに確定させることができる。</li>
+</ul>
+<p>これに線形微分方程式の解法を適用してみよう。</p>
+<ul>
+<li>まず、漸化式をよく見ると、ある数列がこの漸化式を満たす場合、それを定数倍した
+数列もまた解になることが分かる。</li>
+<li>また、ある2つの数列がこの漸化式を満たす場合、それを足したものもまた解になる
+ことが分かる。ただし、2つの式が定数倍の場合は第一の性質で事足りるので除く。</li>
+<li>証明は難しいが、2つの数列と2つの任意定数で解空間全体を覆いつくすことができる。</li>
+</ul>
+<p>となれば、まずは初期条件を無視し、まだ一般解でなくていいので漸化式を満たすような
+特解を2つ、なんとかして見つけられないかという話になる。
+微分方程式のときは微分すると元の関数の定数倍になるような関数ならよさそう、
+そしてそれは指数関数が該当していた。
+次の項が今の項の定数倍となるような数列が思い当たる。
+そしてそれは等比数列である。
+また、その定数倍も条件を満たすが、一般性はまだいらないので初項は適当でよい。
+初項を公比と同じにしておけば式が簡単になる。</p>
+<p>\[
+\begin{eqnarray}
+y' &amp;=&amp; \lambda y \\
+y &amp;=&amp; e^{ \lambda x } \\
+F_{n+1} &amp;=&amp; r F_n \\
+F_n &amp;=&amp; r^n \\
+\end{eqnarray}
+\]</p>
+<p>では等比数列を漸化式に代入すると</p>
+<p>\[
+\begin{eqnarray}
+F_{n+2} - F_{n+1} - F_n &amp;=&amp; 0 \\
+F_n &amp;=&amp; r^n \\
+r^2 \cdot r^n - r \cdot r^n - r^n &amp;=&amp; 0 \\
+(r^2 - r - 1) r^n &amp;=&amp; 0 \\
+r^2 - r - 1 &amp;=&amp; 0 \quad (\because r^n \neq 0)
+\end{eqnarray}
+\]</p>
+<p>これは <strong>特性方程式である</strong> 。
+この解 \( \alpha, \beta \) を底とした等比数列 (指数関数) は漸化式を満たす。
+また、その定数倍も漸化式を満たし、解である。
+また、2つの解を足し合わせたものも解である。
+(特性方程式の解が整数にならないと検算が大変なので、適当な高校数学の問題で確認するとよい)</p>
+<p>\[
+\begin{eqnarray}
+F_{n+2} - F_{n+1} - F_n = 0 \\
+F_n = \alpha^n, \ \beta^n \\
+F_n = C \cdot \alpha^n, \ D \cdot \beta^n \\
+F_n = C \cdot \alpha^n + D \cdot \beta^n \\
+\end{eqnarray}
+\]</p>
+<p>これがフィボナッチ数列から初期条件を取り除いた一般解である。
+ここから一般性を取り除くには初期条件が2つ必要で、</p>
+<p>\[
+\begin{eqnarray}
+F_n &amp;=&amp; C \cdot \alpha^n + D \cdot \beta^n \\
+F_0 &amp;=&amp; 0 = C + D \\
+F_1 &amp;=&amp; 1 = \alpha C + \beta D
+\end{eqnarray}
+\]</p>
+<p>C と D の式が2つあるのでそれぞれ決定できる。</p>
+<p>\[
+\begin{eqnarray}
+D &amp;=&amp; -C \\
+(\alpha - \beta) C &amp;=&amp; 1 \\
+C &amp;=&amp; \frac{1}{ \alpha - \beta } \\
+D &amp;=&amp; - \frac{1}{ \alpha - \beta } \\
+F_n &amp;=&amp; \dfrac{ 1 }{ \alpha - \beta } ( \alpha ^ n - \beta ^ n ) \\
+F_n &amp;=&amp; \dfrac{ 1 }{ \sqrt 5 } \left \{
+\left ( \dfrac{ 1 + \sqrt{5} }{2} \right ) ^ n -
+\left ( \dfrac{ 1 - \sqrt{5} }{2} \right ) ^ n
+\right \}
+\end{eqnarray}
+\]</p>
+<p>高校数学の謎解法と全く同じ解が得られた。</p>
+<p>謎解法と言っても、当然この解構造を意識して作られたもので、
+解空間全体を網羅できているか明らかでない (示せるが超大変) という弱点を
+うまく解消している。
+その代わり、特性方程式がどこから出てきたアイデアなのかが全く示されておらず、
+テクニックの丸暗記状態となってしまっている。
+そもそも高校数学では微分方程式はまったくやらないか、ほんの少し基本的な問題だけ、
+という状態なのに、二階線形微分方程式と同型な問題をこっそり解かせているということであり、
+どうかと思う。</p>
+<h2 id="線形代数からのアプローチ"><a class="header" href="#線形代数からのアプローチ">線形代数からのアプローチ</a></h2>
+<p>まず漸化式が線形和の形になっているし、線形微分方程式の解も線形代数の考え方が
+ベースになっている。
+特解を基底とした2次元空間 (指数関数をベクトルのように見なしている) が
+解空間となっている。
+そもそも線形でない微分方程式などほとんどの場合とてもじゃないが解けやしない。</p>
+<p>というわけで、漸化式が線形なのをヒントに、線形代数の言葉で書き直してみる。
+線形和はベクトルの内積だと考えて、</p>
+<p>\[
+\begin{eqnarray}
+F_{n+2} &amp;=&amp; F_{n+1} + F_n \\
+F_{n+2} &amp;=&amp;
+\begin{pmatrix} 1 &amp; 1 \end{pmatrix}
+\begin{pmatrix} F_{n+1} \\ F_n \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>(行ベクトルを上の方によせたいが、やり方が分からない。ごめんなさい。)</p>
+<p>これで例えば \( (F_2, F_1) \) というベクトルに \( (1, 1) \) というベクトルを
+かける (内積) と、\( F_3 \) になる、と考えることができる。
+しかし次にやりたいのは \( F_4 \) を求めることで、そのためには
+\( (F_3, F_2) \) に係数ベクトルをかける必要がある。
+つまり \( F_3 \) だけでなく \( F_2 \) も同時に欲しいのだが、
+\( (F_2, F_1) \) から \( F_2 \) への変換はとても簡単で、\( (1, 0)\) を
+かければよい。
+一般化すると</p>
+<p>\[
+\begin{eqnarray}
+F_{n+1} &amp;=&amp; 1 \cdot F_{n+1} + 0 \cdot F_n \\
+F_{n+1} &amp;=&amp;
+\begin{pmatrix} 1 &amp; 0 \end{pmatrix}
+\begin{pmatrix} F_{n+1} \\ F_n \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>2つの変換を合体させて、ベクトル \( (F_{n+1}, F_n) \) を
+ベクトル \( (F_{n+2}, F_{n+1}) \) に <strong>行列</strong> をかけて変換すると
+考えることができる。</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} F_{n+2} \\ F_{n+1} \end{pmatrix} =
+\begin{pmatrix} 1 &amp;&amp; 1 \\ 1 &amp;&amp; 0 \end{pmatrix}
+\begin{pmatrix} F_{n+1} \\ F_n \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>つまり、この行列 \( \begin{pmatrix} 1 &amp;&amp; 1 \\ 1 &amp;&amp; 0 \end{pmatrix} \) は、
+フィボナッチ数列の隣り合う2項からなるベクトルを、1つ隣の2項からなるベクトルへ
+一次変換するものだと考えることができる。
+またこの式は、スカラーの等比数列からベクトルの等比数列への
+自然な拡張とみなすことができる。公比にあたるものは行列となっている。</p>
+<p>行列を1回かけると数列の添え字が1つ増えることから、</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} F_{n+1} \\ F_{n} \end{pmatrix} =
+\begin{pmatrix} 1 &amp;&amp; 1 \\ 1 &amp;&amp; 0 \end{pmatrix} ^n
+\begin{pmatrix} F_1 \\ F_0 \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>と一般に表せる。
+ここで律儀にベクトルに行列を左からかける、という操作を n 回行う必要はない。
+行列のかけ算は左右を入れ替えてはいけないが、どちらから先に計算するかは変えてもよい。
+一次変換の一次変換はまた一次変換である、ということで、それが行列の積の計算規則でもある。
+要は行列の n 乗の部分だけ先に積を計算できれば、初項ベクトルにそれを左からかけるだけで
+一般解とできそうである。</p>
+<p>さて、\( \begin{pmatrix} 1 &amp;&amp; 1 \\ 1 &amp;&amp; 0 \end{pmatrix} ^n \) を
+計算できそうか、という話になったが、別の解法により答えは大体分かっており、
+あまり簡単には表せない気がする。
+試しに2乗や3乗を計算してみても、各要素にフィボナッチ数列のようなものが
+現れるだけ (当たり前) で、これを眺めていてもフィボナッチ数列を眺めて
+直接一般項を出そうとするのと話は変わらない。</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} 1 &amp;&amp; 1 \\ 1 &amp;&amp; 0 \end{pmatrix}
+\begin{pmatrix} 1 &amp;&amp; 1 \\ 1 &amp;&amp; 0 \end{pmatrix} =
+\begin{pmatrix} 2 &amp;&amp; 1 \\ 1 &amp;&amp; 1 \end{pmatrix} \\
+\begin{pmatrix} 2 &amp;&amp; 1 \\ 1 &amp;&amp; 1 \end{pmatrix}
+\begin{pmatrix} 1 &amp;&amp; 1 \\ 1 &amp;&amp; 0 \end{pmatrix} =
+\begin{pmatrix} 3 &amp;&amp; 2 \\ 2 &amp;&amp; 1 \end{pmatrix} \\
+\begin{pmatrix} 3 &amp;&amp; 2 \\ 2 &amp;&amp; 1 \end{pmatrix}
+\begin{pmatrix} 1 &amp;&amp; 1 \\ 1 &amp;&amp; 0 \end{pmatrix} =
+\begin{pmatrix} 5 &amp;&amp; 3 \\ 3 &amp;&amp; 2 \end{pmatrix} \\
+\end{eqnarray}
+\]</p>
+<p>行列の n 乗を簡単に求められるようにする方法として、線形代数の授業内容に
+大抵入っている <strong>対角化</strong> という手法が有効である。
+対角行列のべき乗は</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix}
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix} =
+\begin{pmatrix} \alpha^2 &amp; 0 \\ 0 &amp; \beta^2 \end{pmatrix} \\
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix} ^n =
+\begin{pmatrix} \alpha^n &amp; 0 \\ 0 &amp; \beta^n \end{pmatrix} \\
+\end{eqnarray}
+\]</p>
+<p>という風に非常に簡単に計算できる。
+そもそも対角行列がどういうものかというと、</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix}
+\begin{pmatrix} x \\ y \end{pmatrix} =
+\begin{pmatrix} \alpha x \\ \beta y \end{pmatrix} \\
+\end{eqnarray}
+\]</p>
+<p>x と y をそれぞれ単純に定数倍するような行列のことである
+(拡大縮小を表すので 3D グラフィクスではスケーリング行列と呼ばれることもある)。
+もちろんフィボナッチ数列の前進行列はこのような都合のいい形をしていないので、
+なんとかしてこの形に持ち込めないかを考えてみる。</p>
+<h3 id="固有値と固有ベクトル"><a class="header" href="#固有値と固有ベクトル">固有値と固有ベクトル</a></h3>
+<p>さて、ある行列が与えられたとき、ある方向のベクトルにその行列をかけたときに
+ベクトルの方向が変わらず単にスカラー定数倍になる場合がある。
+その方向ベクトルを <strong>固有ベクトル</strong> といい、その倍率を <strong>固有値</strong> と呼ぶ。
+名前の通り、その行列の性質を表す非常に重要な方向や倍率である。
+この単なる定数倍というところが今の課題にうまく使えそうな気がする。
+線形代数の授業ではよく分からないままとりあえず求め方を訓練させられるので、
+とりあえずフィボナッチ数列の行列の固有ベクトルと固有値を求めてみよう。
+求め方はシステム化されていて、あるベクトルに与えられた行列をかけたら
+単なるベクトルのスカラー倍になったという条件から、</p>
+<p>\[
+\begin{eqnarray}
+A \boldsymbol{v} &amp;=&amp; \lambda \boldsymbol{v} \\
+A \boldsymbol{v} &amp;=&amp; \lambda E \boldsymbol{v} \\
+(A - \lambda E) \boldsymbol{v} &amp;=&amp; \boldsymbol{0} \\
+\left (
+\begin{pmatrix} 1 &amp; 1 \\ 1 &amp; 0 \end{pmatrix} -
+\begin{pmatrix} \lambda &amp; 0 \\ 0 &amp; \lambda \end{pmatrix}
+\right)
+\boldsymbol{v} &amp;=&amp; \boldsymbol{0} \\
+\begin{pmatrix} 1 - \lambda &amp; 1 \\ 1 &amp; - \lambda \end{pmatrix}
+\boldsymbol{v} &amp;=&amp; \boldsymbol{0} \\
+\end{eqnarray}
+\]</p>
+<p>ここで \( \boldsymbol{v} \) で括りたかったが、行列とスカラーは直接足し算引き算が
+できないので、単位行列を補って行列同士の減算に書き換えるテクニックを使った。</p>
+<p>左辺の行列に逆行列が存在すると仮定すると、両辺に左からその逆行列をかけることができ、
+\( \boldsymbol{v} = \boldsymbol{0} \) という解のみになってしまう。
+今固有ベクトルとして欲しいのは方向ベクトルであり、方向のないゼロベクトルは
+不適である (固有ベクトルの定義式を満たしはするが、固有ベクトルの定義に含めない)。
+つまり、(ゼロでない) 固有ベクトルが存在するならば、
+この行列は正則でないという必要条件が得られる。
+行列が正則であるということの必要十分条件は非常によく研究されており、
+その中の「行列式がゼロならば正則ではない (逆も成り立つ)」という条件を使うと</p>
+<p>\[
+\begin{eqnarray}
+\begin{vmatrix} 1 - \lambda &amp; 1 \\ 1 &amp; - \lambda \end{vmatrix} = 0 \\
+(1 - \lambda)(- \lambda) - 1 \cdot 1 = 0 \\
+\lambda^2 - \lambda - 1 = 0
+\end{eqnarray}
+\]</p>
+<p>これは2次方程式であり、この解が固有値となる (本当は十分性を確認しなければならないが、
+結論から言うと固有値になる)。
+このように固有値を解に持つ多項式を <strong>固有方程式</strong> と呼ぶ。
+一般に n 次正方行列の固有方程式は n 次方程式になり、複素数の範囲かつ重解を別個に
+カウントすれば、解は n 個ある。
+今回は 2x2 行列なので 2 次方程式になっている。
+形が完全に特性方程式と同じになっていることから、解も同じで</p>
+<p>\[
+\begin{eqnarray}
+\lambda^2 - \lambda - 1 = 0 \\
+(\lambda - \alpha)(\lambda - \beta) = 0 \\
+\lambda^2 - (\alpha + \beta) \lambda - \alpha \beta = 0 \\
+\alpha, \beta = \frac{ 1 \pm \sqrt 5 }{2} \\
+\alpha + \beta = 1 \\
+\alpha \beta = -1 \\
+\end{eqnarray}
+\]</p>
+<p>つまりフィボナッチ数列を表す行列の固有値は \( \alpha, \beta \) の2つである。
+\( \lambda = \alpha \) を代入し、行列がランク落ちしていること
+(連立一次方程式として見たときに実質的に同じ式が2つ並んでいること。
+正則でないことと同値。) と、
+特性方程式より和が 1 で積が -1 であることに気を付けつつ整理すると</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} 1 - \alpha &amp; 1 \\ 1 &amp; - \alpha \end{pmatrix}
+\boldsymbol{v} &amp;=&amp; \boldsymbol{0} \\
+\begin{pmatrix} \beta &amp; 1 \\ 1 &amp; \frac{1}{\beta} \end{pmatrix}
+\begin{pmatrix} x \\ y \end{pmatrix} &amp;=&amp; \boldsymbol{0} \\
+\beta x + y = 0 \\
+y = k \Rightarrow x = - \frac{1}{\beta} k = \alpha k \\
+\boldsymbol{v} = k \begin{pmatrix} \alpha \\ 1 \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>つまり、\( (\alpha, 1) \) に平行なベクトルに行列 A をかけると方向は変わらず、
+単に \( \alpha \) 倍になるということである。
+固有値 \( \beta \) についても同様に、固有ベクトル \( (\beta, 1) \)
+(の定数倍) を得る。</p>
+<h3 id="基底"><a class="header" href="#基底">基底</a></h3>
+<p>\( (\alpha, 1) \) と \( (\beta, 1) \) という方向をベースに考えると
+よいのではないか、というアイデアが得られた。</p>
+<p>ここで座標という考え方を改めて見直してみる。</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} x \\ y \end{pmatrix} =
+x \begin{pmatrix} 1 \\ 0 \end{pmatrix} +
+y \begin{pmatrix} 0 \\ 1 \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>式自体はあまりにも当たり前のものになっているが、これは座標 \( (x , y) \) を
+\( (1, 0) \) の方向に \( x \) 倍だけ、\( (0, 1) \) の方向に \( y \) 倍だけ
+進んだ先のこととする、という気持ちを表している。
+この2つのベクトルのことを <strong>基底</strong> といい、すべての長さが1のとき <strong>正規</strong>、
+お互いに垂直のとき <strong>直交</strong> をつけて、<strong>正規直交基底</strong> という。
+この例は正規直交基底である。</p>
+<p>ここでのアイデアは、基底は正規でも直交でもなくても構わないのではないか？
+というところにある。
+実際、2次元平面を覆いつくすには正規でも直交でもなくてもいいので
+<strong>平行でない</strong> (<strong>一時独立</strong>な) ベクトルが2本あれば十分である
+(むしろ正確には必要な基底ベクトルの数を <strong>次元</strong> と定義する)。
+垂直でない規定による座標系を <strong>斜交座標系</strong> と言ったりする。</p>
+<p>例えば A の固有ベクトルは平行ではないので、任意の正規直交基底による座標は</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} x \\ y \end{pmatrix} &amp;=&amp;
+x' \begin{pmatrix} \alpha \\ 1 \end{pmatrix} +
+y' \begin{pmatrix} \beta  \\ 1 \end{pmatrix} \\
+&amp;=&amp;
+\begin{pmatrix} \alpha &amp; \beta \\ 1 &amp; 1 \end{pmatrix}
+\begin{pmatrix} x' \\ y' \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>のように書ける。
+これは斜交座標 (x', y') を決めると正規直交座標 (x, y) が一意に決まるという
+気持ちを表している。
+行列で表せていることから、この <strong>座標変換</strong> は <strong>一次変換</strong> であることが分かる。</p>
+<p>さらに、 \( (\alpha, 1), (\beta, 1) \) は平行ではないから
+この変換行列は正則で逆行列が存在し、それを両辺に左からかけると</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} \alpha &amp; \beta \\ 1 &amp; 1 \end{pmatrix} ^{-1}
+\begin{pmatrix} x \\ y \end{pmatrix} =
+\begin{pmatrix} x' \\ y' \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>とも表せる。
+これは (x, y) から (x', y') への変換も同様に <strong>一次変換</strong> であるということを
+表している。</p>
+<h3 id="対角化"><a class="header" href="#対角化">対角化</a></h3>
+<p>固有値と座標変換 (基底の変換) を組み合わせて考えてみよう。
+まず元の正規直交基底による座標を、固有ベクトルを基底とする座標系に変換してやる。</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} x' \\ y' \end{pmatrix} =
+\begin{pmatrix} \alpha &amp; \beta \\ 1 &amp; 1 \end{pmatrix} ^{-1}
+\begin{pmatrix} x \\ y \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>この座標系に対して、フィボナッチ数列の行列 A を左からかけてみる
+(スカラー倍に関してはかけ算の左右を交換しても問題ない)。</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} x \\ y \end{pmatrix} &amp;=&amp;
+x' \begin{pmatrix} \alpha \\ 1 \end{pmatrix} +
+y' \begin{pmatrix} \beta  \\ 1 \end{pmatrix} \\
+A \begin{pmatrix} x \\ y \end{pmatrix} &amp;=&amp;
+x' A \begin{pmatrix} \alpha \\ 1 \end{pmatrix} +
+y' A \begin{pmatrix} \beta  \\ 1 \end{pmatrix} \\
+\end{eqnarray}
+\]</p>
+<p>ここで、基底を固有ベクトルに取ったことが生きてくる。
+固有ベクトルとはその方向に行列をかけたら対応する固有値 (スカラー) 倍になるという
+ものだったから、行列 A の代わりに固有値倍となって、</p>
+<p>\[
+\begin{eqnarray}
+A \begin{pmatrix} x \\ y \end{pmatrix} &amp;=&amp;
+x' A \begin{pmatrix} \alpha \\ 1 \end{pmatrix} +
+y' A \begin{pmatrix} \beta  \\ 1 \end{pmatrix} \\
+&amp;=&amp;
+x' \alpha \begin{pmatrix} \alpha \\ 1 \end{pmatrix} +
+y' \beta  \begin{pmatrix} \beta  \\ 1 \end{pmatrix} \\
+&amp;=&amp;
+\alpha x' \begin{pmatrix} \alpha \\ 1 \end{pmatrix} +
+\beta  y' \begin{pmatrix} \beta  \\ 1 \end{pmatrix} \\
+\end{eqnarray}
+\]</p>
+<p>これは (x, y) に左から A をかけるということは、
+(x', y') 座標系では単に x' を \( \alpha \) 倍、y' を \( \beta \) 倍するだけ
+であるということを示している。
+(x', y') 座標系ではこの変換を行列表現すると</p>
+<p>\[ \begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix} \]</p>
+<p>である。
+これを用いて (x, y) に左から行列 A をかけるのを以下のように表現する。</p>
+<ol>
+<li>与えられた (x, y) を一次変換し、(x', y') に座標変換する。</li>
+<li>\( (x', y') \) を \( (x'', y'') = (\alpha x', \beta y') \) に変換する。
+この変換は対角行列
+\( \begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix} \)
+で表される。
+これは (x, y) 座標系では行列 A を左からかけているのに相当する。</li>
+<li>移動後の (x'', y'') を逆変換し、(x', y') に直したものが求める答えとなる。</li>
+</ol>
+<p>固有ベクトルを基底とする座標系への変換行列を \( P^{-1} \) とすると、
+これらの操作は以下のように表せる。</p>
+<p>\[
+\begin{eqnarray}
+A \begin{pmatrix} x \\ y \end{pmatrix} &amp;=&amp;
+P
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix}
+P^{-1}
+\begin{pmatrix} x \\ y \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<ol>
+<li>(x, y) に左から P の逆行列をかけて固有ベクトルによる斜交座標に変換</li>
+<li>固有ベクトルの性質より、固有値による単純なスケーリング変換を左からかける</li>
+<li>左から P をかけて元の正規直交座標に戻す</li>
+</ol>
+<p>ここで、左から A を何度もかけることを考えると、行列とその逆行列との積は
+単位行列になることに注意して、</p>
+<p>\[
+\begin{eqnarray}
+A A \begin{pmatrix} x \\ y \end{pmatrix} &amp;=&amp;
+P
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix}
+P^{-1}
+P
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix}
+P^{-1}
+\begin{pmatrix} x \\ y \end{pmatrix} \\
+&amp;=&amp;
+P
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix} ^2
+P^{-1}
+\begin{pmatrix} x \\ y \end{pmatrix} \\
+A^n \begin{pmatrix} x \\ y \end{pmatrix}
+&amp;=&amp;
+P
+\begin{pmatrix} \alpha &amp; 0 \\ 0 &amp; \beta \end{pmatrix} ^n
+P^{-1}
+\begin{pmatrix} x \\ y \end{pmatrix} \\
+&amp;=&amp;
+P
+\begin{pmatrix} \alpha^n &amp; 0 \\ 0 &amp; \beta^n \end{pmatrix}
+P^{-1}
+\begin{pmatrix} x \\ y \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>教科書的に書くとこうだが、新しい座標系の中でスケーリングしたのち、
+元の座標系に戻し、また新しい座標系に変換してスケーリングするのは無駄なので、</p>
+<ol>
+<li>新しい座標系に変換する</li>
+<li>n 回スケーリングする</li>
+<li>元の座標系に戻す</li>
+</ol>
+<p>の方が早いよね、というだけのことである。</p>
+<p>これはもう解けており、具体的な値を代入すれば、</p>
+<p>\[
+\begin{eqnarray}
+F_0 = 0 \\
+F_1 = 1 \\
+\end{eqnarray}
+\]</p>
+<p>\[
+\begin{eqnarray}
+\alpha &amp;=&amp; \dfrac{ 1 + \sqrt{5} }{2} \\
+\beta  &amp;=&amp; \dfrac{ 1 - \sqrt{5} }{2}
+\end{eqnarray}
+\]</p>
+<p>\[
+\begin{eqnarray}
+P &amp;=&amp; \begin{pmatrix} \alpha &amp; \beta \\ 1 &amp; 1 \end{pmatrix} \\
+P^{-1}
+&amp;=&amp;
+\frac{1}{|P|} \begin{pmatrix} 1 &amp; -\beta \\ -1 &amp; \alpha \end{pmatrix} \\
+&amp;=&amp;
+\frac{1}{\alpha - \beta}
+\begin{pmatrix} 1 &amp; -\beta \\ -1 &amp; \alpha \end{pmatrix}
+\end{eqnarray}
+\]</p>
+<p>\[
+\begin{eqnarray}
+\begin{pmatrix} F_{n+1} \\ F_n \end{pmatrix}
+&amp;=&amp;
+A^n \begin{pmatrix} F_1 \\ F_0 \end{pmatrix} \\
+&amp;=&amp;
+P
+\begin{pmatrix} \alpha^n &amp; 0 \\ 0 &amp; \beta^n \end{pmatrix}
+P^{-1}
+\begin{pmatrix} F_1 \\ F_0 \end{pmatrix} \\
+&amp;=&amp;
+\begin{pmatrix} \alpha &amp; \beta \\ 1 &amp; 1 \end{pmatrix}
+\begin{pmatrix} \alpha^n &amp; 0 \\ 0 &amp; \beta^n \end{pmatrix}
+\frac{1}{\alpha - \beta}
+\begin{pmatrix} 1 &amp; -\beta \\ -1 &amp; \alpha \end{pmatrix}
+\begin{pmatrix} 1 \\ 0 \end{pmatrix} \\
+&amp;=&amp;
+\frac{1}{\alpha - \beta}
+\begin{pmatrix}
+\alpha^{n+1} - \beta^{n+1} &amp;
+- \alpha^{n+1} \beta + \alpha \beta^{n+1} \\
+\alpha^n - \beta^n &amp;
+- \alpha^n \beta + \alpha \beta^n
+\end{pmatrix}
+\begin{pmatrix} 1 \\ 0 \end{pmatrix} \\
+&amp;=&amp;
+\frac{1}{\alpha - \beta}
+\begin{pmatrix}
+\alpha^{n+1} - \beta^{n+1} \\
+\alpha^n - \beta^n
+\end{pmatrix} \\
+F_n
+&amp;=&amp;
+\frac{1}{\alpha - \beta} (\alpha^n - \beta^n) \\
+&amp;=&amp;
+\frac{ 1 }{ \sqrt 5 } \left \{
+\left ( \frac{ 1 + \sqrt{5} }{2} \right ) ^ n -
+\left ( \frac{ 1 - \sqrt{5} }{2} \right ) ^ n
+\right \}
+\end{eqnarray}
+\]</p>
+<h3 id="余談"><a class="header" href="#余談">余談</a></h3>
+<p>行列の n 乗の形に持っていけている時点で、それが対角化されていなくても
+繰り返し二乗法を適用することで比較的少ない計算量で値を直接計算することができる。
+一般解が求まれば n を代入するだけで計算量 \( O (1) \) で \( F_n \) が求まるが、
+それができなくても、</p>
+<p>\begin{eqnarray}
+a^8 &amp;=&amp; a^4 \cdot a^4 \\
+a^4 &amp;=&amp; a^2 \cdot a^2 \\
+a^2 &amp;=&amp; a \cdot a \\
+\end{eqnarray}</p>
+<p>のように n 乗はより小さな n/2 乗を求めるという部分問題の解を使って
+(漸化式や数学的帰納法の考え方) 高速に求めることができる(<strong>分割統治法</strong>)。
+計算量は \( O(\log n) \) になる (底は 2)。
+これは行列のべき乗にもそのまま適用できる。
+このテクニックは行列累乗と呼ばれるが、競プロの中でだけかもしれない。
+\( \log_2 n \) は指数関数の逆関数であり、まったく大きくならないので、
+それなりの大きさの n に関しては実用上、ほぼ定数として扱える。</p>
+<p>\begin{eqnarray}
+2^8 &amp;=&amp; 256 \\
+log_2 256 &amp;=&amp; 8 \\
+2^{16} &amp;=&amp; 65536 \\<br />
+log_2 65536 &amp;=&amp; 16 \\
+2^{32} &amp;=&amp; 4294967296 \\
+log_2 4294967296 &amp;=&amp; 32 \\
+\end{eqnarray}</p>
 
                     </main>
 
