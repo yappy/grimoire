@@ -8,6 +8,7 @@ Auto build: <https://yappy.github.io/grimoire/>
 
 ```sh
 cargo install mdbook
+cargo install mdbook-mermaid
 ```
 
 ### Update mdBook
@@ -26,6 +27,7 @@ mdbook build
 ## VS Code plug-in
 
 * markdownlint
+* Markdown Preview Mermaid Support
 
 ## Auto Build
 
