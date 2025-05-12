@@ -29,6 +29,13 @@ mdbook build
 * markdownlint
 * Markdown Preview Mermaid Support
 
+VS Code Markdown Preview uses KaTeX.
+mdbook uses MathJax.
+I don't know when but now we can use `$ inline $` or `$$ block $$` notation
+in mdbook for MathJax.
+These notation will be parsed by VS Code preview as KaTeX code.
+We can preview math formula if we use common notations for MathJax and KaTeX.
+
 ## Auto Build
 
 See [pages.yaml](./.github/workflows/pages.yaml)
