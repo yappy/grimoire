@@ -25,19 +25,20 @@
         <link rel="stylesheet" href="fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="highlight.css">
-        <link rel="stylesheet" href="tomorrow-night.css">
-        <link rel="stylesheet" href="ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
         <!-- MathJax -->
         <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-        <!-- Provide site root to javascript -->
+        <!-- Provide site root and default themes to javascript -->
         <script>
-            var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc.js"></script>
@@ -47,8 +48,8 @@
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
-                var theme = localStorage.getItem('mdbook-theme');
-                var sidebar = localStorage.getItem('mdbook-sidebar');
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
 
                 if (theme.startsWith('"') && theme.endsWith('"')) {
                     localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
@@ -62,7 +63,8 @@
 
         <!-- Set the theme before any content is loaded, prevents flash -->
         <script>
-            var theme;
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
@@ -75,8 +77,8 @@
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var sidebar = null;
-            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
@@ -112,6 +114,7 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
@@ -382,7 +385,7 @@ OS が適当なタイミング (特別な理由がなければタイマ割り込
 勝手に (タイマ割り込みで) タスクを切り替える、
 プリエンプティブスケジューリングが採用されることが多い。
 ただし OS のスレッドの上でユーザランドでタスクを切り替えるグリーンスレッドだとか
-最近流行りの async-await <sup class="footnote-reference"><a href="#1">1</a></sup>: 系の話では協調的スケジューリングも現役と言える。</p>
+最近流行りの async-await <sup class="footnote-reference" id="fr-1-1"><a href="#footnote-1">1</a></sup>: 系の話では協調的スケジューリングも現役と言える。</p>
 <p>現代ではシングルコア性能の向上に限界を迎え、CPU のマルチコア化が進んでいる。
 ハードウェア設計の方の話で N コア M スレッドのように言われると
 コアという用語が何を指すのか分かりづらいため、ソフトウェア/OS の世界では
@@ -410,10 +413,6 @@ OS が適当なタイミング (特別な理由がなければタイマ割り込
 <li>将棋の手読み</li>
 <li>AI のための行列演算は GPU を用いた方がよい。</li>
 </ul>
-<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
-<p>共通しているのは見た目や使い勝手のみで、
-具体的に何が起こるかはプログラミング言語ごとにバラバラで一概には言い難い。</p>
-</div>
 <h2 id="主流のハードウェア構成"><a class="header" href="#主流のハードウェア構成">主流のハードウェア構成</a></h2>
 <p>主流でなければ色々な構成が考えられるという前提の上で、PC やスマホ等で主流の構成は</p>
 <ul>
@@ -950,7 +949,12 @@ Google が Android のために JVM を x86 から ARM に持っていったら
 怪奇現象にしか見えないメモリオーダリングのバグに苦労したらしい…。</p>
 <h3 id="スリープロック-普通のロック"><a class="header" href="#スリープロック-普通のロック">スリープロック (普通のロック)</a></h3>
 <h2 id="ロックフリーアルゴリズム-初心者お断り"><a class="header" href="#ロックフリーアルゴリズム-初心者お断り">ロックフリーアルゴリズム (初心者お断り)</a></h2>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="サバイバルツール類"><a class="header" href="#サバイバルツール類">サバイバルツール類</a></h1>
+<hr>
+<ol class="footnote-definition"><li id="footnote-1">
+<p>共通しているのは見た目や使い勝手のみで、
+具体的に何が起こるかはプログラミング言語ごとにバラバラで一概には言い難い。 <a href="#fr-1-1">↩</a></p>
+</li>
+</ol><div style="break-before: page; page-break-before: always;"></div><h1 id="サバイバルツール類"><a class="header" href="#サバイバルツール類">サバイバルツール類</a></h1>
 <h2 id="よく分からないファイルを調べる"><a class="header" href="#よく分からないファイルを調べる">よく分からないファイルを調べる</a></h2>
 <p>ヘッダ情報をパースしてくれたり、テキストファイルならエンコーディングを調べてくれたり、
 既に種類が分かっているファイル相手でもいい感じで要約された情報が得られる。</p>
@@ -1665,6 +1669,369 @@ CPU 固有のオプションがいっぱいあるとかを我慢すれば、C �
 素のアセンブリで関数を書くと、呼び出し規約を読みながら引数と返り値がどこに置かれるかで
 苦労するし、そもそもインライン化して関数コールのオーバーヘッドを消したいという
 ケースも多いかもしれない。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="git"><a class="header" href="#git">Git</a></h1>
+<h2 id="前置き"><a class="header" href="#前置き">前置き</a></h2>
+<ul>
+<li>Git は元々 Linux kernel の開発のために Linus によって開発された。
+<ul>
+<li>当時使っていた BitKeeper というプロプライエタリなバージョン管理ソフトで
+トラブルがあったため。</li>
+<li>プログラムのソースコードのような単純なテキストファイルとの相性が非常によい。</li>
+<li>画像動画その他のきらびやかなファイルは歴史データがかさばりよろしくない。
+<ul>
+<li>git lfs で検索。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>コンソール・テキストファイル・テキストエディタ・Linux 至上主義が源流にあるため、
+そのあたりは理解しつつ温かい目で見ること。
+<ul>
+<li>オリジナルの開発者が Linux kernel の開発者だから。</li>
+<li>いろいろな人々の長きに渡る努力でいろいろな部分がマシになってきた。</li>
+<li>Windows で事故っても怒らない。</li>
+</ul>
+</li>
+<li>Git が主流になってから 10 年以上？変わる気配がないので諦めること。
+もしくは、自分で作る。
+<ul>
+<li>Git の代わりを作るよりは、よりフレンドリーな GUI / Web UI を作る方に
+注力するようになったと言えるのかもしれない。</li>
+</ul>
+</li>
+<li>Linux は相当大規模なプロジェクトなので、よほどのプロジェクト規模でない限り
+使わないだろうという機能もある。そういうものは気にしなくてよし。</li>
+</ul>
+<p>プログラムのソースコード以外に相性のよいもの</p>
+<ul>
+<li>本の原稿</li>
+<li>卒業論文</li>
+</ul>
+<p>この2つに関しては非常にオススメです。
+ただし、Git 自体の習得コストがどうしてもネックになることが多いので、
+論文執筆のシーズンに入る前に1か月くらい Git で遊んでみることを強くお勧めします。
+<strong>シーズンになるとサーバも自分の PC もよりによってこの時期に壊れます。</strong>
+ジンクスとかそういうものではなく、その時期にコンピュータを酷使するからです。
+手癖のように <code>git push</code> で別の物理マシンとの間でリポジトリごと同期しておくと
+トラブル時に非常に速やかに対処できます。
+編集履歴が自動で全部記録されていつでも戻せるので大変更の保険もバッチリです。</p>
+<h2 id="ヘルプ"><a class="header" href="#ヘルプ">ヘルプ</a></h2>
+<pre><code class="language-sh">git help CMD
+git CMD --help
+</code></pre>
+<h2 id="リポジトリ"><a class="header" href="#リポジトリ">リポジトリ</a></h2>
+<p>これまでの全ての更新履歴を含むデータが入ったもの。
+大雑把に言うと <code>.git/</code> ディレクトリとほぼ同義。
+<code>.git/</code> の中身が具体的にどうなっているのか漁って回るタイプの人間が作っているので
+そういうものだと思っておくこと。</p>
+<p>Git は (他のバージョン管理システムと比較して) <strong>分散型</strong> と呼ばれる。
+ローカルマシンにもリモートサーバにも同じようにこれまでの履歴全体を保管する構造に
+なっている。
+これは最初のコマンドが <code>git clone</code> という名前の通り、リポジトリをサーバから
+丸ごとコピーすることからも分かる。
+ただし設計上対等とはいえ、サーバ側でよくある使い方とクライアント側でよくある使い方は
+存在し、異なる。</p>
+<p>(Git 一択になっている現状、知る必要はないが)
+分散型でない中央集権型のシステム (CVS, SVN) では、サーバに全ての履歴を保管し、
+クライアントは必要なデータのみをサーバからダウンロードするような仕組みになっていた。
+ネットワーク速度やクライアントマシンのディスク容量に余裕が出てきたから
+可能になったスタイルとも言える。</p>
+<h3 id="git-init"><a class="header" href="#git-init">git init</a></h3>
+<p>ディレクトリを git リポジトリとして初期化する。
+実行後、<code>.git/</code> という名前の隠しディレクトリができている。
+この中に全履歴が保存されていく。</p>
+<p>実は、あまり使わない…。
+大抵の場合、共有サーバ等のリモートのリポジトリを clone して始めることの方が多い。
+clone した場合は自動でその clone 元が <code>origin</code> という名前で登録される。</p>
+<pre><code class="language-sh">git init --bare
+</code></pre>
+<p>主にサーバ的に使うコンピュータ上で初期化するためのコマンド。
+ワーキングコピー
+(作業用に、ある時点のファイルセットを普通に編集できる形で展開したもの)
+を作らない。純粋に履歴の保管庫 (push/fetch のため) としてのみ運用する
+リポジトリとして初期化する。
+ベア (裸の) リポジトリと呼ばれる。</p>
+<h3 id="git-clone"><a class="header" href="#git-clone">git clone</a></h3>
+<p>いつもの。</p>
+<pre><code class="language-sh">git clone &lt;repo&gt; [&lt;dir&gt;]
+</code></pre>
+<p>リポジトリのアドレスの最後の部分が自動的にディレクトリ名として使われるが、
+後ろに追加で指定するとディレクトリ名を好きなものに変えることができる。</p>
+<pre><code class="language-sh">$ git remote -v
+origin  https://github.com/yappy/grimoire.git (fetch)
+origin  https://github.com/yappy/grimoire.git (push)
+</code></pre>
+<p>clone 元のアドレスが自動的に <code>origin</code> という名前の remote として登録される。
+手動で登録するのは面倒なので clone 推奨。
+ただし <code>origin</code> というデフォルトネームはリモート関連のコマンドが何をやっているのか
+理解するためには覚えておいた方がよい。</p>
+<pre><code class="language-sh">$ git branch -a
+  gh-pages
+* main
+  remotes/origin/HEAD -&gt; origin/main
+  remotes/origin/gh-pages
+  remotes/origin/main
+</code></pre>
+<p>リモートトラッキングブランチも <code>remotes/(リモート名)/(ブランチ名)</code> という名前で
+自動的に作られる。
+これは名前の通り、リモートリポジトリの変更を追跡するためのブランチで、
+リモートブランチの丸々コピーを表す。
+このあたりを知っておくと fetch, push のやっていることが分かりやすい。</p>
+<p>昨今のソフトウェアの肥大化は留まることを知らず、プロジェクトによっては
+リポジトリが肥大化しており clone にとてつもない時間がかかることがある。
+場合によっては昔の全履歴は必要ないということもあるだろうから、
+clone には豊富なオプションが用意されている。</p>
+<ul>
+<li><code>depth=1</code> shallow clone (浅いクローン)
+<ul>
+<li><del>他は難しくて覚えられない。</del></li>
+<li>制限が多く罠だらけの状態になるので最新の状態を閲覧したいだけの時以外は
+使わない方がよい。</li>
+</ul>
+</li>
+<li>partial clone
+<ul>
+<li>ブロブレスクローンとツリーレスクローンがあるらしい。</li>
+<li>シャロークローンより制限が緩いようだが、中途半端なのでフルクローンすれば
+いいんじゃないかと思う。</li>
+<li><del>一晩寝て待っていれば終わるよ。</del></li>
+<li><del>豊かなディスク容量とネットワーク帯域でゴリ押すのが現代の
+ソフトウェアエンジニアリングだよ</del></li>
+</ul>
+</li>
+</ul>
+<h3 id="いつもの新規作成手順"><a class="header" href="#いつもの新規作成手順">いつもの新規作成手順</a></h3>
+<ol>
+<li>GitHub の web UI でリポジトリを新規作成する。</li>
+<li>これは GirHub のサーバ上で <code>mkdir</code> して <code>git init --bare</code> することに相当する。
+ついでに README 等を最初のコミットとして入れてくれる。</li>
+<li>web UI で見えるアドレスをコピー。</li>
+<li>ローカルで <code>git clone &lt;コピーしたアドレス&gt;</code></li>
+<li>完了。これだけ！</li>
+</ol>
+<h2 id="ローカルの作業"><a class="header" href="#ローカルの作業">ローカルの作業</a></h2>
+<p>ローカルリポジトリに対して編集を行う方法。</p>
+<h3 id="ワークツリーとステージング"><a class="header" href="#ワークツリーとステージング">ワークツリーとステージング</a></h3>
+<p><code>--bare</code> でない Git リポジトリのディレクトリには、
+リポジトリ内の履歴の今いる時点の内容が、
+普通に編集できるディレクトリやファイルの形で展開されている。
+これをワークツリーとかワーキングコピーと呼んでいる。</p>
+<p>これを書き換えてコミット (履歴の一時点として登録) するわけだが、
+その前にコミットに含めたい変更のみを置くための場所がインデックス
+(名前が分かりづらい気がする。。) とかステージングエリアなどと呼ばれる場所である。</p>
+<p>変更量が多かったり、一度に論理的に複数の変更をしてしまったため
+コミットを分けたい場合に便利である。
+そうでない場合は面倒なだけだが、多少ショートカットできるオプションもある。</p>
+<h3 id="コミットの指定"><a class="header" href="#コミットの指定">コミットの指定</a></h3>
+<p>全てのコミットにはハッシュがついており、これを使って特定のコミットを
+指定することができる。
+このハッシュには SHA-1 が使われており、計算元のデータには Author や Date 等の
+文字列も含めているためそれらが少しでも変わると全く違う値になる。
+これは全てのコミット間で異なることを前提に組まれているため、
+天文学的に運が悪いとシステムが破綻するが気にしなくてよい。
+ハッシュはほとんどの場合最初の方だけでも他と被らないので、
+一意に判別できるなら最初の6ケタ程度でも認識される。</p>
+<pre><code class="language-sh">$ git log
+commit 987e4e5a09483b952bac7a0dfcd64970905fe7d9 (HEAD -&gt; main)
+Author: yappy &lt;superunyo@yahoo.co.jp&gt;
+Date:   Wed Dec 25 01:02:17 2024 +0900
+
+    Install mdbook-mermaid
+</code></pre>
+<h3 id="git-status"><a class="header" href="#git-status">git status</a></h3>
+<p><strong>とにかくこれ。</strong>
+ここからやりたくなる操作についてどのようなコマンドを打てばいいかもかなり親切に
+教えてくれる。</p>
+<pre><code class="language-sh">git status
+</code></pre>
+<p>例</p>
+<pre><code class="language-sh">$ git status
+# 現在いるブランチ名
+On branch main
+# リモートトラッキングブランチとの比較
+# 自分の方が1つコミットが多いところにいるので、これをリモートに送りたいなら
+# git push でできるよ
+Your branch is ahead of 'origin/main' by 1 commit.
+  (use "git push" to publish your local commits)
+# ステージ中の変更
+# このまま git commit した時にコミットされる内容
+# git restore --staged で戻せるよ
+Changes to be committed:
+  (use "git restore --staged &lt;file&gt;..." to unstage)
+        modified:   README.md
+        modified:   src/SUMMARY.md
+        new file:   src/git.md
+# ステージされていない変更
+# git add でステージできるよ
+# git restore で変更を破棄 (現在いるコミットの内容に戻す) できるよ
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git restore &lt;file&gt;..." to discard changes in working directory)
+        modified:   src/git.md
+
+</code></pre>
+<h3 id="git-diff"><a class="header" href="#git-diff">git diff</a></h3>
+<p>コミットと</p>
+<h3 id="git-add"><a class="header" href="#git-add">git add</a></h3>
+<pre><code class="language-sh">git add &lt;file/dir&gt;
+</code></pre>
+<ul>
+<li>git 管理下のファイルの場合、変更をステージングする。</li>
+<li>git 管理下でない場合、ファイルの追加をステージングする。</li>
+<li>ディレクトリを指定すると、そのディレクトリ以下の全ファイルに上記を適用する。</li>
+</ul>
+<p>やっぱりやめたいときは <code>git status</code> を見る。</p>
+<pre><code class="language-sh">git add -p &lt;path&gt;
+</code></pre>
+<p>中級コマンド。
+1つのファイル内の差分を部分的にステージする。
+Yes/No/もっと細かく分割、で答えていくことで好きな部分だけステージする
+(他の部分は別のコミットとする) ことができる。</p>
+<h3 id="git-rm"><a class="header" href="#git-rm">git rm</a></h3>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="git-1"><a class="header" href="#git-1">Git</a></h1>
+<h2 id="git-の内部実装"><a class="header" href="#git-の内部実装">Git の内部実装</a></h2>
+<p>Git は他のファイルシステムの上で作られた、ユーザランドファイルシステムの一種である。
+<code>git add</code> <code>git commit</code> のようなコマンドはハイレベルな抽象コマンドで、
+よりローレベルなファイルシステム操作用のコマンドも存在している。</p>
+<h2 id="git-object"><a class="header" href="#git-object">Git Object</a></h2>
+<p>それぞれの commit に SHA-1 ハッシュが付与されており、コミットハッシュで
+特定のコミットを一意に示すことができるのはよく知られているが、
+そのコミットを構成する要素にもまたハッシュが付与されている。
+グラフ理論で言うとループのない有向グラフとなる。</p>
+<ul>
+<li>blob
+<ul>
+<li>ファイルデータ (ファイル名は含まない)</li>
+</ul>
+</li>
+<li>tree
+<ul>
+<li>blob と tree (再帰的) からなるディレクトリツリー構造</li>
+</ul>
+</li>
+<li>commit
+<ul>
+<li>tree とコミット情報からなるディレクトリツリーのスナップショット</li>
+</ul>
+</li>
+<li>tag
+<ul>
+<li>特定のコミットへの参照</li>
+</ul>
+</li>
+</ul>
+<h3 id="blob"><a class="header" href="#blob">blob</a></h3>
+<p>リンク構造のリーフノードとなるような末端のオブジェクトで、ファイルの内容を表す。
+ファイル名の情報は含まない。
+ヘッダのフォーマットはテキスト形式で、<code>blob</code> という文字列、スペース、
+ファイルサイズを文字列で、そしてヌル文字 (1 byte のゼロ)で区切って
+以下ファイルのバイナリデータが続く。</p>
+<p>例: <code>blob 6\0Hello!</code></p>
+<p>そしてこのヘッダを含むデータ全体に対して SHA-1 hash を計算する。
+SHA (Secure Hash Algorithm) はセキュアなハッシュアルゴリズムだが、
+セキュリティというよりはヘッダも含めて 1 byte でも違えば全く異なる値になる点、
+出力空間全体にまんべんなくランダムに散らばるように見える点を生かしていると思われる。
+SHA-1 は 16 進数で 40 文字になる。</p>
+<pre><code class="language-c">hash = sha1("blob 6\0Hello!")
+</code></pre>
+<p>オブジェクトのハッシュが求まったら、<code>.git/objects</code> に以下のようなパスで保存される。
+また、この時 zlib 圧縮 (zip みたいな可逆圧縮) がなされる。
+これは blob に限らない。</p>
+<p><code>.git/objects/{最初の2文字}/{残りの38文字}</code></p>
+<p>ここから以下のようなことが分かる。</p>
+<ul>
+<li>全く同一の内容 (ファイル名は問わない) のファイルの場合、ヘッダも含めてハッシュ計算の
+ソースが完全に一致するため、ハッシュも同一値になる。
+<ul>
+<li>新たにオブジェクトを保存する必要はなく、されない。</li>
+</ul>
+</li>
+<li>運悪く異なるオブジェクトのハッシュ値が衝突してしまった場合、システムは破綻する。
+<ul>
+<li>天文学的に低い確率なので無視できる。そういう設計のために SHA-1 を使っている。</li>
+<li>ハッシュテーブルで文字列を管理する時のようないい加減なノンセキュアハッシュだと
+できやすい・できにくいハッシュ値に偏りがあって衝突しやすくなりそう。</li>
+</ul>
+</li>
+</ul>
+<h3 id="tree"><a class="header" href="#tree">tree</a></h3>
+<p>例を見た方が早い。</p>
+<pre><code class="language-sh">$ git cat-file -p &lt;hash&gt;
+100644 blob a906cb2a4a904a152e80877d4088654daad0c859      README
+100644 blob 8f94139338f9404f26296befa88755fc2598c289      Rakefile
+040000 tree 99f1a6d12cb4b6f19c8655fca46c3ecf317074e0      lib
+</code></pre>
+<p>実際のバイナリフォーマットは以下のようになっている。</p>
+<ul>
+<li>"tree"</li>
+<li>スペース</li>
+<li>サイズを文字列で</li>
+<li>NUL</li>
+<li>中身...</li>
+</ul>
+<p>tree の場合、中身のフォーマットは</p>
+<ul>
+<li><code>[mode] [file/folder name]\0[SHA-1 of referencing blob or tree]</code></li>
+</ul>
+<p>らしい。
+hash はバイナリで、固定長のため次のエントリへの区切り文字は不要らしい。
+これがファイルかディレクトリかはそのハッシュからオブジェクトを引けば分かる。
+また、ファイル名、ディレクトリ名の情報はここで付与される。</p>
+<p>タイプを文字列で、スペース、サイズ、NULL 文字、サイズで指定された大きさの中身、
+というのが git オブジェクトの共通のヘッダ及び全体の仕様となっている。
+ヘッダも含めた全体に SHA-1 ハッシュ関数を適用し、その値から
+<code>.git/objects/</code> 以下のパスを決定し保管されるのも同様である。</p>
+<p>tree は blob または tree を任意の個数持つ、という再帰データ構造になっているので、
+ファイルディレクトリツリーのある時点でのスナップショットを表すことになる。
+ファイル or ディレクトリ名の変更で tree オブジェクトハッシュは変わるし、
+ファイル内容 (blob) が変わるとそのハッシュが変わるので、それが書かれた
+tree オブジェクトのハッシュも変わることになる (別オブジェクトとなる)。</p>
+<h3 id="commit"><a class="header" href="#commit">commit</a></h3>
+<p>tree によってある時点のディレクトリツリーのスナップショットが作れれば
+コミットオブジェクトはとても簡単で、コミットとはある時点での
+ファイルディレクトリツリーのスナップショットを指すのだから、
+ある1つの tree オブジェクトへのリンクが本体である。
+それにコミットメッセージや作者、コミット日時などのメタ情報を含めたものが
+コミットオブジェクトである。</p>
+<pre><code class="language-sh">$ git cat-file -p &lt;hash&gt;
+tree d8329fc1cc938780ffdd9f94e0d364e0ea74f579
+author Scott Chacon &lt;schacon@gmail.com&gt; 1243040974 -0700
+committer Scott Chacon &lt;schacon@gmail.com&gt; 1243040974 -0700
+
+first commit
+</code></pre>
+<p>これも実際はヌル文字を含むフォーマットであり先頭に共通のヘッダが付与され、
+全体に SHA-1 を適用してハッシュが求められる。
+これが <code>git log</code> でいつも目にする "コミットハッシュ" である。</p>
+<p>マージコミットは少し特殊で、親コミットが2つになることがある。</p>
+<h3 id="tag"><a class="header" href="#tag">tag</a></h3>
+<p><code>git tag -a</code> のアノテートタグは、tag というタイプの git object が作られる。
+したがってタグにハッシュもつく。</p>
+<pre><code class="language-sh">git cat-file -p &lt;hash&gt;
+object 1a410efbd13591db07496601ebc7a059dd55cfe9
+type commit
+tag v1.1
+tagger Scott Chacon &lt;schacon@gmail.com&gt; Sat May 23 16:48:58 2009 -0700
+
+test tag
+</code></pre>
+<p>コミットへの参照が本体で、他にタグ名、作者、日時、タグメッセージなどが
+含まれている。
+ちなみにタグはコミット以外の任意の git object に対して作ることができるらしい。</p>
+<p>軽量タグは単なるコミットへの参照であり、git object は作られない。</p>
+<h2 id="まとめ"><a class="header" href="#まとめ">まとめ</a></h2>
+<p>Git の設計は上層と下層に分かれている。</p>
+<p>下層は、ヘッダとコンテンツから SHA-1 ハッシュを計算し、ハッシュをキーとした
+リポジトリデータベースへ格納、また逆にハッシュからコンテンツを引くことのできる、
+(カーネルファイルシステム上に構築された) ユーザランドファイルシステムになっている。</p>
+<p>上層は、そのハッシュベースのファイルシステムをうまく使って
+バージョンコントロールシステムを構築している。</p>
+<p>Linux カーネル開発者作らしいというか、ある種の素養がないとひらめくのは難しいが、
+一度理解してしまえばシンプルで一貫した設計で、
+他にも応用の効きそうな興味深い設計である。</p>
+<p>スナップショットに対応したジャーナリングファイルシステムのような
+リッチなファイルシステムについて調べてみるのもよいかもしれない。
+(すみません、私は組み込み志向なので勉強不足です)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="参考文献"><a class="header" href="#参考文献">参考文献</a></h1>
 <ul>
 <li>最初から順に読み進めて読破が狙えるものと、それは普通に無理なものが存在する。</li>
@@ -3177,6 +3544,188 @@ log_2 65536 &amp;=&amp; 16 \\
 2^{32} &amp;=&amp; 4294967296 \\
 log_2 4294967296 &amp;=&amp; 32 \\
 \end{eqnarray}</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="フーリエ変換"><a class="header" href="#フーリエ変換">フーリエ変換</a></h1>
+<ul>
+<li>自然に思いつくことはほぼ不可能と思われるが、理工学では一般常識。
+<ul>
+<li>最近のトレンドでは裁判官の間でも一般常識らしい。本当かどうかは不明。</li>
+</ul>
+</li>
+<li>一般常識かどうかは諸説あるが、一般常識として持っておくと生活が豊かになる。</li>
+<li>正直数学がキツいところはあるというか、高校範囲外なのは事実である。</li>
+<li>ただし概要やできることを知っているだけでも相当価値がある。</li>
+</ul>
+<p>できることの例</p>
+<ul>
+<li>音声データを周波数成分ごとに分解できる。それを元の音声信号に戻すこともできる。
+<ul>
+<li>ボーカルをカットしてカラオケ用のデータを自作する方法がこれ。</li>
+</ul>
+</li>
+<li>可逆圧縮のほとんど効かない写真画像や音声データを効率的に圧縮できる。
+<ul>
+<li>jpeg や音声、動画圧縮の中身の基本はこれ</li>
+</ul>
+</li>
+</ul>
+<h2 id="波の基本"><a class="header" href="#波の基本">波の基本</a></h2>
+<p>実際のところ、対象は音などの時間で変化する信号だけに限らない。
+例えば、時間の代わりに画像ファイルの座標を使う、など (jpeg や動画の圧縮に使うよ)。
+ただし用語の使い方も時間信号で考えた用語をそれ以外を対象にする場合も気にせずそのまま
+使っている感じのため、とりあえず時間変化する信号と考えておき、
+それ以外にも適用可能なことだけ気を付けておけばよい。</p>
+<p>とりあえず sin (cos) 波を考える。
+三角関数が最も基本的な波だから、とか、発電所ではタービンを円運動させているので
+コンセントには sin 波が来ているから、とか適当なことを言って (きちんとした事実だが)
+ごまかしながら導入するが、本当の理由は
+「三角関数とは全然違う波だとしても、三角関数の重ね合わせとして分解できるから」
+である。
+例えば、太陽光 (電磁波) なんかは全く三角関数の形をしていない。
+三角関数が最も基本的な波なのは事実で、使える数学のツールも非常に多い。
+なので、三角関数でないものが三角関数だけの和で表せるのは超重要な事実である。</p>
+<p>$$
+\begin{aligned}
+f(t) &amp;= A \sin (\omega t + \phi) \\
+f(t) &amp;= A \sin (2 \pi f t + \phi) \\
+f(t) &amp;= A \sin ( \frac { 2 \pi } { T } t + \phi) \\
+f &amp;= 1 / T \\
+\omega &amp;= \frac { 2 \pi } { T } = 2 \pi f \\
+\end{aligned}
+$$</p>
+<ul>
+<li>振幅 (amplitude)
+<ul>
+<li>三角関数の定数係数。波の振れ幅。</li>
+<li>三角関数は -1 から 1 の範囲をふわふわするので、
+\( -A \le f(t) \le A \)
+の範囲で変化する波を表すことになる。
+単位は波によって色々。音声信号なら音圧など。</li>
+</ul>
+</li>
+<li>位相 (phase)
+<ul>
+<li>三角関数の中身。単位は角度 (rad など)。</li>
+<li>360 度 ( \( 2 \pi \) rad) を一周期としたとき、その中のどのポイントにいるかを
+角度で示したもの。</li>
+</ul>
+</li>
+<li>波の変化速度 (相互変換可能)
+<ul>
+<li>角周波数 (angular frequency) \( \omega \)
+<ul>
+<li>三角関数内の時間に係数をつける形で $ \omega t $ のようにしたもの。</li>
+<li>単位は (角度 / 時間) で、rad / s 等。
+時間に掛け算すると角度となり三角関数に入れられる。</li>
+<li>単位時間あたり、一周期を 360 度とした割合で何度分進むか。</li>
+<li>合成関数の微分積分でそのまま外に出てくるため、数式処理する場合に一番読みやすい。</li>
+</ul>
+</li>
+<li>周期 \( T \)
+<ul>
+<li>繰り返しの一回分に何秒かかるか。分かりやすい。</li>
+<li>単位は時間。s。</li>
+</ul>
+</li>
+<li>周波数 \( f \)
+<ul>
+<li>1秒に何回繰り返されるか。こちらも分かりやすい。周期とお互いに逆数の関係にある。</li>
+<li>単位は 1/s。Hz (ヘルツ) の方をよく使う。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="フーリエ級数展開"><a class="header" href="#フーリエ級数展開">フーリエ級数展開</a></h2>
+<ul>
+<li>三角関数とは似ても似つかないが、周期 T で繰り返してはいる信号があるとする。</li>
+<li>そんな都合よく周期 T でずっと繰り返す信号ばかりじゃない (例: 音声ファイル)、
+と思うかもしれないが、その場合は音声ファイルの長さを T とし、
+左右に無限回コピペし続ければ周期 T の信号と言えなくもない。</li>
+<li>これが苦しい言い訳に聞こえて仕方ない場合は、フーリエ変換まで我慢する。</li>
+</ul>
+<p>驚くべき事実として、周波数
+\( f = 1/T \)
+の任意 (本当に任意とは言っていない) の信号は、周波数
+\( f, 2f, 3f, 4f, 5f, \ldots \)
+の三角関数の無限個の和に分解できる (ことが多い)。
+もともとかなり無茶なことをしようとしているので、数学的に厳密な議論をしようとすると
+とんでもないことになる (Wikipedia 参照) ため、数学徒以外は無理をしてはいけない。</p>
+<p>式で書くときは角周波数で書いた方が目に優しいため、基本角周波数を
+\( \omega _0 = \frac { 2 \pi } { T } \)
+とし、その整数倍の角周波数の三角関数を考える。
+周波数のみを固定したとき、振幅と初期位相の2つが自由に決められるパラメータとなるから</p>
+<p>$$
+\begin{aligned}
+C_1 &amp; \sin ( 1 \omega _0 t + D_1 ) \\
+C_2 &amp; \sin ( 2 \omega _0 t + D_2 ) \\
+C_3 &amp; \sin ( 3 \omega _0 t + D_3 ) \\
+\ldots \\
+C_k &amp; \sin ( k \omega _0 t + D_k )\\
+\ldots
+\end{aligned}
+$$</p>
+<p>のような波を重ね合わせることになる。
+1つを選んで加法定理を使って変形すると、</p>
+<p>$$
+\begin{aligned}
+&amp; C_k \sin ( k \omega _0 t + D_k ) \\
+&amp;= C_k ( \sin k \omega _0 t \cos D_k + \cos k \omega _0 t \sin D_k) \\
+&amp;= (C_k \cos D_k) \sin k \omega _0 t + (C_k \sin D_k) \cos k \omega _0 t \\
+&amp;= A_k \sin k \omega _0 t + B_k \cos k \omega _0 t
+\end{aligned}
+$$</p>
+<p>のようになる。</p>
+<p>任意の A, B (sin の振幅と cos の振幅) を決めるのは
+任意の C, D (1つの三角関数の振幅と位相) を決めるのと同じ、
+という順番で説明されることが多いが、それは三角関数の合成を根拠にされる。
+三角関数の合成は加法定理の逆をやっているだけなので、
+とにかく2つの表現はどちらも同じことである。</p>
+<p>ここでちょっと準備をする。
+なぜか高校数学ではあまり注目されない気がするが、以下の事実がある。</p>
+<p>$$
+\begin{aligned}
+n, m = 1, 2, 3, \ldots \\
+\int_0^{2 \pi} \sin n t \sin m t dt &amp;= 0 \quad (n \ne m) \\
+\int_0^{2 \pi} \cos n t \cos m t dt &amp;= 0 \quad (n \ne m) \\
+\int_0^{2 \pi} \sin n t \cos m t dt &amp;= 0 \quad \\
+\end{aligned}
+$$</p>
+<p>整数倍の周波数の sin や cos について、周波数の異なるもの同士を掛けたもの、
+または周波数が同じだとしても sin と cos を掛けたものは
+基本周期で積分すると 0 になる。
+見た目がゴツいので例を書き下すと</p>
+<p>$$
+\begin{aligned}
+\int_0^{2 \pi} \sin t \sin 3 t dt &amp;= 0 \\
+\int_0^{2 \pi} \cos 5 t \cos 8 t dt &amp;= 0 \\
+\int_0^{2 \pi} \sin 2 t \cos 2 t dt &amp;= 0 \quad \\
+\end{aligned}
+$$</p>
+<p>のような感じである。</p>
+<p>証明はただ積分を計算するだけだが、積を積分するのは難しいので和の形に変形する
+(三角関数は使える道具が多い)。
+一言で言うと積和の公式なのだが、要は加法定理をいじって積を和に変換する式を
+作るだけである。</p>
+<p>sin の加法定理をよく見ると三角関数の積が右辺にある。
+プラスマイナスの2つの式を上下に並べて辺々足し算 (または引き算) すれば
+sin と cos の積を和に直せる。</p>
+<p>$$
+\begin{aligned}
+\sin (\alpha + \beta) &amp;= \sin \alpha \cos \beta + \cos \alpha \sin \beta \\
+\sin (\alpha - \beta) &amp;= \sin \alpha \cos \beta - \cos \alpha \sin \beta \\
+\sin (\alpha + \beta) + \sin (\alpha - \beta) &amp;= 2 \sin \alpha \cos \beta
+\end{aligned}
+$$</p>
+<p>右辺が今積分できずに困っている形、左辺は楽に積分できる形になっている。</p>
+<p>cos の加法定理を辺々いい感じにすれば sin 同士または cos 同士の積を和に直せる。</p>
+<p>$$
+\begin{aligned}
+\cos (\alpha - \beta) &amp;= \cos \alpha \cos \beta + \sin \alpha \sin \beta \\
+\cos (\alpha + \beta) &amp;= \cos \alpha \cos \beta - \sin \alpha \sin \beta \\
+2 \sin \alpha \sin \beta &amp;= \cos (\alpha - \beta) - \cos (\alpha + \beta) \\
+2 \cos \alpha \cos \beta &amp;= \cos (\alpha - \beta) + \cos (\alpha + \beta) \\
+\end{aligned}
+$$</p>
 
                     </main>
 
@@ -3212,6 +3761,8 @@ log_2 4294967296 &amp;=&amp; 32 \\
         <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="mermaid.min.js"></script>
+        <script src="mermaid-init.js"></script>
 
         <script>
         window.addEventListener('load', function() {

@@ -24,19 +24,20 @@
         <link rel="stylesheet" href="fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="highlight.css">
-        <link rel="stylesheet" href="tomorrow-night.css">
-        <link rel="stylesheet" href="ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
         <!-- MathJax -->
         <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-        <!-- Provide site root to javascript -->
+        <!-- Provide site root and default themes to javascript -->
         <script>
-            var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc.js"></script>
@@ -46,8 +47,8 @@
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
-                var theme = localStorage.getItem('mdbook-theme');
-                var sidebar = localStorage.getItem('mdbook-sidebar');
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
 
                 if (theme.startsWith('"') && theme.endsWith('"')) {
                     localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
@@ -61,7 +62,8 @@
 
         <!-- Set the theme before any content is loaded, prevents flash -->
         <script>
-            var theme;
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
@@ -74,8 +76,8 @@
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var sidebar = null;
-            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
@@ -111,6 +113,7 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
@@ -169,7 +172,7 @@ OS が適当なタイミング (特別な理由がなければタイマ割り込
 勝手に (タイマ割り込みで) タスクを切り替える、
 プリエンプティブスケジューリングが採用されることが多い。
 ただし OS のスレッドの上でユーザランドでタスクを切り替えるグリーンスレッドだとか
-最近流行りの async-await <sup class="footnote-reference"><a href="#1">1</a></sup>: 系の話では協調的スケジューリングも現役と言える。</p>
+最近流行りの async-await <sup class="footnote-reference" id="fr-1-1"><a href="#footnote-1">1</a></sup>: 系の話では協調的スケジューリングも現役と言える。</p>
 <p>現代ではシングルコア性能の向上に限界を迎え、CPU のマルチコア化が進んでいる。
 ハードウェア設計の方の話で N コア M スレッドのように言われると
 コアという用語が何を指すのか分かりづらいため、ソフトウェア/OS の世界では
@@ -197,10 +200,6 @@ OS が適当なタイミング (特別な理由がなければタイマ割り込
 <li>将棋の手読み</li>
 <li>AI のための行列演算は GPU を用いた方がよい。</li>
 </ul>
-<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
-<p>共通しているのは見た目や使い勝手のみで、
-具体的に何が起こるかはプログラミング言語ごとにバラバラで一概には言い難い。</p>
-</div>
 <h2 id="主流のハードウェア構成"><a class="header" href="#主流のハードウェア構成">主流のハードウェア構成</a></h2>
 <p>主流でなければ色々な構成が考えられるという前提の上で、PC やスマホ等で主流の構成は</p>
 <ul>
@@ -737,7 +736,12 @@ Google が Android のために JVM を x86 から ARM に持っていったら
 怪奇現象にしか見えないメモリオーダリングのバグに苦労したらしい…。</p>
 <h3 id="スリープロック-普通のロック"><a class="header" href="#スリープロック-普通のロック">スリープロック (普通のロック)</a></h3>
 <h2 id="ロックフリーアルゴリズム-初心者お断り"><a class="header" href="#ロックフリーアルゴリズム-初心者お断り">ロックフリーアルゴリズム (初心者お断り)</a></h2>
-
+<hr>
+<ol class="footnote-definition"><li id="footnote-1">
+<p>共通しているのは見た目や使い勝手のみで、
+具体的に何が起こるかはプログラミング言語ごとにバラバラで一概には言い難い。 <a href="#fr-1-1">↩</a></p>
+</li>
+</ol>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
@@ -784,6 +788,8 @@ Google が Android のために JVM を x86 から ARM に持っていったら
         <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="mermaid.min.js"></script>
+        <script src="mermaid-init.js"></script>
 
 
     </div>
